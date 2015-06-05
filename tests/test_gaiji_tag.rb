@@ -17,6 +17,17 @@ class EmbedGaijiTagTest < Test::Unit::TestCase
     assert_equal "<span class=\"notes\">［テストtest］</span>", egt.to_s.encode("utf-8")
   end
 
+  def test_espcaed?
+    egt = UnEmbed_Gaiji_tag.new(nil,"テストtest".encode("Shift_JIS"))
+    assert_equal false, egt.escaped?
+  end
+
+  def test_espcae!
+    egt = UnEmbed_Gaiji_tag.new(nil,"テストtest".encode("Shift_JIS"))
+    egt.escape!
+    assert_equal true, egt.escaped?
+  end
+
   def teardown
     $gaiji_dir = @orig_gaiji_dir
   end
