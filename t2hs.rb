@@ -1,4 +1,3 @@
-#! /usr/bin/ruby1.9
 # -*- coding:shift_jis -*-
 # 青空文庫形式のテキストファイルを html に整形する ruby スクリプト
 require "cgi"
