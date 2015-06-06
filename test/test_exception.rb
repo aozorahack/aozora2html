@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'aozora2xhtml'
+require 'aozora2html'
 
 class ExceptionTest < Test::Unit::TestCase
   def test_raise_aozora_exception

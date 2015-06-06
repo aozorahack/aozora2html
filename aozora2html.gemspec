@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'aozora2xhtml/version'
+require 'aozora2html/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "aozora2xhtml"
-  spec.version       = Aozora2xhtml::VERSION
+  spec.name          = "aozora2html"
+  spec.version       = Aozora2html::VERSION
   spec.platform      = Gem::Platform::RUBY
   spec.license       = "MIT"
   spec.authors       = ["aozorahack team"]
@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{TODO: Write a short summary, because Rubygems requires one.}
   spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "https://github.com/aozorahack/aozora2xhtml"
+  spec.homepage      = "https://github.com/aozorahack/aozora2html"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
   # delete this section to allow pushing this gem to any host.

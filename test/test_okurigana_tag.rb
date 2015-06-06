@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'aozora2xhtml'
+require 'aozora2html'
 
 class OkuriganaTagTest < Test::Unit::TestCase
   def setup

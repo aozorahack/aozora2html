@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'aozora2xhtml'
+require 'aozora2html'
 
 class CompatTest < Test::Unit::TestCase
   def test_array_to_s
