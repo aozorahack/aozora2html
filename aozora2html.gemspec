@@ -5,7 +5,7 @@ require 'aozora2html/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "aozora2html"
-  spec.version       = Aozora2html::VERSION
+  spec.version       = Aozora2Html::VERSION
   spec.platform      = Gem::Platform::RUBY
   spec.license       = "MIT"
   spec.authors       = ["aozorahack team"]

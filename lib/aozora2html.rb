@@ -1,5 +1,6 @@
 require "aozora2html/version"
 require 't2hs.rb'
 
-module Aozora2html
+## already defined in t2hs.rb
+class Aozora2Html
 end
