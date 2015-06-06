@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# -*- coding:utf-8 -*-
+
+require 'aozora2html'
+
+# todo: 引数チェックとか
+Aozora2Html.new(ARGV[0],ARGV[1]).process
+
