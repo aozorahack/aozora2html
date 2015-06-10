@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "aozora2html"
   spec.version       = Aozora2Html::VERSION
   spec.platform      = Gem::Platform::RUBY
-  spec.license       = "MIT"
+  spec.license       = "CC0"
   spec.authors       = ["aozorahack team"]
   spec.email         = ["takahashimm@gmail.com"]
 
