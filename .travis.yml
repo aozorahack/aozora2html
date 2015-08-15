@@ -1,0 +1,11 @@
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1
+  - 2.2
+install:
+  'travis_retry bundle instal -j 4'
+branches:
+  only:
+    - add_travis_testing
+#    - master
