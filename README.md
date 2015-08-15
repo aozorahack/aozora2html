@@ -17,6 +17,7 @@ $ gem install aozora2html
 ソースからインストールするときは以下のようにします。
 
 ```
+$ gem install bundler
 $ rake install
 ```
 
