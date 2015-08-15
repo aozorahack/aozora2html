@@ -1,6 +1,7 @@
 require 'test_helper'
 require 'aozora2html'
 require 'fileutils'
+require 'tmpdir'
 
 class Aozora2HtmlTest < Test::Unit::TestCase
   def setup
@@ -49,7 +50,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
       output = File.join(dir,'dummy2.txt')
       File.write(input, "ab\r\nc\r\n")
       parser = Aozora2Html.new(input, output)
-      
+
       parsed = parser.read_line
       assert_equal "ab", parsed
     end
