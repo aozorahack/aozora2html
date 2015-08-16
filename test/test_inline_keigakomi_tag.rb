@@ -1,9 +1,10 @@
+# encoding: utf-8
 require 'test_helper'
 require 'aozora2html'
 
 class InlineKeigakomiTagTest < Test::Unit::TestCase
   def setup
-    stub(@parser).block_allowed_context?{true} 
+    stub(@parser).block_allowed_context?{true}
   end
 
   def test_keigakomi_new
