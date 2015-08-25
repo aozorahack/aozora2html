@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'test_helper'
 require 'aozora2html'
 require 'stringio'
@@ -54,5 +55,3 @@ class JstreamTest < Test::Unit::TestCase
     assert_equal "\r\n", stm.peek_char(3).encode("utf-8")
   end
 end
-
-
