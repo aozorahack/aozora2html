@@ -1,10 +1,11 @@
+# encoding: utf-8
 require 'test_helper'
 require 'aozora2html'
 
 class MultilineMidashiTagTest < Test::Unit::TestCase
   def setup
-    stub(@parser).block_allowed_context?{true} 
-    stub(@parser).new_midashi_id{2} 
+    stub(@parser).block_allowed_context?{true}
+    stub(@parser).new_midashi_id{2}
   end
 
   def test_multiline_midashi_new

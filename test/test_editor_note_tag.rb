@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'test_helper'
 require 'aozora2html'
 
@@ -19,4 +20,3 @@ class EditorNoteTagTest < Test::Unit::TestCase
   def teardown
   end
 end
-
