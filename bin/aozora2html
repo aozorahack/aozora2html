@@ -1,8 +1,20 @@
 #!/usr/bin/env ruby
-# -*- coding:utf-8 -*-
 
 require 'aozora2html'
 
-# todo: 引数チェックとか
+def usage
+  $stderr.print "usage: aozora2html <text file> <html file>\n"
+end
+
+if ARGV.size != 2
+  usage
+  exit 1
+end
+
+if !File.exists?(ARGV[0])
+  $stderr.print "file not found: #{ARGV[0]}\n"
+  exit 1
+end
+
 Aozora2Html.new(ARGV[0],ARGV[1]).process
 
