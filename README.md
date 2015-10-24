@@ -1,6 +1,6 @@
 # Aozora2Html
 
-青空文庫の「組版案内」(http://kumihan.aozora.gr.jp/)で配布されているtxt2html内にあるt2hs.rbを改造するプロジェクトです。
+青空文庫の「組版案内」( http://kumihan.aozora.gr.jp/ )で配布されているtxt2html内にあるt2hs.rbを改造するプロジェクトです。
 
 ## 動作環境
 
