@@ -42,3 +42,5 @@ $ rake test
 ## License
 
 CC0
+
+To the extent possible under law, 青空文庫 has waived all copyright and related or neighboring rights to txt2xhtml. This work is published from Japan.
