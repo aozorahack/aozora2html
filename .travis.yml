@@ -1,13 +1,8 @@
+sudo: false
+cache: bundler
 rvm:
   - 1.9.3
   - 2.0
   - 2.1
   - 2.2
-before_install:
-  'gem install bundler'
-install:
-  'travis_retry bundle instal -j 4'
-branches:
-  only:
-    - add_travis_testing
-#    - master
+  - ruby-head
