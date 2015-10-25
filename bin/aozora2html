@@ -2,6 +2,30 @@
 
 require 'aozora2html'
 
+# override Aozora2Html#push_chars
+#
+# Original Aozora2Html#push_chars does not convert "'" into '&#39;'; it's old behaivor
+# of CGI.escapeHTML().
+#
+class Aozora2Html
+  def push_chars(obj)
+    if obj.is_a?(Array)
+      obj.each{|x|
+        push_chars(x)
+      }
+    elsif obj.is_a?(String)
+      if obj.length == 1
+        obj = obj.gsub(/[&\"<>]/, {'&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;'})
+      end
+      obj.each_char{|x|
+        push_char(x)
+      }
+    else
+      push_char(obj)
+    end
+  end
+end
+
 def usage
   $stderr.print "usage: aozora2html <text file> <html file>\n"
 end
