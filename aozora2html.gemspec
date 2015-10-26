@@ -11,8 +11,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["aozorahack team"]
   spec.email         = ["takahashimm@gmail.com"]
 
-  spec.summary       = %q{converter from Aozora Bunko format into xhtml}
-  spec.description   = %q{converter from Aozora Bunko format into xhtml. It's based of t2hs.rb from kumihan.aozora.gr.jp}
+  spec.summary       = %q{converter from Aozora Bunko format into xhtml. It's based of t2hs.rb from kumihan.aozora.gr.jp.}
+  spec.description   = %q{converter from Aozora Bunko format into xhtml. It's based of t2hs.rb from kumihan.aozora.gr.jp.}
   spec.homepage      = "https://github.com/aozorahack/aozora2html"
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
