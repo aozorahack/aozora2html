@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'aozora2html'
+require 'optparse'
 
 # override Aozora2Html#push_chars
 #
@@ -26,12 +27,17 @@ class Aozora2Html
   end
 end
 
-def usage
-  $stderr.print "usage: aozora2html <text file> <html file>\n"
+opt = OptionParser.new("Usage: aozora2html [options] <text file> <html file>\n")
+opt.on('--gaiji-dir DIR', 'setting gaiji directory')
+opt.version = Aozora2Html::VERSION
+options = opt.getopts
+
+if options["gaiji-dir"]
+  $gaiji_dir = options["gaiji-dir"]
 end
 
 if ARGV.size != 2
-  usage
+  $stderr.print opt.banner
   exit 1
 end
 
