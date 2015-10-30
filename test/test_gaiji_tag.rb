@@ -29,7 +29,14 @@ class EmbedGaijiTagTest < Test::Unit::TestCase
     assert_equal true, egt.escaped?
   end
 
+  def test_jisx0213
+    Embed_Gaiji_tag.use_jisx0213 = true
+    egt = Embed_Gaiji_tag.new(nil,"foo","1-06-75","snowman")
+    assert_equal "&#x2603;", egt.to_s.encode("utf-8")
+  end
+
   def teardown
+    Embed_Gaiji_tag.use_jisx0213 = false
     $gaiji_dir = @orig_gaiji_dir
   end
 end

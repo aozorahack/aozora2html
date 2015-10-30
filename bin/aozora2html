@@ -29,11 +29,16 @@ end
 
 opt = OptionParser.new("Usage: aozora2html [options] <text file> <html file>\n")
 opt.on('--gaiji-dir DIR', 'setting gaiji directory')
+opt.on('--use-jisx0213', 'setting gaiji directory')
 opt.version = Aozora2Html::VERSION
 options = opt.getopts
 
 if options["gaiji-dir"]
   $gaiji_dir = options["gaiji-dir"]
+end
+
+if options["use-jisx0213"]
+  Embed_Gaiji_tag.use_jisx0213 = true
 end
 
 if ARGV.size != 2
