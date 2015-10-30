@@ -33,6 +33,13 @@ $ aozora2html foo.txt foo.html
 
 こうすると、青空文庫記法で書かれたfoo.txtをfoo.htmlに変換します。
 
+また、青空文庫サイトで配布している、中にテキストファイルが同梱されているzip形式のファイルも変換できます。
+
+```
+$ aozora2html foo.zip foo.html
+```
+
+
 ## テスト
 
 テストも追加しています。テストは以下のように実行します。
@@ -41,6 +48,10 @@ $ aozora2html foo.txt foo.html
 $ bundle install
 $ rake test
 ```
+
+## 更新履歴
+
+主な更新履歴は[CHANGELOG.md](CHANGELOG.md)にあります。
 
 ## License
 
