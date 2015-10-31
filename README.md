@@ -39,6 +39,9 @@ $ aozora2html foo.txt foo.html
 $ aozora2html foo.zip foo.html
 ```
 
+コマンドラインオプションとして`--gaiji-dir`と`--use-jisx0213`があります。
+`--gaiji-dir`は外字画像のパスを指定します。
+`--use-jisx0213`はJIS X 0213の外字画像を使わず、数値実体参照として表示します。
 
 ## テスト
 
