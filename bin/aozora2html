@@ -46,19 +46,21 @@ if ARGV.size != 2
   exit 1
 end
 
-if !File.exists?(ARGV[0])
-  $stderr.print "file not found: #{ARGV[0]}\n"
+src_file, dest_file = ARGV[0], ARGV[1]
+
+if !File.exists?(src_file)
+  $stderr.print "file not found: #{src_file}\n"
   exit 1
 end
 
-if File.extname(ARGV[0]) == ".zip"
+if File.extname(src_file) == ".zip"
   require "tempfile"
   Dir.mktmpdir do |dir|
     tmpfile = File.join(dir, "aozora.txt")
-    Aozora2Html::Zip.unzip(ARGV[0], tmpfile)
-    Aozora2Html.new(tmpfile, ARGV[1]).process
+    Aozora2Html::Zip.unzip(src_file, tmpfile)
+    Aozora2Html.new(tmpfile, dest_file).process
   end
 else
-  Aozora2Html.new(ARGV[0], ARGV[1]).process
+  Aozora2Html.new(src_file, dest_file).process
 end
 
