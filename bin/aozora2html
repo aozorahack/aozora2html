@@ -2,6 +2,7 @@
 
 require 'aozora2html'
 require 'optparse'
+require "tempfile"
 
 # override Aozora2Html#push_chars
 #
@@ -46,19 +47,35 @@ if ARGV.size != 2
   exit 1
 end
 
-if !File.exists?(ARGV[0])
-  $stderr.print "file not found: #{ARGV[0]}\n"
-  exit 1
-end
+src_file, dest_file = ARGV[0], ARGV[1]
 
-if File.extname(ARGV[0]) == ".zip"
-  require "tempfile"
-  Dir.mktmpdir do |dir|
-    tmpfile = File.join(dir, "aozora.txt")
-    Aozora2Html::Zip.unzip(ARGV[0], tmpfile)
-    Aozora2Html.new(tmpfile, ARGV[1]).process
+Dir.mktmpdir do |dir|
+  if src_file =~ /\Ahttps?:/
+    require 'open-uri'
+    down_file = File.join(dir, File.basename(src_file))
+    begin
+      open(down_file, "wb") do |f0|
+        open(src_file){|f1| f0.write(f1.read)}
+      end
+      src_file = down_file
+    rescue
+      $stderr.print "file not found: #{src_file}\n"
+      $stderr.print "Download Error: #{$!}\n"
+      exit 1
+    end
+  else
+    if !File.exists?(src_file)
+      $stderr.print "file not found: #{src_file}\n"
+      exit 1
+    end
   end
-else
-  Aozora2Html.new(ARGV[0], ARGV[1]).process
+
+  if File.extname(src_file) == ".zip"
+    tmpfile = File.join(dir, "aozora.txt")
+    Aozora2Html::Zip.unzip(src_file, tmpfile)
+    Aozora2Html.new(tmpfile, dest_file).process
+  else
+    Aozora2Html.new(src_file, dest_file).process
+  end
 end
 
