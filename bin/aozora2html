@@ -28,7 +28,7 @@ class Aozora2Html
   end
 end
 
-opt = OptionParser.new("Usage: aozora2html [options] <text file> <html file>\n")
+opt = OptionParser.new("Usage: aozora2html [options] <text file> [<html file>]\n")
 opt.on('--gaiji-dir DIR', 'setting gaiji directory')
 opt.on('--use-jisx0213', 'setting gaiji directory')
 opt.version = Aozora2Html::VERSION
@@ -42,7 +42,7 @@ if options["use-jisx0213"]
   Embed_Gaiji_tag.use_jisx0213 = true
 end
 
-if ARGV.size != 2
+if ARGV.size < 1 || ARGV.size > 2
   $stderr.print opt.banner
   exit 1
 end
@@ -50,6 +50,9 @@ end
 src_file, dest_file = ARGV[0], ARGV[1]
 
 Dir.mktmpdir do |dir|
+  if dest_file.nil?
+    dest_file = File.join(dir, "output.html")
+  end
   if src_file =~ /\Ahttps?:/
     require 'open-uri'
     down_file = File.join(dir, File.basename(src_file))
@@ -76,6 +79,10 @@ Dir.mktmpdir do |dir|
     Aozora2Html.new(tmpfile, dest_file).process
   else
     Aozora2Html.new(src_file, dest_file).process
+  end
+  if !ARGV[1]
+    output = File.read(dest_file)
+    print output
   end
 end
 
