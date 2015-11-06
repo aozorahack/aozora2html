@@ -39,6 +39,18 @@ $ aozora2html foo.txt foo.html
 $ aozora2html foo.zip foo.html
 ```
 
+第1引数にURLを指定すると、そのURLのファイルをダウンロードして変換します。
+
+```
+$ aozora2html http://example.jp/foo/bar.zip foo.html
+```
+
+第2引数を省略すると、ファイルではなく標準出力に変換結果を出力します。
+
+```
+$ aozora2html foo.txt
+```
+
 コマンドラインオプションとして`--gaiji-dir`と`--use-jisx0213`があります。
 `--gaiji-dir`は外字画像のパスを指定します。
 `--use-jisx0213`はJIS X 0213の外字画像を使わず、数値実体参照として表示します。
