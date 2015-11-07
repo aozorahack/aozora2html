@@ -810,7 +810,7 @@ class Aozora2Html
     "s¶¬‘‚«"=>["subscript","sub"]
   }
   def initialize (input, output)
-    @stream = Jstream.new(File.open(input,"r:Shift_JIS"))
+    @stream = Jstream.new(File.open(input,"rb:Shift_JIS"))
     @buffer = []; @ruby_buf = [""]; @ruby_char_type = nil
     @out = File.open(output,"w"); @section = :head; @header = []; @style_stack = []
     @chuuki_table = {}; @images = []; @indent_stack = []; @tag_stack = []
