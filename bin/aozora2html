@@ -40,6 +40,7 @@ end
 
 if options["use-jisx0213"]
   Embed_Gaiji_tag.use_jisx0213 = true
+  Accent_tag.use_jisx0213 = true
 end
 
 if ARGV.size < 1 || ARGV.size > 2
