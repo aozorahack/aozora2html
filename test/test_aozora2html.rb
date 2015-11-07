@@ -12,7 +12,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     Dir.mktmpdir do |dir|
       input = File.join(dir,'dummy.txt')
       output = File.join(dir,'dummy2.txt')
-      File.write(input, "テスト\r\n")
+      File.binwrite(input, "テスト\r\n")
       parser = Aozora2Html.new(input, output)
       begin
         assert_equal Aozora2Html, parser.class
@@ -26,7 +26,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     Dir.mktmpdir do |dir|
       input = File.join(dir,'dummy.txt')
       output = File.join(dir,'dummy2.txt')
-      File.write(input, "a\r\nb\r\nc\r\n")
+      File.binwrite(input, "a\r\nb\r\nc\r\n")
       parser = Aozora2Html.new(input, output)
 
       begin
@@ -56,7 +56,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     Dir.mktmpdir do |dir|
       input = File.join(dir,'dummy.txt')
       output = File.join(dir,'dummy2.txt')
-      File.write(input, "ab\r\nc\r\n")
+      File.binwrite(input, "ab\r\nc\r\n")
       parser = Aozora2Html.new(input, output)
       begin
         parsed = parser.read_line
@@ -71,7 +71,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     Dir.mktmpdir do |dir|
       input = File.join(dir,'dummy.txt')
       output = File.join(dir,'dummy2.txt')
-      File.write(input, "ab\r\nc\r\n")
+      File.binwrite(input, "ab\r\nc\r\n")
       parser = Aozora2Html.new(input, output)
 
       begin
