@@ -30,7 +30,7 @@ end
 
 opt = OptionParser.new("Usage: aozora2html [options] <text file> [<html file>]\n")
 opt.on('--gaiji-dir DIR', 'setting gaiji directory')
-opt.on('--use-jisx0213', 'setting gaiji directory')
+opt.on('--use-jisx0213', 'use JIS X 0213 character')
 opt.version = Aozora2Html::VERSION
 options = opt.getopts
 
