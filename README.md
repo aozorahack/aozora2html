@@ -1,6 +1,6 @@
 # Aozora2Html
 
-[![Build Status](https://travis-ci.org/aozorahack/aozora2html.svg?branch=master)](https://travis-ci.org/aozorahack/aozora2html) [![Gem Version](https://badge.fury.io/rb/aozora2html.svg)](https://badge.fury.io/rb/aozora2html)
+[![Build Status](https://travis-ci.org/aozorahack/aozora2html.svg?branch=master)](https://travis-ci.org/aozorahack/aozora2html) [![Gem Version](https://badge.fury.io/rb/aozora2html.svg)](https://badge.fury.io/rb/aozora2html) [![Code Climate](https://codeclimate.com/github/aozorahack/aozora2html/badges/gpa.svg)](https://codeclimate.com/github/aozorahack/aozora2html)
 
 青空文庫の「組版案内」( http://kumihan.aozora.gr.jp/ )で配布されているtxt2html内にあるt2hs.rbを改造するプロジェクトです。
 
