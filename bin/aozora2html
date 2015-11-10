@@ -68,7 +68,7 @@ Dir.mktmpdir do |dir|
       exit 1
     end
   else
-    if !File.exists?(src_file)
+    if !File.exist?(src_file)
       $stderr.print "file not found: #{src_file}\n"
       exit 1
     end
