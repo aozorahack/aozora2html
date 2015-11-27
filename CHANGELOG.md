@@ -1,3 +1,11 @@
+<a name="0.6.1"></a>
+## 0.6.1
+
+### Bug Fixes
+
+* Encoding::CompatibilityErrorエラーが出ることがあるのを修正した
+* READMEに説明を追加した
+
 <a name="0.6.0"></a>
 ## 0.6.0
 
