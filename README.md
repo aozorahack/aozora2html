@@ -51,9 +51,16 @@ $ aozora2html http://example.jp/foo/bar.zip foo.html
 $ aozora2html foo.txt
 ```
 
-コマンドラインオプションとして`--gaiji-dir`と`--use-jisx0213`があります。
+コマンドラインオプションとして`--gaiji-dir`と`--use-jisx0213`、`--use-unicode`があります。
 `--gaiji-dir`は外字画像のパスを指定します。
 `--use-jisx0213`はJIS X 0213の外字画像を使わず、数値実体参照として表示します。
+`--use-unicode`はUnicodeのコードポイントが指定されている外字を数値実体参照として表示します。
+
+可能な限り数値実体参照を使って表示するには、以下のようにオプションを指定します。
+
+```
+$ aozora2html --use-jisx0213 --use-unicode foo.txt
+```
 
 ## テスト
 
