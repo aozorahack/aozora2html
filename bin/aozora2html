@@ -46,7 +46,7 @@ class Aozora2Html
         escape_gaiji(command)
       end
     else
-      "※"
+      "※".encode("shift_jis")
     end
   end
 end
