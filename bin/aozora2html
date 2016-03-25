@@ -53,6 +53,7 @@ end
 
 opt = OptionParser.new("Usage: aozora2html [options] <text file> [<html file>]\n")
 opt.on('--gaiji-dir DIR', 'setting gaiji directory')
+opt.on('--css-files FILES', 'setting css directory')
 opt.on('--use-jisx0213', 'use JIS X 0213 character')
 opt.on('--use-unicode', 'use Unicode character')
 opt.version = Aozora2Html::VERSION
@@ -60,6 +61,10 @@ options = opt.getopts
 
 if options["gaiji-dir"]
   $gaiji_dir = options["gaiji-dir"]
+end
+
+if options["css-files"]
+  $css_files = options["css-files"].split(",")
 end
 
 if options["use-jisx0213"]
@@ -114,4 +119,3 @@ Dir.mktmpdir do |dir|
     print output
   end
 end
-
