@@ -28,6 +28,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "test-unit-rr"
   # spec.add_development_dependency "test-unit-notify"
   # spec.add_development_dependency "terminal-notifier"
-  spec.add_development_dependency "guard"
-  spec.add_development_dependency "guard-test"
+  if RUBY_VERSION > "2.2.0"
+    spec.add_development_dependency "guard"
+    spec.add_development_dependency "guard-test"
+  end
 end
