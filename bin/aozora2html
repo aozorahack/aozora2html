@@ -69,7 +69,7 @@ end
 
 if options["use-jisx0213"]
   Embed_Gaiji_tag.use_jisx0213 = true
-  Accent_tag.use_jisx0213 = true
+  Aozora2Html::Tag::Accent.use_jisx0213 = true
 end
 
 if options["use-unicode"]

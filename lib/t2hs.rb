@@ -7,20 +7,26 @@ require "jstream"
 require "aozora2html/tag"
 require "aozora2html/tag/inline"
 require "aozora2html/tag/block"
+require "aozora2html/tag/accent"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-class Accent_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Inline
-  def initialize (parser, code, name)
-    @code = code
-    @name = name
-    super
-  end
-  def to_s
-    "<img src=\"#{$gaiji_dir}#{@code}.png\" alt=\"¦(#{@name})\" class=\"gaiji\" />"
+class Aozora2Html
+  class Tag
+    class Accent < Aozora2Html::Tag
+      include Aozora2Html::Tag::Inline
+      def initialize(parser, code, name)
+        @code = code
+        @name = name
+        super
+      end
+
+      def to_s
+        "<img src=\"#{$gaiji_dir}#{@code}.png\" alt=\"¦(#{@name})\" class=\"gaiji\" />"
+      end
+    end
   end
 end
 
@@ -775,7 +781,7 @@ class Aozora2Html
   end
   
   def char_type (char)
-    if char.is_a?(Accent_tag)
+    if char.is_a?(Aozora2Html::Tag::Accent)
       :hankaku
     elsif char.is_a?(Gaiji_tag)
       :kanji
@@ -2372,14 +2378,14 @@ class Aozora_accent_parser < Aozora2Html
       if found2 = found[@stream.peek_char(0)]
         if found2.is_a?(Hash)
           if found3 = found2[@stream.peek_char(1)]
-            first = Accent_tag.new(self, *found3)
+            first = Aozora2Html::Tag::Accent.new(self, *found3)
             @encount_accent = true
             @chuuki_table[:accent] = true
             read_char
             read_char
           end
         elsif found2
-          first = Accent_tag.new(self, *found2)
+          first = Aozora2Html::Tag::Accent.new(self, *found2)
           @encount_accent = true
           read_char
           @chuuki_table[:accent] = true
