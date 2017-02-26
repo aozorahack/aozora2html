@@ -25,29 +25,13 @@ require "aozora2html/tag/multiline_midashi"
 require "aozora2html/tag/jisage"
 require "aozora2html/tag/oneline_jisage"
 require "aozora2html/tag/multiline_jisage"
+require "aozora2html/tag/chitsuki"
+require "aozora2html/tag/oneline_chitsuki"
+require "aozora2html/tag/multiline_chitsuki"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Chitsuki_tag < Aozora2html::Tag::Indent
-  def initialize (parser, length)
-    @length = length
-    super
-  end
-  def to_s
-    '<div class="chitsuki_' + @length + '" style="text-align:right; margin-right: ' + @length + 'em">'
-  end
-end
-
-class Oneline_Chitsuki_tag < Chitsuki_tag
-  include Aozora2html::Tag::OnelineIndent
-end
-
-
-class Multiline_Chitsuki_tag < Chitsuki_tag
-  include Aozora2Html::Tag::Multiline
-end
 
 # 前方参照でこいつだけは中身をチェックする
 # 子要素を持つAozora2Html::Tag::Inlineは全てこいつのサブクラス
@@ -1090,7 +1074,7 @@ class Aozora2Html
       elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
         # 消してあった※を復活させて
         @out.print "※"
-      elsif s.is_a?(Multiline_Chitsuki_tag)
+      elsif s.is_a?(Aozora2Html::Tag::MultilineChitsuki)
       elsif s.is_a?(String) and s.match("</em")
       end
       @out.print s.to_s
@@ -1400,10 +1384,10 @@ class Aozora2Html
         # 複数行指定
         implicit_close(:chitsuki)
         @indent_stack.push(:chitsuki)
-        Multiline_Chitsuki_tag.new(self, l)
+        Aozora2Html::Tag::MultilineChitsuki.new(self, l)
       else
         # 1行のみ
-        Oneline_Chitsuki_tag.new(self, l)
+        Aozora2html::Tag::OnelineChitsuki.new(self, l)
       end
     end
   end
