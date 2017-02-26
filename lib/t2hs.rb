@@ -30,100 +30,11 @@ require "aozora2html/tag/oneline_chitsuki"
 require "aozora2html/tag/multiline_chitsuki"
 require "aozora2html/tag/reference_mentioned"
 require "aozora2html/tag/midashi"
+require "aozora2html/tag/ruby"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-# complex ruby markup
-# if css3 is major supported, please fix ruby position with property "ruby-position"
-# see also: http://www.w3.org/TR/2001/WD-css3-ruby-20010216/
-class Ruby_tag < Aozora2Html::Tag::ReferenceMentioned
-  attr_accessor :ruby, :under_ruby
-  def initialize (parser, string, ruby, under_ruby = "")
-    @target = string; @ruby = ruby; @under_ruby = under_ruby
-    super
-  end
-  
-  def gen_rt (string)
-    if string != ""
-      "<rt class=\"real_ruby\">#{string}</rt>"
-    else
-      "<rt class=\"dummy_ruby\"></rt>"
-    end
-  end
-
-  def to_s
-    "<ruby><rb>#{@target.to_s}</rb><rp>（</rp><rt>#{@ruby.to_s}</rt><rp>）</rp></ruby>"
-  end
-
-# complex ruby is waiting for IE support and CSS3 candidate
-=begin      
-  def to_s
-    ans = "<ruby class=\"complex_ruby\"><rbc>" # indicator of new version of aozora ruby
-    if @ruby.is_a?(Array) and @ruby.length > 0
-      # cell is used
-      @rbspan = @ruby.length
-    end
-    if @under_ruby.is_a?(Array) and @under_ruby.length > 0
-      # cell is used, but two way cell is not supported
-      if @rbspan
-        raise Aozora2Html::Error.new("サポートされていない複雑なルビ付けです")
-      else
-        @rbspan = @under_ruby.length
-      end
-    end
-    
-    # target
-    if @rbspan
-      @target.each{|x|
-        ans.concat("<rb>#{x.to_s}</rb>")
-      }
-    else
-      ans.concat("<rb>#{@target.to_s}</rb>")
-    end
-
-    ans.concat("</rbc><rtc>")
-
-    # upper ruby
-    if @ruby.is_a?(Array)
-      @ruby.each{|x|
-        ans.concat(gen_rt(x))
-      }
-    elsif @rbspan
-      if @ruby != ""
-        ans.concat("<rt class=\"real_ruby\" rbspan=\"#{@rbspan}\">#{@ruby}</rt>")
-      else
-        ans.concat("<rt class=\"dummy_ruby\" rbspan=\"#{@rbspan}\"></rt>")
-      end
-    else
-      ans.concat(gen_rt(@ruby))
-    end
-
-    ans.concat("</rtc>")
-
-    # under_ruby (if exists)
-    if @under_ruby.length > 0
-      ans.concat("<rtc>")
-      if @under_ruby.is_a?(Array)
-        @under_ruby.each{|x|
-          ans.concat(gen_rt(x))
-        }
-      elsif @rbspan
-        ans.concat("<rt class=\"real_ruby\" rbspan=\"#{@rbspan}\">#{@under_ruby}</rt>")
-      else
-        ans.concat(gen_rt(@under_ruby))
-      end
-      ans.concat("</rtc>")
-    end
-      
-    # finalize
-    ans.concat("</ruby>")
-    
-    ans
-  end
-=end
-end
 
 class Kunten_tag < Aozora2Html::Tag
   include Aozora2Html::Tag::Inline
@@ -1639,13 +1550,13 @@ class Aozora2Html
 
   def include_ruby? (array)
     array.index{|elt|
-      if elt.is_a?(Ruby_tag)
+      if elt.is_a?(Aozora2Html::Tag::Ruby)
         true
       elsif elt.is_a?(Aozora2Html::Tag::ReferenceMentioned)
         if elt.target.is_a?(Array)
           include_ruby?(elt.target)
         else
-          elt.target.is_a?(Ruby_tag)
+          elt.target.is_a?(Aozora2Html::Tag::Ruby)
         end
       end
     }
@@ -1654,7 +1565,7 @@ class Aozora2Html
   # complex ruby wrap up utilities -- don't erase! we will use soon ...
   def rearrange_ruby_tag (targets, upper_ruby, under_ruby = "")
     target,upper,under = rearrange_ruby(targets, upper_ruby, under_ruby)
-    Ruby_tag.new(self, target,upper,under)
+    Aozora2Html::Tag::Ruby.new(self, target,upper,under)
   end
   
   # rubyタグの再割り当て
@@ -1676,9 +1587,9 @@ class Aozora2Html
       end
     
       targets.each{|x|
-        if x.is_a?(Ruby_tag)
+        if x.is_a?(Aozora2Html::Tag::Ruby)
           if x.target.is_a?(Array)
-            # inner Ruby_tag is already complex ... give up
+            # inner Aozora2Html::Tag::Ruby is already complex ... give up
             raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
           else
             if x.ruby != ""
@@ -1777,7 +1688,7 @@ class Aozora2Html
                                end)
     elsif command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/)
       whole, dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
-      if targets.length == 1 and targets[0].is_a?(Ruby_tag)
+      if targets.length == 1 and targets[0].is_a?(Aozora2Html::Tag::Ruby)
         tag = targets[0]
         if tag.under_ruby == ""
           tag.under_ruby = under
@@ -1880,7 +1791,7 @@ class Aozora2Html
       else
         ans.concat(token.to_s)
       end}
-    @buffer.push(Ruby_tag.new(self, ans, ruby))
+    @buffer.push(Aozora2Html::Tag::Ruby.new(self, ans, ruby))
     @buffer = @buffer + notes
     @ruby_buf = [""]
     nil
