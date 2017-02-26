@@ -31,34 +31,13 @@ require "aozora2html/tag/multiline_chitsuki"
 require "aozora2html/tag/reference_mentioned"
 require "aozora2html/tag/midashi"
 require "aozora2html/tag/ruby"
+require "aozora2html/tag/kunten"
+require "aozora2html/tag/kaeriten"
+require "aozora2html/tag/okurigana"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Kunten_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Inline
-end
-
-class Kaeriten_tag < Kunten_tag
-  def initialize (parser, string)
-    @string = string
-    super
-  end
-  def to_s
-    "<sub class=\"kaeriten\">#{@string.to_s}</sub>"
-  end
-end
-
-class Okurigana_tag < Kunten_tag
-  def initialize (parser, string)
-    @string = string
-    super
-  end
-  def to_s
-    "<sup class=\"okurigana\">#{@string.to_s}</sup>"
-  end
-end
 
 class Inline_keigakomi_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target)
@@ -382,7 +361,7 @@ class Aozora2Html
       :hankaku
     elsif char.is_a?(Aozora2Html::Tag::Gaiji)
       :kanji
-    elsif char.is_a?(Kunten_tag) # just remove this line
+    elsif char.is_a?(Aozora2Html::Tag::Kunten) # just remove this line
       :else
     elsif char.is_a?(Dakuten_katakana_tag)
       :katakana
@@ -1095,9 +1074,9 @@ class Aozora2Html
       elsif command.match(/1-7-8[2345]/)
         apply_dakuten_katakana(command)
       elsif command.match(/^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$/)
-        Kaeriten_tag.new(self, command)
+        Aozora2Html::Tag::Kaeriten.new(self, command)
       elsif command.match(/^（(.+)）$/)
-        Okurigana_tag.new(self, command.gsub!(/[（）]/,""))
+        Aozora2Html::Tag::Okurigana.new(self, command.gsub!(/[（）]/,""))
       elsif command.match(/(地付き|字上げ)(終わり)*$/)
         apply_chitsuki(command)
       elsif exec_inline_start_command(command)
@@ -1664,9 +1643,9 @@ class Aozora2Html
     elsif command.match(/キャプション/)
       Inline_caption_tag.new(self, targets)
     elsif command.match(/返り点/)
-      Kaeriten_tag.new(self, targets)
+      Aozora2Html::Tag::Kaeriten.new(self, targets)
     elsif command.match(/訓点送り仮名/)
-      Okurigana_tag.new(self, targets)
+      Aozora2Html::Tag::Okurigana.new(self, targets)
     elsif command.match(/見出し/)
       midashi_type = :normal
       if command.match(/同行/)
