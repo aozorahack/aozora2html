@@ -19,86 +19,13 @@ require "aozora2html/tag/multiline_style"
 require "aozora2html/tag/font_size"
 require "aozora2html/tag/jizume"
 require "aozora2html/tag/keigakomi"
+require "aozora2html/tag/multiline_yokogumi"
+require "aozora2html/tag/multiline_caption"
+require "aozora2html/tag/multiline_midashi"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Multiline_yokogumi_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
-  def initialize (parser)
-    super
-  end
-  def to_s
-    "<div class=\"yokogumi\">"
-  end
-end
-
-class Multiline_caption_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
-  def initialize (parser)
-    super
-  end
-  def to_s
-    "<div class=\"caption\">"
-  end
-end
-
-class Multiline_midashi_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
-  def initialize (parser,size,type)
-    super
-    @tag = if size.match("小")
-             @id = parser.new_midashi_id(1)
-             "h5"
-           elsif size.match("中")
-             @id = parser.new_midashi_id(10)
-             "h4"
-           elsif size.match("大")
-             @id = parser.new_midashi_id(100)
-             "h3"
-           else
-             raise Aozora2Html::Error.new("未定義な見出しです")
-           end   
-    @class = case type
-             when :normal
-               case @tag
-               when "h5"
-                 "ko-midashi"
-               when "h4"
-                 "naka-midashi"
-               when "h3"
-                 "o-midashi"
-               end
-             when :dogyo
-               case @tag
-               when "h5"
-                 "dogyo-ko-midashi"
-               when "h4"
-                 "dogyo-naka-midashi"
-               when "h3"
-                 "dogyo-o-midashi"
-               end
-             when :mado
-               case @tag
-               when "h5"
-                 "mado-ko-midashi"
-               when "h4"
-                 "mado-naka-midashi"
-               when "h3"
-                 "mado-o-midashi"
-               end
-             else
-               raise Aozora2Html::Error.new("未定義な見出しです")
-             end
-  end
-  def to_s
-    "<#{@tag} class=\"#{@class}\"><a class=\"midashi_anchor\" id=\"midashi#{@id}\">"
-  end
-  def close_tag
-    "</a></#{@tag}>"
-  end
-end
 
 class Jisage_tag < Aozora2html::Tag::Indent
   def initialize (parser, width)
@@ -1509,12 +1436,12 @@ class Aozora2Html
       else
         @terprip = false
       end
-    Multiline_midashi_tag.new(self,command,midashi_type)
+    Aozora2Html::Tag::MultilineMidashi.new(self,command,midashi_type)
   end
 
   def apply_yokogumi(command)
     @indent_stack.push(:yokogumi)
-    Multiline_yokogumi_tag.new(self)
+    Aozora2Html::Tag::MultilineYokogumi.new(self)
   end
 
   def apply_keigakomi(command)
@@ -1524,7 +1451,7 @@ class Aozora2Html
 
   def apply_caption(command)
     @indent_stack.push(:caption)
-    Multiline_caption_tag.new(self)
+    Aozora2Html::Tag::MultilineCaption.new(self)
   end
 
   def apply_jizume(command)
