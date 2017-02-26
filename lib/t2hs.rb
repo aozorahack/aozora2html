@@ -16,38 +16,11 @@ require "aozora2html/tag/indent"
 require "aozora2html/tag/oneline_indent"
 require "aozora2html/tag/multiline"
 require "aozora2html/tag/multiline_style"
+require "aozora2html/tag/font_size"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Font_size_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
-  def initialize (parser, times, daisho)
-    @class = daisho.to_s + times.to_s
-    @style = case times
-             when 1
-               ""
-             when 2
-               "x-"
-             else
-               if times >= 3
-                 "xx-"
-               else
-                 raise Aozora2Html::Error.new("文字サイズの指定が不正です")
-               end
-             end + case daisho
-                   when :dai
-                     "large"
-                   when :sho
-                     "small"
-                   end
-    super
-  end
-  def to_s
-    "<div class=\"#{@class}\" style=\"font-size: #{@style};\">"
-  end
-end
 
 class Jizume_tag < Aozora2html::Tag::Indent
   include Aozora2Html::Tag::Multiline
@@ -1782,7 +1755,7 @@ class Aozora2Html
                else
                  :dai
                end
-      push_block_tag(Font_size_tag.new(self,
+      push_block_tag(Aozora2Html::Tag::FontSize.new(self,
                                        convert_japanese_number(nest).to_i,
                                        daisho),match)
       @indent_stack.push(daisho)
