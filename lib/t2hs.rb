@@ -8,16 +8,14 @@ require "aozora2html/tag"
 require "aozora2html/tag/inline"
 require "aozora2html/tag/block"
 require "aozora2html/tag/accent"
+require "aozora2html/tag/gaiji"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-class Gaiji_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Inline
-end
 
-class Embed_Gaiji_tag < Gaiji_tag
+class Embed_Gaiji_tag < Aozora2Html::Tag::Gaiji
   def initialize (parser, folder, code, name)
     @folder = folder
     @code = code
@@ -29,7 +27,7 @@ class Embed_Gaiji_tag < Gaiji_tag
   end
 end
 
-class UnEmbed_Gaiji_tag < Gaiji_tag
+class UnEmbed_Gaiji_tag < Aozora2Html::Tag::Gaiji
   def initialize (parser, desc)
     @desc = desc; @escaped = false
     super
@@ -766,7 +764,7 @@ class Aozora2Html
   def char_type (char)
     if char.is_a?(Aozora2Html::Tag::Accent)
       :hankaku
-    elsif char.is_a?(Gaiji_tag)
+    elsif char.is_a?(Aozora2Html::Tag::Gaiji)
       :kanji
     elsif char.is_a?(Kunten_tag) # just remove this line
       :else
