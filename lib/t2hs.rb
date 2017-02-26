@@ -18,21 +18,11 @@ require "aozora2html/tag/multiline"
 require "aozora2html/tag/multiline_style"
 require "aozora2html/tag/font_size"
 require "aozora2html/tag/jizume"
+require "aozora2html/tag/keigakomi"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Keigakomi_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
-  def initialize (parser, size = 1)
-    @size = size
-    super
-  end
-  def to_s
-    "<div class=\"keigakomi\" style=\"border: solid #{@size}px\">"
-  end
-end
 
 class Multiline_yokogumi_tag < Aozora2Html::Tag
   include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
@@ -1529,7 +1519,7 @@ class Aozora2Html
 
   def apply_keigakomi(command)
     @indent_stack.push(:keigakomi)
-    Keigakomi_tag.new(self)
+    Aozora2Html::Tag::Keigakomi.new(self)
   end
 
   def apply_caption(command)
