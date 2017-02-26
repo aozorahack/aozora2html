@@ -42,6 +42,8 @@ require "aozora2html/tag/decorate"
 require "aozora2html/tag/dakuten_katakana"
 require "aozora2html/tag/dir"
 require "aozora2html/tag/img"
+require "aozora2html/tag_parser"
+require "aozora2html/accent_parser"
 
 $gaiji_dir = "../../../gaiji/"
 
@@ -230,7 +232,7 @@ class Aozora2Html
   end
 
   def read_accent
-    Aozora_accent_parser.new(@stream,"〕",@chuuki_table,@images).process
+    Aozora2Html::AccentParser.new(@stream,"〕",@chuuki_table,@images).process
   end
 
   def read_to_nest (endchar)
@@ -1774,139 +1776,6 @@ class Aozora2Html
       @out.print "</ul>\r\n" # <ul>内に<li>以外のエレメントが来るのは不正なので修正
     end
     @out.print "</div>\r\n"
-  end
-end
-
-# 青空記法の入れ子に対応（？）
-class Aozora2Html::TagParser < Aozora2Html
-  def initialize (input, endchar, chuuki, image)
-    if not(input.is_a?(Jstream))
-      raise ArgumentError, "tag_parser must supply Jstream as input"
-    end
-    @stream = input;
-    @buffer = []; @ruby_buf = [""]; @ruby_char_type = nil
-    @chuuki_table = chuuki; @images = image; # globalな環境を記録するアイテムは共有する必要あり
-    @endchar = endchar # 改行を越えるべきか否か…
-    @section = :tail # 末尾処理と記法内はインデントをしないので等価
-    @raw = "" # 外字変換前の生テキストを残したいことがあるらしい
-  end
-
-  def read_char # method override!
-    c = @stream.read_char
-    @raw.concat(c)
-    c
-  end
-
-  def read_to_nest(endchar)
-    ans = super(endchar)
-    @raw.concat(ans[1])
-    ans
-  end
-
-  def general_output # 出力は[String,String]返しで！
-    ruby_buf_dump
-    ans=""
-    @buffer.each{|s|
-      if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
-        # 消してあった※を復活させて
-        ans.concat("※")
-      end
-      ans.concat(s.to_s)
-    }
-    [ans,@raw]
-  end
-  
-  def process ()
-    catch(:terminate){
-      loop{
-          parse
-      }
-    }
-    general_output
-  end
-end
-
-# accent特殊文字を生かすための再帰呼び出し
-class Aozora_accent_parser < Aozora2Html
-  def initialize (input, endchar, chuuki, image)
-    if not(input.is_a?(Jstream))
-      raise ArgumentError, "tag_parser must supply Jstream as input"
-    end
-    @stream = input
-    @buffer = []; @ruby_buf = [""]; @ruby_char_type = nil
-    @chuuki_table = chuuki; @images = image; # globalな環境を記録するアイテムは共有する必要あり
-    @endchar = endchar # 改行は越えられない <br />を出力していられない
-    @closed = nil # 改行での強制撤退チェックフラグ
-    @encount_accent = nil
-  end
-
-  def general_output # 出力は配列で返す
-    ruby_buf_dump
-    if not(@encount_accent)
-      @buffer.unshift("〔")
-    end
-    if @closed and not(@encount_accent)
-      @buffer.push("〕")
-    elsif not(@closed)
-      @buffer.push("<br />\r\n")
-    end
-    @buffer
-  end
-  
-  def parse
-    first = read_char
-    if found = @@accent_table[first]
-      if found2 = found[@stream.peek_char(0)]
-        if found2.is_a?(Hash)
-          if found3 = found2[@stream.peek_char(1)]
-            first = Aozora2Html::Tag::Accent.new(self, *found3)
-            @encount_accent = true
-            @chuuki_table[:accent] = true
-            read_char
-            read_char
-          end
-        elsif found2
-          first = Aozora2Html::Tag::Accent.new(self, *found2)
-          @encount_accent = true
-          read_char
-          @chuuki_table[:accent] = true
-        end
-      end
-    end
-    case first
-    when "※"
-      first = dispatch_gaiji
-    when "［"
-      first = dispatch_aozora_command
-    when @@ku
-      assign_kunoji
-    when "《"
-      first = apply_ruby
-    end
-    if first == "\r\n"
-      if @encount_accent
-        puts "警告(#{scount}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません"
-      end
-      throw :terminate
-    elsif first == "〕"
-      @closed = true
-      throw :terminate
-    elsif first == "｜"
-      ruby_buf_dump
-      @ruby_buf_protected = true
-    elsif first != "" and first != nil
-      illegal_char_check(first)
-      push_chars(first)
-    end
-  end
-  
-  def process ()
-    catch(:terminate){
-      loop{
-          parse
-      }
-    }
-    general_output
   end
 end
 
