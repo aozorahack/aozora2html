@@ -38,55 +38,14 @@ require "aozora2html/tag/inline_keigakomi"
 require "aozora2html/tag/inline_yokogumi"
 require "aozora2html/tag/inline_caption"
 require "aozora2html/tag/inline_font_size"
+require "aozora2html/tag/decorate"
+require "aozora2html/tag/dakuten_katakana"
+require "aozora2html/tag/dir"
+require "aozora2html/tag/img"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Decorate_tag < Aozora2Html::Tag::ReferenceMentioned
-  def initialize (parser, target, html_class, html_tag)
-    @target = target; @close = "</#{html_tag}>"
-    @open = "<#{html_tag} class=\"#{html_class}\">"
-    super
-  end
-  def to_s
-    @open+@target.to_s+@close
-  end
-end
-
-class Dakuten_katakana_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Inline
-  def initialize (parser, n, katakana)
-    @n = n; @katakana = katakana
-    super
-  end
-  def to_s
-    "<img src=\"#{$gaiji_dir}/1-07/1-07-8#{@n}.png\" alt=\"※(濁点付き片仮名「#{@katakana}」、1-07-8#{@n})\" class=\"gaiji\" />"
-  end
-end
-
-class Dir_tag < Aozora2Html::Tag::ReferenceMentioned
-  def initialize (parser, target)
-    @target = target
-    super
-  end
-  def to_s
-    "<span dir=\"ltr\">#{@target.to_s}</span>"
-  end
-end
-
-class Img_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Inline
-  def initialize (parser, filename, css_class, alt, width, height)
-    @filename = filename; @css_class = css_class; @alt = alt; @width = width; @height = height
-    super
-  end
-  def to_s
-    "<img class=\"#{@css_class}\" width=\"#{@width}\" height=\"#{@height}\" src=\"#{@filename}\" alt=\"#{@alt}\" />"
-  end
-end
-
-# tag定義終わり
 
 # 変換器本体
 class Aozora2Html
@@ -309,7 +268,7 @@ class Aozora2Html
       :kanji
     elsif char.is_a?(Aozora2Html::Tag::Kunten) # just remove this line
       :else
-    elsif char.is_a?(Dakuten_katakana_tag)
+    elsif char.is_a?(Aozora2Html::Tag::DakutenKatakana)
       :katakana
     elsif char.is_a?(Aozora2Html::Tag)
       :else
@@ -1439,7 +1398,7 @@ class Aozora2Html
                   else
                     "illustration"
                   end
-      Img_tag.new(self, src, css_class, alt, width, height)
+      Aozora2Html::Tag::Img.new(self, src, css_class, alt, width, height)
     else
       apply_rest_notes(command)
     end
@@ -1581,7 +1540,7 @@ class Aozora2Html
     if try_kuten != command
       try_kuten
     elsif command.match(/縦中横/)
-      Dir_tag.new(self, targets)
+      Aozora2Html::Tag::Dir.new(self, targets)
     elsif command.match(/横組み/)
       Aozora2Html::Tag::InlineYokogumi.new(self, targets)
     elsif command.match(/罫囲み/)
@@ -1654,7 +1613,7 @@ class Aozora2Html
         if found[1] == "em" # or found[1] == "strong" 
           @chuuki_table[:em] = true
         end
-        Decorate_tag.new(self, targets, filter.call(found[0]), found[1])
+        Aozora2Html::Tag::Decorate.new(self, targets, filter.call(found[0]), found[1])
       else
         nil
       end
@@ -1675,7 +1634,7 @@ class Aozora2Html
         "ヲ゛"
       end
     if found = search_front_reference(frontref)
-      Dakuten_katakana_tag.new(self, n,found.join)
+      Aozora2Html::Tag::DakutenKatakana.new(self, n,found.join)
     else
       apply_rest_notes(command)
     end
