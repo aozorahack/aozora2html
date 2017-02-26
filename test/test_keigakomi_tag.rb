@@ -9,7 +9,7 @@ class KeigakomiTagTest < Test::Unit::TestCase
   def test_keigakomi_new
     tag = Keigakomi_tag.new(@parser,2)
     assert_equal Keigakomi_tag, tag.class
-    assert_equal true, tag.kind_of?(Block_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
     assert_equal true, tag.kind_of?(Multiline_tag)
   end
 

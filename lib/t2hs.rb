@@ -6,24 +6,11 @@ require "aozora2html/error"
 require "jstream"
 require "aozora2html/tag"
 require "aozora2html/inline_tag"
+require "aozora2html/tag/block"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-module Block_tag
-  # •K—v‚ÉŠî‚Ã‚«method override‚·‚é
-  def close_tag
-    "</div>"
-  end
-  def initialize (parser, *args)
-    if parser.block_allowed_context?
-      nil
-    else
-      syntax_error
-    end
-  end
-end
 
 class Accent_tag < Aozora2Html::Tag
   include Aozora2Html::InlineTag
@@ -81,7 +68,7 @@ class Editor_note_tag < Aozora2Html::Tag
 end
 
 class Indent_tag < Aozora2Html::Tag
-  include Block_tag
+  include Aozora2Html::Tag::Block
 end
 
 module Oneline_Indent_tag
@@ -91,7 +78,7 @@ module Multiline_tag
 end
 
 class Multiline_style_tag < Aozora2Html::Tag
-  include Block_tag, Multiline_tag
+  include Aozora2Html::Tag::Block, Multiline_tag
   def initialize (parser, style)
     @style = style
     super
@@ -102,7 +89,7 @@ class Multiline_style_tag < Aozora2Html::Tag
 end
 
 class Font_size_tag < Aozora2Html::Tag
-  include Block_tag, Multiline_tag
+  include Aozora2Html::Tag::Block, Multiline_tag
   def initialize (parser, times, daisho)
     @class = daisho.to_s + times.to_s
     @style = case times
@@ -141,7 +128,7 @@ class Jizume_tag < Indent_tag
 end
 
 class Keigakomi_tag < Aozora2Html::Tag
-  include Block_tag, Multiline_tag
+  include Aozora2Html::Tag::Block, Multiline_tag
   def initialize (parser, size = 1)
     @size = size
     super
@@ -152,7 +139,7 @@ class Keigakomi_tag < Aozora2Html::Tag
 end
 
 class Multiline_yokogumi_tag < Aozora2Html::Tag
-  include Block_tag, Multiline_tag
+  include Aozora2Html::Tag::Block, Multiline_tag
   def initialize (parser)
     super
   end
@@ -162,7 +149,7 @@ class Multiline_yokogumi_tag < Aozora2Html::Tag
 end
 
 class Multiline_caption_tag < Aozora2Html::Tag
-  include Block_tag, Multiline_tag
+  include Aozora2Html::Tag::Block, Multiline_tag
   def initialize (parser)
     super
   end
@@ -172,7 +159,7 @@ class Multiline_caption_tag < Aozora2Html::Tag
 end
 
 class Multiline_midashi_tag < Aozora2Html::Tag
-  include Block_tag, Multiline_tag
+  include Aozora2Html::Tag::Block, Multiline_tag
   def initialize (parser,size,type)
     super
     @tag = if size.match("¬")
@@ -279,7 +266,7 @@ class Reference_mentioned_tag < Aozora2Html::Tag
     elsif elt.is_a?(String)
       elt.match(/<div/)
     else
-      elt.is_a?(Block_tag)
+      elt.is_a?(Aozora2Html::Tag::Block)
     end
   end
   def initialize (*args)

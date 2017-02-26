@@ -9,7 +9,7 @@ class FontSizeTagTest < Test::Unit::TestCase
   def test_font_size_new
     tag = Font_size_tag.new(@parser,1,:dai)
     assert_equal Font_size_tag, tag.class
-    assert_equal true, tag.kind_of?(Block_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
     assert_equal true, tag.kind_of?(Multiline_tag)
   end
 
