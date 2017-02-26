@@ -1,4 +1,4 @@
-class Aozora2html
+class Aozora2Html
   class Tag
     class MultilineStyle < Aozora2Html::Tag
       include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline

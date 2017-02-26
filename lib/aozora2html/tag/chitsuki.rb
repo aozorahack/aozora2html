@@ -1,6 +1,6 @@
 class Aozora2Html
   class Tag
-    class Chitsuki < Aozora2html::Tag::Indent
+    class Chitsuki < Aozora2Html::Tag::Indent
 
       def initialize(parser, length)
         @length = length

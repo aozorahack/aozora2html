@@ -1,6 +1,6 @@
 class Aozora2Html
   class Tag
-    class Jizume < Aozora2html::Tag::Indent
+    class Jizume < Aozora2Html::Tag::Indent
       include Aozora2Html::Tag::Multiline
 
       def initialize(parser, width)

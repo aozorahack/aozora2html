@@ -694,7 +694,7 @@ class Aozora2Html
     buf.each{|token|
       if token.is_a?(String) and not(token=="")
         return false
-      elsif token.is_a?(Aozora2html::Tag::OnelineIndent)
+      elsif token.is_a?(Aozora2Html::Tag::OnelineIndent)
         return :inline
       end
     }
@@ -738,7 +738,7 @@ class Aozora2Html
     end
     
     buf.each{|s|
-      if s.is_a?(Aozora2html::Tag::OnelineIndent)
+      if s.is_a?(Aozora2Html::Tag::OnelineIndent)
         tail.unshift(s.close_tag)
       elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
         # Á‚µ‚Ä‚ ‚Á‚½¦‚ğ•œŠˆ‚³‚¹‚Ä
@@ -1061,7 +1061,7 @@ class Aozora2Html
         Aozora2Html::Tag::MultilineChitsuki.new(self, l)
       else
         # 1s‚Ì‚İ
-        Aozora2html::Tag::OnelineChitsuki.new(self, l)
+        Aozora2Html::Tag::OnelineChitsuki.new(self, l)
       end
     end
   end
@@ -1285,14 +1285,14 @@ class Aozora2Html
       if match != ""
         @indent_stack.pop
       end
-      push_block_tag(Aozora2html::Tag::MultilineStyle.new(self, "futoji"),match)
+      push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, "futoji"),match)
       @indent_stack.push(:futoji)
     end
     if command.match(/Î‘Ì/)
       if match != ""
         @indent_stack.pop
       end
-      push_block_tag(Aozora2html::Tag::MultilineStyle.new(self, "shatai"),match)
+      push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, "shatai"),match)
       @indent_stack.push(:shatai)
     end     
 

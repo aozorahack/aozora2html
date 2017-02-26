@@ -1,2 +1,2 @@
-module Aozora2html::Tag::OnelineIndent
+module Aozora2Html::Tag::OnelineIndent
 end
