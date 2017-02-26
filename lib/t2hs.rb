@@ -11,7 +11,7 @@ $css_files = Array["../../aozora.css"]
 
 
 # 変換される青空記法class
-class Aozora_tag
+class Aozora2Html::Tag
   # debug用
   def inspect
     to_s
@@ -45,7 +45,7 @@ module Block_tag
   end
 end
 
-class Accent_tag < Aozora_tag
+class Accent_tag < Aozora2Html::Tag
   include Inline_tag
   def initialize (parser, code, name)
     @code = code
@@ -57,7 +57,7 @@ class Accent_tag < Aozora_tag
   end
 end
 
-class Gaiji_tag < Aozora_tag
+class Gaiji_tag < Aozora2Html::Tag
   include Inline_tag
 end
 
@@ -89,7 +89,7 @@ class UnEmbed_Gaiji_tag < Gaiji_tag
   end
 end
 
-class Editor_note_tag < Aozora_tag
+class Editor_note_tag < Aozora2Html::Tag
   include Inline_tag
   def initialize (parser, desc)
     @desc = desc
@@ -100,7 +100,7 @@ class Editor_note_tag < Aozora_tag
   end
 end
 
-class Indent_tag < Aozora_tag
+class Indent_tag < Aozora2Html::Tag
   include Block_tag
 end
 
@@ -110,7 +110,7 @@ end
 module Multiline_tag
 end
 
-class Multiline_style_tag < Aozora_tag
+class Multiline_style_tag < Aozora2Html::Tag
   include Block_tag, Multiline_tag
   def initialize (parser, style)
     @style = style
@@ -121,7 +121,7 @@ class Multiline_style_tag < Aozora_tag
   end
 end
 
-class Font_size_tag < Aozora_tag
+class Font_size_tag < Aozora2Html::Tag
   include Block_tag, Multiline_tag
   def initialize (parser, times, daisho)
     @class = daisho.to_s + times.to_s
@@ -160,7 +160,7 @@ class Jizume_tag < Indent_tag
   end
 end
 
-class Keigakomi_tag < Aozora_tag
+class Keigakomi_tag < Aozora2Html::Tag
   include Block_tag, Multiline_tag
   def initialize (parser, size = 1)
     @size = size
@@ -171,7 +171,7 @@ class Keigakomi_tag < Aozora_tag
   end
 end
 
-class Multiline_yokogumi_tag < Aozora_tag
+class Multiline_yokogumi_tag < Aozora2Html::Tag
   include Block_tag, Multiline_tag
   def initialize (parser)
     super
@@ -181,7 +181,7 @@ class Multiline_yokogumi_tag < Aozora_tag
   end
 end
 
-class Multiline_caption_tag < Aozora_tag
+class Multiline_caption_tag < Aozora2Html::Tag
   include Block_tag, Multiline_tag
   def initialize (parser)
     super
@@ -191,7 +191,7 @@ class Multiline_caption_tag < Aozora_tag
   end
 end
 
-class Multiline_midashi_tag < Aozora_tag
+class Multiline_midashi_tag < Aozora2Html::Tag
   include Block_tag, Multiline_tag
   def initialize (parser,size,type)
     super
@@ -285,7 +285,7 @@ end
 
 # 前方参照でこいつだけは中身をチェックする
 # 子要素を持つInline_tagは全てこいつのサブクラス
-class Reference_mentioned_tag < Aozora_tag
+class Reference_mentioned_tag < Aozora2Html::Tag
   include Inline_tag
   attr_accessor :target
   def block_element? (elt)
@@ -466,7 +466,7 @@ class Ruby_tag < Reference_mentioned_tag
 =end
 end
 
-class Kunten_tag < Aozora_tag
+class Kunten_tag < Aozora2Html::Tag
   include Inline_tag
 end
 
@@ -559,7 +559,7 @@ class Decorate_tag < Reference_mentioned_tag
   end
 end
 
-class Dakuten_katakana_tag < Aozora_tag
+class Dakuten_katakana_tag < Aozora2Html::Tag
   include Inline_tag
   def initialize (parser, n, katakana)
     @n = n; @katakana = katakana
@@ -580,7 +580,7 @@ class Dir_tag < Reference_mentioned_tag
   end
 end
 
-class Img_tag < Aozora_tag
+class Img_tag < Aozora2Html::Tag
   include Inline_tag
   def initialize (parser, filename, css_class, alt, width, height)
     @filename = filename; @css_class = css_class; @alt = alt; @width = width; @height = height
@@ -780,7 +780,7 @@ class Aozora2Html
   end
 
   def read_to_nest (endchar)
-    Aozora_tag_parser.new(@stream,endchar,@chuuki_table,@images).process
+    Aozora2Html::TagParser.new(@stream,endchar,@chuuki_table,@images).process
   end
 
   def read_line
@@ -816,7 +816,7 @@ class Aozora2Html
       :else
     elsif char.is_a?(Dakuten_katakana_tag)
       :katakana
-    elsif char.is_a?(Aozora_tag)
+    elsif char.is_a?(Aozora2Html::Tag)
       :else
     elsif char.match(/[ぁ-んゝゞ]/)
       :hiragana
@@ -2324,7 +2324,7 @@ class Aozora2Html
 end
 
 # 青空記法の入れ子に対応（？）
-class Aozora_tag_parser < Aozora2Html
+class Aozora2Html::TagParser < Aozora2Html
   def initialize (input, endchar, chuuki, image)
     if not(input.is_a?(Jstream))
       raise ArgumentError, "tag_parser must supply Jstream as input"
