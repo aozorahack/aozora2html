@@ -6,13 +6,6 @@ $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-# 1.8 like to_s method to Array
-class Array
-  def to_s
-    self.join
-  end
-end
-
 # —áŠOclass
 class Aozora_Exception < Exception
   def initialize (message)
