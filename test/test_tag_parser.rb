@@ -6,7 +6,7 @@ require 'tmpdir'
 
 class TagParserTest < Test::Unit::TestCase
   def setup
-    @jisx0213 = Embed_Gaiji_tag.use_jisx0213
+    @jisx0213 = Aozora2Html::Tag::EmbedGaiji.use_jisx0213
   end
 
   def test_parse_katakana
@@ -64,7 +64,7 @@ class TagParserTest < Test::Unit::TestCase
   end
 
   def test_parse_gaiji_jisx0213
-    Embed_Gaiji_tag.use_jisx0213 = true
+    Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = true
     str = "※［＃「てへん＋劣」、第3水準1-84-77］…\r\n".encode("shift_jis")
     strio = StringIO.new(str)
     stream = Jstream.new(strio)
@@ -74,7 +74,7 @@ class TagParserTest < Test::Unit::TestCase
   end
 
   def teardown
-    Embed_Gaiji_tag.use_jisx0213 = @jisx0213
+    Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = @jisx0213
   end
 end
 

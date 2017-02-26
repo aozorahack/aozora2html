@@ -9,39 +9,14 @@ require "aozora2html/tag/inline"
 require "aozora2html/tag/block"
 require "aozora2html/tag/accent"
 require "aozora2html/tag/gaiji"
+require "aozora2html/tag/embed_gaiji"
+require "aozora2html/tag/un_embed_gaiji"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
 
-class Embed_Gaiji_tag < Aozora2Html::Tag::Gaiji
-  def initialize (parser, folder, code, name)
-    @folder = folder
-    @code = code
-    @name = name
-    super
-  end
-  def to_s
-    "<img src=\"#{$gaiji_dir}#{@folder}/#{@code}.png\" alt=\"Å¶(#{@name})\" class=\"gaiji\" />"
-  end
-end
-
-class UnEmbed_Gaiji_tag < Aozora2Html::Tag::Gaiji
-  def initialize (parser, desc)
-    @desc = desc; @escaped = false
-    super
-  end
-  def to_s
-    '<span class="notes">Åm' + @desc + 'Ån</span>'
-  end
-  def escaped?
-    @escaped
-  end
-  def escape!
-    @escaped = true
-  end
-end
 
 class Editor_note_tag < Aozora2Html::Tag
   include Aozora2Html::Tag::Inline
@@ -1275,7 +1250,7 @@ class Aozora2Html
     buf.each{|s|
       if s.is_a?(Oneline_Indent_tag)
         tail.unshift(s.close_tag)
-      elsif s.is_a?(UnEmbed_Gaiji_tag) and not(s.escaped?)
+      elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
         # è¡ÇµÇƒÇ†Ç¡ÇΩÅ¶ÇïúäàÇ≥ÇπÇƒ
         @out.print "Å¶"
       elsif s.is_a?(Multiline_Chitsuki_tag)
@@ -1412,7 +1387,7 @@ class Aozora2Html
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d",*codes)
       code = sprintf("%1d-%02d-%02d",*codes)
-       Embed_Gaiji_tag.new(self, folder,code,desc.gsub!("Åî",""))
+       Aozora2Html::Tag::EmbedGaiji.new(self, folder,code,desc.gsub!("Åî",""))
      else
        substring
      end
@@ -1426,7 +1401,7 @@ class Aozora2Html
     else
       @images.push([kanji,line])
     end
-    UnEmbed_Gaiji_tag.new(self, command)
+    Aozora2Html::Tag::UnEmbedGaiji.new(self, command)
   end
 
   def dispatch_gaiji
@@ -2168,7 +2143,7 @@ class Aozora2Html
     ans = ""
     notes = []
     @ruby_buf.each{|token|
-      if token.is_a?(UnEmbed_Gaiji_tag)
+      if token.is_a?(Aozora2Html::Tag::UnEmbedGaiji)
         ans.concat("Å¶")
         token.escape!
         notes.push(token)
@@ -2307,7 +2282,7 @@ class Aozora2Html::TagParser < Aozora2Html
     ruby_buf_dump
     ans=""
     @buffer.each{|s|
-      if s.is_a?(UnEmbed_Gaiji_tag) and not(s.escaped?)
+      if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
         # è¡ÇµÇƒÇ†Ç¡ÇΩÅ¶ÇïúäàÇ≥ÇπÇƒ
         ans.concat("Å¶")
       end

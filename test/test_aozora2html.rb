@@ -75,8 +75,8 @@ class Aozora2HtmlTest < Test::Unit::TestCase
       parser = Aozora2Html.new(input, output)
 
       begin
-        assert_equal :kanji, parser.char_type(Embed_Gaiji_tag.new(nil,"foo","1-2-3","name"))
-        assert_equal :kanji, parser.char_type(UnEmbed_Gaiji_tag.new(nil,"foo"))
+        assert_equal :kanji, parser.char_type(Aozora2Html::Tag::EmbedGaiji.new(nil,"foo","1-2-3","name"))
+        assert_equal :kanji, parser.char_type(Aozora2Html::Tag::UnEmbedGaiji.new(nil,"foo"))
         assert_equal :hankaku, parser.char_type(Aozora2Html::Tag::Accent.new(nil,123,"abc"))
         assert_equal :else, parser.char_type(Okurigana_tag.new(nil,"abc"))
         assert_equal :else, parser.char_type(Inline_keigakomi_tag.new(nil,"abc"))
