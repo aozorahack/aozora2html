@@ -28,52 +28,13 @@ require "aozora2html/tag/multiline_jisage"
 require "aozora2html/tag/chitsuki"
 require "aozora2html/tag/oneline_chitsuki"
 require "aozora2html/tag/multiline_chitsuki"
+require "aozora2html/tag/reference_mentioned"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-# 前方参照でこいつだけは中身をチェックする
-# 子要素を持つAozora2Html::Tag::Inlineは全てこいつのサブクラス
-class Reference_mentioned_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Inline
-  attr_accessor :target
-  def block_element? (elt)
-    if elt.is_a?(Array)
-      elt.each{|x|
-        if block_element?(x)
-          return true
-        end
-      }
-      nil
-    elsif elt.is_a?(String)
-      elt.match(/<div/)
-    else
-      elt.is_a?(Aozora2Html::Tag::Block)
-    end
-  end
-  def initialize (*args)
-    if block_element?(@target)
-      syntax_error
-    end
-  end
-  def target_string
-    if @target.is_a?(Reference_mentioned_tag)
-      @target.target_string
-    elsif @target.is_a?(Array)
-      @target.collect{|x|
-        if x.is_a?(Reference_mentioned_tag)
-          x.target_string
-        else
-          x
-        end}.to_s
-    else
-      @target
-    end
-  end
-end
-
-class Midashi_tag < Reference_mentioned_tag
+class Midashi_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser,target,size,type)
     super
     @target = target
@@ -129,7 +90,7 @@ end
 # complex ruby markup
 # if css3 is major supported, please fix ruby position with property "ruby-position"
 # see also: http://www.w3.org/TR/2001/WD-css3-ruby-20010216/
-class Ruby_tag < Reference_mentioned_tag
+class Ruby_tag < Aozora2Html::Tag::ReferenceMentioned
   attr_accessor :ruby, :under_ruby
   def initialize (parser, string, ruby, under_ruby = "")
     @target = string; @ruby = ruby; @under_ruby = under_ruby
@@ -240,7 +201,7 @@ class Okurigana_tag < Kunten_tag
   end
 end
 
-class Inline_keigakomi_tag < Reference_mentioned_tag
+class Inline_keigakomi_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target)
     @target = target
     super
@@ -250,7 +211,7 @@ class Inline_keigakomi_tag < Reference_mentioned_tag
   end
 end
 
-class Inline_yokogumi_tag < Reference_mentioned_tag
+class Inline_yokogumi_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target)
     @target = target
     super
@@ -260,7 +221,7 @@ class Inline_yokogumi_tag < Reference_mentioned_tag
   end
 end
 
-class Inline_caption_tag < Reference_mentioned_tag
+class Inline_caption_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target)
     @target = target
     super
@@ -270,7 +231,7 @@ class Inline_caption_tag < Reference_mentioned_tag
   end
 end
 
-class Inline_font_size_tag < Reference_mentioned_tag
+class Inline_font_size_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target, times, daisho)
     @target = target
     @class = daisho.to_s + times.to_s
@@ -298,7 +259,7 @@ class Inline_font_size_tag < Reference_mentioned_tag
   end
 end
 
-class Decorate_tag < Reference_mentioned_tag
+class Decorate_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target, html_class, html_tag)
     @target = target; @close = "</#{html_tag}>"
     @open = "<#{html_tag} class=\"#{html_class}\">"
@@ -320,7 +281,7 @@ class Dakuten_katakana_tag < Aozora2Html::Tag
   end
 end
 
-class Dir_tag < Reference_mentioned_tag
+class Dir_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target)
     @target = target
     super
@@ -1140,7 +1101,7 @@ class Aozora2Html
           false
         end
       end
-    elsif last_string.is_a?(Reference_mentioned_tag)
+    elsif last_string.is_a?(Aozora2Html::Tag::ReferenceMentioned)
       inner = last_string.target_string
       if inner == string
         # 完全一致
@@ -1732,7 +1693,7 @@ class Aozora2Html
     array.index{|elt|
       if elt.is_a?(Ruby_tag)
         true
-      elsif elt.is_a?(Reference_mentioned_tag)
+      elsif elt.is_a?(Aozora2Html::Tag::ReferenceMentioned)
         if elt.target.is_a?(Array)
           include_ruby?(elt.target)
         else
@@ -1787,7 +1748,7 @@ class Aozora2Html
             end
             new_targets.push(x.target)
           end
-        elsif x.is_a?(Reference_mentioned_tag)
+        elsif x.is_a?(Aozora2Html::Tag::ReferenceMentioned)
           if x.target.is_a?(Array)
             # recursive
             tar,up,un = rearrange_ruby(x.target,"","")
