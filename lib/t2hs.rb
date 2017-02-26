@@ -657,7 +657,7 @@ class Aozora2Html
       }
     elsif obj.is_a?(String)
       if obj.length == 1
-        obj = CGI.escapeHTML(obj)
+        obj = obj.gsub(/[&\"<>]/, {'&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;'})
       end
       obj.each_char{|x|
         push_char(x)
@@ -901,11 +901,16 @@ class Aozora2Html
       # embed?
       command,raw = read_to_nest("Ån")
       try_emb = kuten2png(command)
-      if try_emb == command
+      if try_emb != command
+        try_emb
+      elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
+        unicode_num = $1
+        ch = Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command)
+        ch.unicode = unicode_num
+        ch
+      else
         # Unemb
         escape_gaiji(command)
-      else
-        try_emb
       end
     else
       "Å¶"

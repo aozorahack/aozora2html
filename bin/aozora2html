@@ -4,53 +4,6 @@ require 'aozora2html'
 require 'optparse'
 require "tempfile"
 
-# override Aozora2Html#push_chars
-#
-# Original Aozora2Html#push_chars does not convert "'" into '&#39;'; it's old behaivor
-# of CGI.escapeHTML().
-#
-class Aozora2Html
-  def push_chars(obj)
-    if obj.is_a?(Array)
-      obj.each{|x|
-        push_chars(x)
-      }
-    elsif obj.is_a?(String)
-      if obj.length == 1
-        obj = obj.gsub(/[&\"<>]/, {'&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;'})
-      end
-      obj.each_char{|x|
-        push_char(x)
-      }
-    else
-      push_char(obj)
-    end
-  end
-
-  def dispatch_gaiji
-    hook = @stream.peek_char(0)
-    if hook ==  "［".encode("shift_jis")
-      read_char
-      # embed?
-      command,raw = read_to_nest("］".encode("shift_jis"))
-      try_emb = kuten2png(command)
-      if try_emb != command
-        try_emb
-      elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
-        unicode_num = $1
-        ch = Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command)
-        ch.unicode = unicode_num
-        ch
-      else
-        # Unemb
-        escape_gaiji(command)
-      end
-    else
-      "※".encode("shift_jis")
-    end
-  end
-end
-
 opt = OptionParser.new("Usage: aozora2html [options] <text file> [<html file>]\n")
 opt.on('--gaiji-dir DIR', 'setting gaiji directory')
 opt.on('--css-files FILES', 'setting css directory')
