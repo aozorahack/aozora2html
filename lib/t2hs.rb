@@ -4,23 +4,12 @@ require "cgi"
 require "extensions"
 require "aozora2html/error"
 require "jstream"
+require "aozora2html/tag"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-
-# 変換される青空記法class
-class Aozora2Html::Tag
-  # debug用
-  def inspect
-    to_s
-  end
-  
-  def syntax_error
-    raise Aozora2Html::Error.new("注記を重ねる際の原則、「狭い範囲を先に、広い範囲を後に」が守られていません。リンク先の指針を参考に、書き方をあらためてください")
-  end
-end
 
 # 全ての青空記法はHTML elementに変換される
 # したがって、block/inlineの区別がある
