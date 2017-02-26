@@ -17,21 +17,11 @@ require "aozora2html/tag/oneline_indent"
 require "aozora2html/tag/multiline"
 require "aozora2html/tag/multiline_style"
 require "aozora2html/tag/font_size"
+require "aozora2html/tag/jizume"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Jizume_tag < Aozora2html::Tag::Indent
-  include Aozora2Html::Tag::Multiline
-  def initialize (parser, width)
-    @w = width
-    super
-  end
-  def to_s
-    "<div class=\"jizume_#{@w}\" style=\"width: #{@w}em\">"
-  end
-end
 
 class Keigakomi_tag < Aozora2Html::Tag
   include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
@@ -1550,7 +1540,7 @@ class Aozora2Html
   def apply_jizume(command)
     w = convert_japanese_number(command).match(/(\d*)(?:Žš‹l‚ß)/)[1]
     @indent_stack.push(:jizume)
-    Jizume_tag.new(self, w)
+    Aozora2Html::Tag::Jizume.new(self, w)
   end
   
   def push_block_tag (tag,closing)
