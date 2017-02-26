@@ -34,68 +34,14 @@ require "aozora2html/tag/ruby"
 require "aozora2html/tag/kunten"
 require "aozora2html/tag/kaeriten"
 require "aozora2html/tag/okurigana"
+require "aozora2html/tag/inline_keigakomi"
+require "aozora2html/tag/inline_yokogumi"
+require "aozora2html/tag/inline_caption"
+require "aozora2html/tag/inline_font_size"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Inline_keigakomi_tag < Aozora2Html::Tag::ReferenceMentioned
-  def initialize (parser, target)
-    @target = target
-    super
-  end
-  def to_s
-    "<span class=\"keigakomi\">#{@target.to_s}</span>"
-  end
-end
-
-class Inline_yokogumi_tag < Aozora2Html::Tag::ReferenceMentioned
-  def initialize (parser, target)
-    @target = target
-    super
-  end
-  def to_s
-    "<span class=\"yokogumi\">#{@target.to_s}</span>"
-  end
-end
-
-class Inline_caption_tag < Aozora2Html::Tag::ReferenceMentioned
-  def initialize (parser, target)
-    @target = target
-    super
-  end
-  def to_s
-    "<span class=\"caption\">#{@target.to_s}</span>"
-  end
-end
-
-class Inline_font_size_tag < Aozora2Html::Tag::ReferenceMentioned
-  def initialize (parser, target, times, daisho)
-    @target = target
-    @class = daisho.to_s + times.to_s
-    @style = case times
-             when 1
-               ""
-             when 2
-               "x-"
-             else
-               if times >= 3
-                 "xx-"
-               else
-                 raise Aozora2Html::Error.new("文字サイズの指定が不正です")
-               end
-             end + case daisho
-                   when :dai
-                     "large"
-                   when :sho
-                     "small"
-                   end
-    super
-  end
-  def to_s
-    "<span class=\"#{@class}\" style=\"font-size: #{@style};\">" + @target.to_s + "</span>"
-  end
-end
 
 class Decorate_tag < Aozora2Html::Tag::ReferenceMentioned
   def initialize (parser, target, html_class, html_tag)
@@ -1637,11 +1583,11 @@ class Aozora2Html
     elsif command.match(/縦中横/)
       Dir_tag.new(self, targets)
     elsif command.match(/横組み/)
-      Inline_yokogumi_tag.new(self, targets)
+      Aozora2Html::Tag::InlineYokogumi.new(self, targets)
     elsif command.match(/罫囲み/)
-      Inline_keigakomi_tag.new(self, targets)
+      Aozora2Html::Tag::InlineKeigakomi.new(self, targets)
     elsif command.match(/キャプション/)
-      Inline_caption_tag.new(self, targets)
+      Aozora2Html::Tag::InlineCaption.new(self, targets)
     elsif command.match(/返り点/)
       Aozora2Html::Tag::Kaeriten.new(self, targets)
     elsif command.match(/訓点送り仮名/)
@@ -1658,7 +1604,7 @@ class Aozora2Html
       Aozora2Html::Tag::Midashi.new(self, targets, command, midashi_type)
     elsif command.match(/(.*)段階(..)な文字/)
       whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
-      Inline_font_size_tag.new(self,targets,
+      Aozora2Html::Tag::InlineFontSize.new(self,targets,
                                convert_japanese_number(nest).to_i,
                                if style.match("小")
                                  :sho
