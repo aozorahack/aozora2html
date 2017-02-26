@@ -6,8 +6,10 @@ install:
   - bundle install
 build_script:
   - bundle exec rake test
-artifacts:
-  - path: pkg\*.gem
+
+branches:
+  only:
+    - master
 
 environment:
   matrix:
