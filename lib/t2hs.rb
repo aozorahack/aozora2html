@@ -11,23 +11,11 @@ require "aozora2html/tag/accent"
 require "aozora2html/tag/gaiji"
 require "aozora2html/tag/embed_gaiji"
 require "aozora2html/tag/un_embed_gaiji"
+require "aozora2html/tag/editor_note"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-
-
-class Editor_note_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Inline
-  def initialize (parser, desc)
-    @desc = desc
-    super
-  end
-  def to_s
-    '<span class="notes">ÅmÅî' + @desc + 'Ån</span>'
-  end
-end
 
 class Indent_tag < Aozora2Html::Tag
   include Aozora2Html::Tag::Block
@@ -2129,7 +2117,7 @@ class Aozora2Html
 
   def apply_rest_notes (command)
     @chuuki_table[:chuki] = true
-    Editor_note_tag.new(self, command)
+    Aozora2Html::Tag::EditorNote.new(self, command)
   end
 
   # ÅbÇ™óàÇΩÇ∆Ç´ÇÕï∂éöéÌÇñ≥éãÇµÇƒruby_bufÇéÁÇÁÇ»Ç´Ç·Ç¢ÇØÇ»Ç¢
