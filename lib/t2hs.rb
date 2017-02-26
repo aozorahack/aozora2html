@@ -15,21 +15,11 @@ require "aozora2html/tag/editor_note"
 require "aozora2html/tag/indent"
 require "aozora2html/tag/oneline_indent"
 require "aozora2html/tag/multiline"
+require "aozora2html/tag/multiline_style"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Multiline_style_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
-  def initialize (parser, style)
-    @style = style
-    super
-  end
-  def to_s
-    "<div class=\"#{@style}\">"
-  end
-end
 
 class Font_size_tag < Aozora2Html::Tag
   include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
@@ -1771,14 +1761,14 @@ class Aozora2Html
       if match != ""
         @indent_stack.pop
       end
-      push_block_tag(Multiline_style_tag.new(self, "futoji"),match)
+      push_block_tag(Aozora2html::Tag::MultilineStyle.new(self, "futoji"),match)
       @indent_stack.push(:futoji)
     end
     if command.match(/ŽÎ‘Ì/)
       if match != ""
         @indent_stack.pop
       end
-      push_block_tag(Multiline_style_tag.new(self, "shatai"),match)
+      push_block_tag(Aozora2html::Tag::MultilineStyle.new(self, "shatai"),match)
       @indent_stack.push(:shatai)
     end     
 

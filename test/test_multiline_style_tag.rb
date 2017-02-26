@@ -7,14 +7,14 @@ class MultilineStyleTagTest < Test::Unit::TestCase
   end
 
   def test_multiline_style_new
-    tag = Multiline_style_tag.new(@parser,"style1")
-    assert_equal Multiline_style_tag, tag.class
+    tag = Aozora2html::Tag::MultilineStyle.new(@parser,"style1")
+    assert_equal Aozora2html::Tag::MultilineStyle, tag.class
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Multiline)
   end
 
   def test_to_s
-    tag = Multiline_style_tag.new(@parser,"s1")
+    tag = Aozora2html::Tag::MultilineStyle.new(@parser,"s1")
     assert_equal "<div class=\"s1\">", tag.to_s
     assert_equal "</div>", tag.close_tag
   end
