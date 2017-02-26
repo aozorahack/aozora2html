@@ -10,7 +10,7 @@ class OkuriganaTagTest < Test::Unit::TestCase
   def test_okurigana_new
     tag = Okurigana_tag.new(@parser,"aaa")
     assert_equal Okurigana_tag, tag.class
-    assert_equal true, tag.kind_of?(Aozora2Html::InlineTag)
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Inline)
   end
 
   def test_to_s

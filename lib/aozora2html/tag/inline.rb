@@ -2,9 +2,11 @@
 # したがって、block/inlineの区別がある
 # 全ての末端青空classはどちらかのmoduleをincludeする必要がある
 class Aozora2Html
-  module InlineTag
-    def initialize (*args)
-      true
+  class Tag
+    module Inline
+      def initialize (*args)
+        true
+      end
     end
   end
 end

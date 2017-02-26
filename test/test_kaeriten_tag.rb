@@ -10,7 +10,7 @@ class KaeritenTagTest < Test::Unit::TestCase
   def test_kaeriten_new
     tag = Kaeriten_tag.new(@parser,"aaa")
     assert_equal Kaeriten_tag, tag.class
-    assert_equal true, tag.kind_of?(Aozora2Html::InlineTag)
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Inline)
   end
 
   def test_to_s
