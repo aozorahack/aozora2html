@@ -10,7 +10,7 @@ class RubyTagTest < Test::Unit::TestCase
   def test_ruby_new
     tag = Ruby_tag.new(@parser,"aaa".encode("shift_jis"),"bb")
     assert_equal Ruby_tag, tag.class
-    assert_equal true, tag.kind_of?(Inline_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::InlineTag)
   end
 
   def test_to_s

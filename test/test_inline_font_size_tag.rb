@@ -10,7 +10,7 @@ class InlineFontSizeTagTest < Test::Unit::TestCase
   def test_font_size_new
     tag = Inline_font_size_tag.new(@parser,"aa",1,:dai)
     assert_equal Inline_font_size_tag, tag.class
-    assert_equal true, tag.kind_of?(Inline_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::InlineTag)
   end
 
   def test_to_s

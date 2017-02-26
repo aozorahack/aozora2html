@@ -10,7 +10,7 @@ class InlineCaptionTagTest < Test::Unit::TestCase
   def test_caption_new
     tag = Inline_caption_tag.new(@parser,"aaa")
     assert_equal Inline_caption_tag, tag.class
-    assert_equal true, tag.kind_of?(Inline_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::InlineTag)
   end
 
   def test_to_s

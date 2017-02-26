@@ -14,7 +14,7 @@ $css_files = Array["../../aozora.css"]
 # 全ての青空記法はHTML elementに変換される
 # したがって、block/inlineの区別がある
 # 全ての末端青空classはどちらかのmoduleをincludeする必要がある
-module Inline_tag
+module Aozora2Html::InlineTag
   def initialize (*args)
     true
   end
@@ -35,7 +35,7 @@ module Block_tag
 end
 
 class Accent_tag < Aozora2Html::Tag
-  include Inline_tag
+  include Aozora2Html::InlineTag
   def initialize (parser, code, name)
     @code = code
     @name = name
@@ -47,7 +47,7 @@ class Accent_tag < Aozora2Html::Tag
 end
 
 class Gaiji_tag < Aozora2Html::Tag
-  include Inline_tag
+  include Aozora2Html::InlineTag
 end
 
 class Embed_Gaiji_tag < Gaiji_tag
@@ -79,7 +79,7 @@ class UnEmbed_Gaiji_tag < Gaiji_tag
 end
 
 class Editor_note_tag < Aozora2Html::Tag
-  include Inline_tag
+  include Aozora2Html::InlineTag
   def initialize (parser, desc)
     @desc = desc
     super
@@ -273,9 +273,9 @@ class Multiline_Chitsuki_tag < Chitsuki_tag
 end
 
 # 前方参照でこいつだけは中身をチェックする
-# 子要素を持つInline_tagは全てこいつのサブクラス
+# 子要素を持つAozora2Html::InlineTagは全てこいつのサブクラス
 class Reference_mentioned_tag < Aozora2Html::Tag
-  include Inline_tag
+  include Aozora2Html::InlineTag
   attr_accessor :target
   def block_element? (elt)
     if elt.is_a?(Array)
@@ -456,7 +456,7 @@ class Ruby_tag < Reference_mentioned_tag
 end
 
 class Kunten_tag < Aozora2Html::Tag
-  include Inline_tag
+  include Aozora2Html::InlineTag
 end
 
 class Kaeriten_tag < Kunten_tag
@@ -549,7 +549,7 @@ class Decorate_tag < Reference_mentioned_tag
 end
 
 class Dakuten_katakana_tag < Aozora2Html::Tag
-  include Inline_tag
+  include Aozora2Html::InlineTag
   def initialize (parser, n, katakana)
     @n = n; @katakana = katakana
     super
@@ -570,7 +570,7 @@ class Dir_tag < Reference_mentioned_tag
 end
 
 class Img_tag < Aozora2Html::Tag
-  include Inline_tag
+  include Aozora2Html::InlineTag
   def initialize (parser, filename, css_class, alt, width, height)
     @filename = filename; @css_class = css_class; @alt = alt; @width = width; @height = height
     super

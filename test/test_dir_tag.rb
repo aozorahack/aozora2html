@@ -10,7 +10,7 @@ class DirTagTest < Test::Unit::TestCase
   def test_dir_new
     tag = Dir_tag.new(@parser,"テスト".encode("shift_jis"))
     assert_equal Dir_tag, tag.class
-    assert_equal true, tag.kind_of?(Inline_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::InlineTag)
   end
 
   def test_to_s

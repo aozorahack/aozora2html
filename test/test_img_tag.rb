@@ -9,7 +9,7 @@ class ImgTagTest < Test::Unit::TestCase
   def test_img_new
     tag = Img_tag.new(@parser,"foo.png","img1","alt img1",40,50)
     assert_equal Img_tag, tag.class
-    assert_equal true, tag.kind_of?(Inline_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::InlineTag)
   end
 
   def test_to_s
