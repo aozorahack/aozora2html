@@ -12,23 +12,16 @@ require "aozora2html/tag/gaiji"
 require "aozora2html/tag/embed_gaiji"
 require "aozora2html/tag/un_embed_gaiji"
 require "aozora2html/tag/editor_note"
+require "aozora2html/tag/indent"
+require "aozora2html/tag/oneline_indent"
+require "aozora2html/tag/multiline"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-class Indent_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block
-end
-
-module Oneline_Indent_tag
-end
-
-module Multiline_tag
-end
-
 class Multiline_style_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Multiline_tag
+  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
   def initialize (parser, style)
     @style = style
     super
@@ -39,7 +32,7 @@ class Multiline_style_tag < Aozora2Html::Tag
 end
 
 class Font_size_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Multiline_tag
+  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
   def initialize (parser, times, daisho)
     @class = daisho.to_s + times.to_s
     @style = case times
@@ -66,8 +59,8 @@ class Font_size_tag < Aozora2Html::Tag
   end
 end
 
-class Jizume_tag < Indent_tag
-  include Multiline_tag
+class Jizume_tag < Aozora2html::Tag::Indent
+  include Aozora2Html::Tag::Multiline
   def initialize (parser, width)
     @w = width
     super
@@ -78,7 +71,7 @@ class Jizume_tag < Indent_tag
 end
 
 class Keigakomi_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Multiline_tag
+  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
   def initialize (parser, size = 1)
     @size = size
     super
@@ -89,7 +82,7 @@ class Keigakomi_tag < Aozora2Html::Tag
 end
 
 class Multiline_yokogumi_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Multiline_tag
+  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
   def initialize (parser)
     super
   end
@@ -99,7 +92,7 @@ class Multiline_yokogumi_tag < Aozora2Html::Tag
 end
 
 class Multiline_caption_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Multiline_tag
+  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
   def initialize (parser)
     super
   end
@@ -109,7 +102,7 @@ class Multiline_caption_tag < Aozora2Html::Tag
 end
 
 class Multiline_midashi_tag < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Multiline_tag
+  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
   def initialize (parser,size,type)
     super
     @tag = if size.match("小")
@@ -164,7 +157,7 @@ class Multiline_midashi_tag < Aozora2Html::Tag
   end
 end
 
-class Jisage_tag < Indent_tag
+class Jisage_tag < Aozora2html::Tag::Indent
   def initialize (parser, width)
     @width = width
     super
@@ -175,13 +168,13 @@ class Jisage_tag < Indent_tag
 end
 
 class Oneline_Jisage_tag < Jisage_tag
-  include Oneline_Indent_tag
+  include Aozora2html::Tag::OnelineIndent
 end
 class Multiline_Jisage_tag < Jisage_tag
-  include Multiline_tag
+  include Aozora2Html::Tag::Multiline
 end
 
-class Chitsuki_tag < Indent_tag
+class Chitsuki_tag < Aozora2html::Tag::Indent
   def initialize (parser, length)
     @length = length
     super
@@ -192,12 +185,12 @@ class Chitsuki_tag < Indent_tag
 end
 
 class Oneline_Chitsuki_tag < Chitsuki_tag
-  include Oneline_Indent_tag
+  include Aozora2html::Tag::OnelineIndent
 end
 
 
 class Multiline_Chitsuki_tag < Chitsuki_tag
-  include Multiline_tag
+  include Aozora2Html::Tag::Multiline
 end
 
 # 前方参照でこいつだけは中身をチェックする
@@ -1192,7 +1185,7 @@ class Aozora2Html
     buf.each{|token|
       if token.is_a?(String) and not(token=="")
         return false
-      elsif token.is_a?(Oneline_Indent_tag)
+      elsif token.is_a?(Aozora2html::Tag::OnelineIndent)
         return :inline
       end
     }
@@ -1202,7 +1195,7 @@ class Aozora2Html
   def terpri? (buf)
     flag = true
     buf.each{|x|
-      if x.is_a?(Multiline_tag)
+      if x.is_a?(Aozora2Html::Tag::Multiline)
         flag = false
       elsif (x.is_a?(String) and x == "") 
         nil
@@ -1236,7 +1229,7 @@ class Aozora2Html
     end
     
     buf.each{|s|
-      if s.is_a?(Oneline_Indent_tag)
+      if s.is_a?(Aozora2html::Tag::OnelineIndent)
         tail.unshift(s.close_tag)
       elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
         # 消してあった※を復活させて

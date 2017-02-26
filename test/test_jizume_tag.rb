@@ -10,7 +10,7 @@ class JizumeTagTest < Test::Unit::TestCase
     tag = Jizume_tag.new(@parser,50)
     assert_equal Jizume_tag, tag.class
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
-    assert_equal true, tag.kind_of?(Multiline_tag)
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Multiline)
   end
 
   def test_to_s
