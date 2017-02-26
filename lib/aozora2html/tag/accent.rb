@@ -1,5 +1,3 @@
-require "aozora2html/tag"
-
 class Aozora2Html
   class Tag
     class Accent < Aozora2Html::Tag
