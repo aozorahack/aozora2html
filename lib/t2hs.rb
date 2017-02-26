@@ -22,27 +22,13 @@ require "aozora2html/tag/keigakomi"
 require "aozora2html/tag/multiline_yokogumi"
 require "aozora2html/tag/multiline_caption"
 require "aozora2html/tag/multiline_midashi"
+require "aozora2html/tag/jisage"
+require "aozora2html/tag/oneline_jisage"
+require "aozora2html/tag/multiline_jisage"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-class Jisage_tag < Aozora2html::Tag::Indent
-  def initialize (parser, width)
-    @width = width
-    super
-  end
-  def to_s
-    "<div class=\"jisage_#{@width}\" style=\"margin-left: #{@width}em\">"
-  end
-end
-
-class Oneline_Jisage_tag < Jisage_tag
-  include Aozora2html::Tag::OnelineIndent
-end
-class Multiline_Jisage_tag < Jisage_tag
-  include Aozora2Html::Tag::Multiline
-end
 
 class Chitsuki_tag < Aozora2html::Tag::Indent
   def initialize (parser, length)
@@ -1353,7 +1339,7 @@ class Aozora2Html
     else
       if command.match(/‚±‚Ìs/)
         # 1s‚¾‚¯
-        @buffer.unshift(Oneline_Jisage_tag.new(self, jisage_width(command)))
+        @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
         nil
       else
         if @buffer.length == 0 and @stream.peek_char(0) == "\r\n"
@@ -1363,9 +1349,9 @@ class Aozora2Html
           # adhook hack
           @noprint = false
           @indent_stack.push(:jisage)
-          Multiline_Jisage_tag.new(self, jisage_width(command))
+          Aozora2Html::Tag::MultilineJisage.new(self, jisage_width(command))
         else
-          @buffer.unshift(Oneline_Jisage_tag.new(self, jisage_width(command)))
+          @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
           nil
         end
       end
