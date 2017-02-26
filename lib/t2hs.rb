@@ -1,23 +1,12 @@
 # -*- coding:shift_jis -*-
 # 青空文庫形式のテキストファイルを html に整形する ruby スクリプト
 require "cgi"
+require "extensions"
+require "aozora2html/error"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-# 例外class
-class Aozora_Exception < Exception
-  def initialize (message)
-    @message=message
-  end
-end
-
-class Aozora_Error < Aozora_Exception
-  def message (line)
-    "エラー(#{line}行目):#{@message}. \r\n処理を停止します"
-  end
-end
 
 class Jstream
   attr_accessor :line
@@ -25,7 +14,7 @@ class Jstream
     if tmp = @file.readline.chomp!("\r\n")
       @buffer = tmp.each_char.to_a
     else
-      raise Aozora_Error.new("改行コードを、「CR+LF」にあらためてください")
+      raise Aozora2Html::Error.new("改行コードを、「CR+LF」にあらためてください")
     end
     @entry = true
   end
@@ -35,9 +24,9 @@ class Jstream
     @file = file_io
     begin
       store_to_buffer
-    rescue Aozora_Exception => e
+    rescue Aozora2Html::Error => e
       puts e.message(1)
-      if e.is_a?(Aozora_Error)
+      if e.is_a?(Aozora2Html::Error)
         exit(2)
       end
     end
@@ -84,7 +73,7 @@ class Aozora_tag
   end
   
   def syntax_error
-    raise Aozora_Error.new("注記を重ねる際の原則、「狭い範囲を先に、広い範囲を後に」が守られていません。リンク先の指針を参考に、書き方をあらためてください")
+    raise Aozora2Html::Error.new("注記を重ねる際の原則、「狭い範囲を先に、広い範囲を後に」が守られていません。リンク先の指針を参考に、書き方をあらためてください")
   end
 end
 
@@ -200,7 +189,7 @@ class Font_size_tag < Aozora_tag
                if times >= 3
                  "xx-"
                else
-                 raise Aozora_Error.new("文字サイズの指定が不正です")
+                 raise Aozora2Html::Error.new("文字サイズの指定が不正です")
                end
              end + case daisho
                    when :dai
@@ -271,7 +260,7 @@ class Multiline_midashi_tag < Aozora_tag
              @id = parser.new_midashi_id(100)
              "h3"
            else
-             raise Aozora_Error.new("未定義な見出しです")
+             raise Aozora2Html::Error.new("未定義な見出しです")
            end   
     @class = case type
              when :normal
@@ -302,7 +291,7 @@ class Multiline_midashi_tag < Aozora_tag
                  "mado-o-midashi"
                end
              else
-               raise Aozora_Error.new("未定義な見出しです")
+               raise Aozora2Html::Error.new("未定義な見出しです")
              end
   end
   def to_s
@@ -403,7 +392,7 @@ class Midashi_tag < Reference_mentioned_tag
              @id = parser.new_midashi_id(100)
              "h3"
            else
-             raise Aozora_Error.new("未定義な見出しです")
+             raise Aozora2Html::Error.new("未定義な見出しです")
            end   
     @class = case type
              when :normal
@@ -434,7 +423,7 @@ class Midashi_tag < Reference_mentioned_tag
                  "mado-o-midashi"
                end
              else
-               raise Aozora_Error.new("未定義な見出しです")
+               raise Aozora2Html::Error.new("未定義な見出しです")
              end
   end
   def to_s
@@ -475,7 +464,7 @@ class Ruby_tag < Reference_mentioned_tag
     if @under_ruby.is_a?(Array) and @under_ruby.length > 0
       # cell is used, but two way cell is not supported
       if @rbspan
-        raise Aozora_Error.new("サポートされていない複雑なルビ付けです")
+        raise Aozora2Html::Error.new("サポートされていない複雑なルビ付けです")
       else
         @rbspan = @under_ruby.length
       end
@@ -599,7 +588,7 @@ class Inline_font_size_tag < Reference_mentioned_tag
                if times >= 3
                  "xx-"
                else
-                 raise Aozora_Error.new("文字サイズの指定が不正です")
+                 raise Aozora2Html::Error.new("文字サイズの指定が不正です")
                end
              end + case daisho
                    when :dai
@@ -860,9 +849,9 @@ class Aozora2Html
       loop{
         begin
           parse
-        rescue Aozora_Exception => e
+        rescue Aozora2Html::Error => e
           puts e.message(scount)
-          if e.is_a?(Aozora_Error)
+          if e.is_a?(Aozora2Html::Error)
             exit(2)
           end
         end
@@ -975,13 +964,13 @@ class Aozora2Html
 
   def ensure_close
     if n = @indent_stack.last
-      raise Aozora_Error.new("#{convert_indent_type(n)}中に本文が終了しました")
+      raise Aozora2Html::Error.new("#{convert_indent_type(n)}中に本文が終了しました")
     end
   end 
   
   def explicit_close (type)
     if n = check_close_match(type)
-      raise Aozora_Error.new("#{n}を閉じようとしましたが、#{n}中ではありません")                            
+      raise Aozora2Html::Error.new("#{n}を閉じようとしましたが、#{n}中ではありません")                            
     end
     if tag = @tag_stack.pop
       push_chars(tag)
@@ -1002,7 +991,7 @@ class Aozora2Html
     when :tail
       parse_tail
     else
-      Aozora_Error.new("encount undefined condition")
+      Aozora2Html::Error.new("encount undefined condition")
     end
   end
 
@@ -1128,7 +1117,7 @@ class Aozora2Html
       header_info[:subtitle] = @header[2]
       header_info[:author] = @header[3]
       if process_person(@header[4],header_info) == :author
-        raise Aozora_Error.new("parser encounted author twice")
+        raise Aozora2Html::Error.new("parser encounted author twice")
       end      
     when 6
       header_info[:original_title] = @header[1]
@@ -1136,7 +1125,7 @@ class Aozora2Html
       header_info[:original_subtitle] = @header[3]
       header_info[:author] = @header[4]
       if process_person(@header[5],header_info) == :author
-        raise Aozora_Error.new("parser encounted author twice")
+        raise Aozora2Html::Error.new("parser encounted author twice")
       end
     end
 
@@ -1364,7 +1353,7 @@ class Aozora2Html
 
   def general_output
     if @style_stack.last
-      raise Aozora_Error.new("#{@style_stack.last[0]}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください")
+      raise Aozora2Html::Error.new("#{@style_stack.last[0]}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください")
     end
     # bufferにインデントタグだけがあったら改行しない！
     if @noprint
@@ -1818,7 +1807,7 @@ class Aozora2Html
                  if times >= 3
                    "xx-"
                  else
-                   raise Aozora_Error.new("文字サイズの指定が不正です")
+                   raise Aozora2Html::Error.new("文字サイズの指定が不正です")
                  end
                end + case daisho
                      when :dai
@@ -1879,7 +1868,7 @@ class Aozora2Html
     elsif @style_stack.last[0].match(encount)
       push_chars(@style_stack.pop[1])
     else
-      raise Aozora_Error.new("#{encount}を終了しようとしましたが、#{@style_stack.last[0]}中です")
+      raise Aozora2Html::Error.new("#{encount}を終了しようとしましたが、#{@style_stack.last[0]}中です")
     end
   end
 
@@ -2079,26 +2068,26 @@ class Aozora2Html
                     []
                   end
       if new_upper.length > 1 and new_under.length > 1
-        raise Aozora_Error.new("1つの単語に3つのルビはつけられません")
+        raise Aozora2Html::Error.new("1つの単語に3つのルビはつけられません")
       end
     
       targets.each{|x|
         if x.is_a?(Ruby_tag)
           if x.target.is_a?(Array)
             # inner Ruby_tag is already complex ... give up
-            raise Aozora_Error.new("同じ箇所に2つのルビはつけられません")
+            raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
           else
             if x.ruby != ""
               if new_upper.is_a?(Array)
                 new_upper.push(x.ruby)
               else
-              raise Aozora_Error.new("同じ箇所に2つのルビはつけられません")
+              raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
               end
             else
               if new_under.is_a?(Array)
               new_under.push(x.under_ruby)
               else
-                raise Aozora_Error.new("同じ箇所に2つのルビはつけられません")
+                raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
               end
             end
             new_targets.push(x.target)
@@ -2115,12 +2104,12 @@ class Aozora2Html
             if new_under.is_a?(Array)
               new_under.concat(un)
             elsif un.to_s.length > 0
-              raise Aozora_Error.new("同じ箇所に2つのルビはつけられません")
+              raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
             end
             if new_upper.is_a?(Array)
               new_upper.concat(up)
             elsif up.to_s.length > 0
-              raise Aozora_Error.new("同じ箇所に2つのルビはつけられません")
+              raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
             end
           else
             new_targets.push(x)
@@ -2190,7 +2179,7 @@ class Aozora2Html
           tag.under_ruby = under
           tag
         else
-          raise Aozora_Error.new("1つの単語に3つのルビはつけられません")
+          raise Aozora2Html::Error.new("1つの単語に3つのルビはつけられません")
         end
       else
         rearrange_ruby_tag(targets,"",under)

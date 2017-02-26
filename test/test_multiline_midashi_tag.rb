@@ -36,7 +36,7 @@ class MultilineMidashiTagTest < Test::Unit::TestCase
   def test_undeined_midashi
     begin
       Multiline_midashi_tag.new(@parser,"あ".encode("shift_jis"),:mado)
-    rescue Aozora_Error => e
+    rescue Aozora2Html::Error => e
       assert_equal e.message(123).encode("utf-8"), "エラー(123行目):未定義な見出しです. \r\n処理を停止します"
     end
   end
@@ -44,7 +44,7 @@ class MultilineMidashiTagTest < Test::Unit::TestCase
   def test_undeined_midashi2
     begin
       Multiline_midashi_tag.new(@parser,"大".encode("shift_jis"),:madoo)
-    rescue Aozora_Error => e
+    rescue Aozora2Html::Error => e
       assert_equal e.message(123).encode("utf-8"), "エラー(123行目):未定義な見出しです. \r\n処理を停止します"
     end
   end
