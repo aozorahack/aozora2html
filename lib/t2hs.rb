@@ -5,20 +5,11 @@ require "extensions"
 require "aozora2html/error"
 require "jstream"
 require "aozora2html/tag"
+require "aozora2html/inline_tag"
 
 $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
-
-
-# 全ての青空記法はHTML elementに変換される
-# したがって、block/inlineの区別がある
-# 全ての末端青空classはどちらかのmoduleをincludeする必要がある
-module Aozora2Html::InlineTag
-  def initialize (*args)
-    true
-  end
-end
 
 module Block_tag
   # 必要に基づきmethod overrideする
