@@ -13,23 +13,6 @@ $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-class Aozora2Html
-  class Tag
-    class Accent < Aozora2Html::Tag
-      include Aozora2Html::Tag::Inline
-      def initialize(parser, code, name)
-        @code = code
-        @name = name
-        super
-      end
-
-      def to_s
-        "<img src=\"#{$gaiji_dir}#{@code}.png\" alt=\"¦(#{@name})\" class=\"gaiji\" />"
-      end
-    end
-  end
-end
-
 class Gaiji_tag < Aozora2Html::Tag
   include Aozora2Html::Tag::Inline
 end
