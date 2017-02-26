@@ -669,9 +669,9 @@ end
 # 変換器本体
 class Aozora2Html
   # 全角バックスラッシュが出せないから直打ち
-  @@ku = ["18e5"].pack("h*")
-  @@noji = ["18f5"].pack("h*")
-  @@dakuten = ["18d8"].pack("h*")
+  @@ku = ["18e5"].pack("h*").force_encoding("shift_jis")
+  @@noji = ["18f5"].pack("h*").force_encoding("shift_jis")
+  @@dakuten = ["18d8"].pack("h*").force_encoding("shift_jis")
   # @@kunoji = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
   # @@dakutenkunoji = ["18e518d818f5"].pack("h*")

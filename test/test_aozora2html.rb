@@ -97,6 +97,22 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
+  def test_read_char
+    Dir.mktmpdir do |dir|
+      input = File.join(dir,'dummy.txt')
+      output = File.join(dir,'dummy2.txt')
+      File.binwrite(input, "／＼\r\n".encode("shift_jis"))
+      parser = Aozora2Html.new(input, output)
+      begin
+        char = parser.read_char
+        assert_equal "／".encode("shift_jis"), char
+        assert_equal Aozora2Html.class_eval("@@ku"), char
+      ensure
+        parser.close
+      end
+    end
+  end
+
   def teardown
   end
 end
