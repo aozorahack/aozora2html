@@ -200,38 +200,39 @@ class Aozora2Html
     @stream.read_char
   end
 
-  def read_to (endchar)
-    buf=""
-    loop{
-      char=@stream.read_char
-      if char==endchar
+  def read_to(endchar)
+    buf = ""
+    loop do
+      char = @stream.read_char
+      if char == endchar
         break
       else
         if char.kind_of?(Symbol)
           print endchar
         end
         buf.concat(char)
-      end}
+      end
+    end
     buf
   end
 
   def read_accent
-    Aozora2Html::AccentParser.new(@stream,"〕",@chuuki_table,@images).process
+    Aozora2Html::AccentParser.new(@stream, "〕", @chuuki_table, @images).process
   end
 
   def read_to_nest (endchar)
-    Aozora2Html::TagParser.new(@stream,endchar,@chuuki_table,@images).process
+    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images).process
   end
 
   def read_line
-    tmp=read_to("\r\n")
-    @buffer=[]
+    tmp = read_to("\r\n")
+    @buffer = []
     tmp
   end
 
   def process ()
-    catch(:terminate){
-      loop{
+    catch(:terminate) do
+      loop do
         begin
           parse
         rescue Aozora2Html::Error => e
@@ -240,8 +241,8 @@ class Aozora2Html
             exit(2)
           end
         end
-      }
-    }
+      end
+    end
     tail_output # final call
     finalize
     close
@@ -298,7 +299,7 @@ class Aozora2Html
     INDENT_TYPE[type] || type
   end
 
-  def check_close_match (type)
+  def check_close_match(type)
     ind = if @indent_stack.last.is_a?(String)
             @noprint = true
             :jisage
@@ -312,10 +313,9 @@ class Aozora2Html
     end
   end
 
-  def implicit_close (type)
+  def implicit_close(type)
     if @indent_stack.last
-      n = check_close_match(type)
-      if n
+      if check_close_match(type)
         # ok, nested multiline tags, go ahead
       else
         # not nested, please close
@@ -333,7 +333,7 @@ class Aozora2Html
     end
   end
 
-  def explicit_close (type)
+  def explicit_close(type)
     n = check_close_match(type)
     if n
       raise Aozora2Html::Error.new("#{n}を閉じようとしましたが、#{n}中ではありません")
@@ -363,11 +363,11 @@ class Aozora2Html
 
   def judge_chuuki
     # 注記が入るかどうかチェック
-    i=0
-    loop{
+    i = 0
+    loop do
       case @stream.peek_char(i)
       when "-"
-        i=i+1
+        i += 1
       when "\r\n"
         @section = :chuuki
         return
@@ -376,14 +376,14 @@ class Aozora2Html
         @out.print("<br />\r\n")
         return
       end
-    }
+    end
   end
 
   # headerは一行ずつ読む
   def parse_header
     string = read_line
     # refine from Tomita 09/06/14
-    if (string == "") # 空行がくれば、そこでヘッダー終了とみなす
+    if string == ""  # 空行がくれば、そこでヘッダー終了とみなす
       @section = :head_end
       process_header
     else
@@ -393,7 +393,7 @@ class Aozora2Html
     end
   end
 
-  def html_title_push (string, hash, attr)
+  def html_title_push(string, hash, attr)
     found = hash[attr]
     if found
       if found != ""
@@ -406,16 +406,16 @@ class Aozora2Html
     end
   end
 
-  def out_header_info (hash, attr, true_name = nil)
+  def out_header_info(hash, attr, true_name = nil)
     found = hash[attr]
     if found
       @out.print("<h2 class=\"#{true_name or attr}\">#{found}</h2>\r\n")
     end
   end
 
-  def header_element_type (string)
+  def header_element_type(string)
     original = true
-    string.each_char{|x|
+    string.each_char do |x|
       code = x.unpack("H*")[0]
       if ("00" <= code and code <= "7f") or # 1byte
           ("8140" <= code and code <= "8258") or # 1-1, 3-25
@@ -425,7 +425,7 @@ class Aozora2Html
         original = false
         break
       end
-    }
+    end
     if original
       :original
     elsif string.match(/[校訂|編|編集|編集校訂|校訂編集]$/)
@@ -437,7 +437,7 @@ class Aozora2Html
     end
   end
 
-  def process_person (string,header_info)
+  def process_person(string, header_info)
     type = header_element_type(string)
     case type
     when :editor
@@ -454,15 +454,15 @@ class Aozora2Html
   end
 
   def process_header()
-    header_info = {:title=>@header[0]}
+    header_info = {:title => @header[0]}
     case @header.length
     when 2
-      process_person(@header[1],header_info)
+      process_person(@header[1], header_info)
     when 3
       if header_element_type(@header[1]) == :original
         header_info[:original_title] = @header[1]
-        process_person(@header[2],header_info)
-      elsif process_person(@header[2],header_info) == :author
+        process_person(@header[2], header_info)
+      elsif process_person(@header[2], header_info) == :author
         header_info[:subtitle] = @header[1]
       else
         header_info[:author] = @header[1]
@@ -473,7 +473,7 @@ class Aozora2Html
       else
         header_info[:subtitle] = @header[1]
       end
-      if process_person(@header[3],header_info) == :author
+      if process_person(@header[3], header_info) == :author
         header_info[:subtitle] = @header[2]
       else
         header_info[:author] = @header[2]
@@ -482,7 +482,7 @@ class Aozora2Html
       header_info[:original_title] = @header[1]
       header_info[:subtitle] = @header[2]
       header_info[:author] = @header[3]
-      if process_person(@header[4],header_info) == :author
+      if process_person(@header[4], header_info) == :author
         raise Aozora2Html::Error.new("parser encounted author twice")
       end
     when 6
@@ -490,7 +490,7 @@ class Aozora2Html
       header_info[:subtitle] = @header[2]
       header_info[:original_subtitle] = @header[3]
       header_info[:author] = @header[4]
-      if process_person(@header[5],header_info) == :author
+      if process_person(@header[5], header_info) == :author
         raise Aozora2Html::Error.new("parser encounted author twice")
       end
     end
@@ -508,9 +508,9 @@ class Aozora2Html
 
     # 出力
     @out.print("<?xml version=\"1.0\" encoding=\"Shift_JIS\"?>\r\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\r\n    \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"ja\" >\r\n<head>\r\n	<meta http-equiv=\"Content-Type\" content=\"text/html;charset=Shift_JIS\" />\r\n	<meta http-equiv=\"content-style-type\" content=\"text/css\" />\r\n")
-    $css_files.each{|css|
+    $css_files.each do |css|
       @out.print("\t<link rel=\"stylesheet\" type=\"text/css\" href=\"" + css + "\" />\r\n")
-    }
+    end
     @out.print("\t#{html_title}\r\n	<script type=\"text/javascript\" src=\"../../jquery-1.4.2.min.js\"></script>\r\n  <link rel=\"Schema.DC\" href=\"http://purl.org/dc/elements/1.1/\" />\r\n	<meta name=\"DC.Title\" content=\"#{header_info[:title]}\" />\r\n	<meta name=\"DC.Creator\" content=\"#{header_info[:author]}\" />\r\n	<meta name=\"DC.Publisher\" content=\"青空文庫\" />\r\n</head>\r\n<body>\r\n<div class=\"metadata\">\r\n")
     @out.print("<h1 class=\"title\">#{header_info[:title]}</h1>\r\n")
     out_header_info(header_info, :original_title)
@@ -525,7 +525,7 @@ class Aozora2Html
 
   def parse_chuuki
     string = read_line
-    if (string.match(/^\-+$/))
+    if string.match(/^\-+$/)
       case @section
       when :chuuki
         @section = :chuuki_in
@@ -538,16 +538,16 @@ class Aozora2Html
   def illegal_char_check(char, line)
     if char.is_a?(String)
       code = char.unpack("H*")[0]
-      if code == "21" or
+      if (code == "21" or
           code == "23" or
           ("a1" <= code and code <= "a5") or
-          ("28" <= code and code<= "29") or
+          ("28" <= code and code <= "29") or
           code == "5b" or
           code == "5d" or
           code == "3d" or
           code == "3f" or
           code == "2b" or
-          ("7b" <= code and code <= "7d")
+          ("7b" <= code and code <= "7d"))
         puts "警告(#{line}行目):1バイトの「#{char}」が使われています"
       end
 
@@ -555,7 +555,7 @@ class Aozora2Html
         puts "警告(#{line}行目):注記記号の誤用の可能性がある、「#{char}」が使われています"
       end
 
-      if ("81ad" <=  code and code <= "81b7") or
+      if (("81ad" <=  code and code <= "81b7") or
           ("81c0" <=  code and code <= "81c7") or
           ("81cf" <=  code and code <= "81d9") or
           ("81e9" <=  code and code <= "81ef") or
@@ -581,7 +581,7 @@ class Aozora2Html
           ("ec40" <=  code and code <= "ecfc") or
           ("ed40" <=  code and code <= "edfc") or
           ("ee40" <=  code and code <= "eefc") or
-          ("ef40" <=  code and code <= "effc")
+          ("ef40" <=  code and code <= "effc"))
         puts "警告(#{line}行目):JIS外字「#{char}」が使われています"
       end
     end
@@ -611,6 +611,7 @@ class Aozora2Html
     when "《"
       char = apply_ruby
     end
+
     if char == "\r\n"
       general_output
     elsif char == "｜"
@@ -619,7 +620,7 @@ class Aozora2Html
     elsif char == @endchar
       # suddenly finished the file
       puts "警告(#{scount}行目):予期せぬファイル終端"
-        throw :terminate
+      throw :terminate
     elsif char != nil
       if check
         illegal_char_check(char, scount)
@@ -778,7 +779,7 @@ class Aozora2Html
   end
 
   # 前方参照の発見 Ruby,style重ねがけ等々のため、要素の配列で返す
-  def search_front_reference (string)
+  def search_front_reference(string)
     if string.length == 0
       return false
     end
@@ -834,7 +835,7 @@ class Aozora2Html
   end
 
   # 発見した前方参照を元に戻す
-  def recovery_front_reference (reference)
+  def recovery_front_reference(reference)
     reference.each{|elt|
 #      if @ruby_buf_protected
       if @ruby_buf.length > 0
@@ -861,7 +862,7 @@ class Aozora2Html
     }
   end
 
-  def convert_japanese_number (command)
+  def convert_japanese_number(command)
     tmp = command.tr("０-９", "0-9")
     tmp.tr!("一二三四五六七八九〇","1234567890")
     tmp.gsub!(/(\d)十(\d)/){"#{$1}#{$2}"}
@@ -871,7 +872,7 @@ class Aozora2Html
     tmp
   end
 
-  def kuten2png (substring)
+  def kuten2png(substring)
     desc = substring.gsub(/「※」[は|の]/,"")
     match = desc.match(/[12]\-\d{1,2}\-\d{1,2}/)
     if (match and not(desc.match(/非0213外字/)) and not(desc.match(/※.*※/)))
@@ -879,19 +880,19 @@ class Aozora2Html
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d",*codes)
       code = sprintf("%1d-%02d-%02d",*codes)
-      Aozora2Html::Tag::EmbedGaiji.new(self, folder,code,desc.gsub!("＃",""))
+      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!("＃",""))
     else
       substring
     end
   end
 
-  def escape_gaiji (command)
+  def escape_gaiji(command)
     _whole, kanji, line = command.match(/(?:＃)(.*)(?:、)(.*)/).to_a
     tmp = @images.assoc(kanji)
     if tmp
       tmp.push(line)
     else
-      @images.push([kanji,line])
+      @images.push([kanji, line])
     end
     Aozora2Html::Tag::UnEmbedGaiji.new(self, command)
   end
@@ -964,7 +965,7 @@ class Aozora2Html
     end
   end
 
-  def apply_burasage (command)
+  def apply_burasage(command)
     tag = nil
     if implicit_close(:jisage)
       @terprip = false
@@ -986,11 +987,11 @@ class Aozora2Html
     nil
   end
 
-  def jisage_width (command)
+  def jisage_width(command)
     convert_japanese_number(command).match(/(\d*)(?:字下げ)/)[1]
   end
 
-  def apply_jisage (command)
+  def apply_jisage(command)
     if command.match(/まで/) or command.match(/終わり/)
       # 字下げ終わり
       explicit_close(:jisage)
@@ -1018,7 +1019,7 @@ class Aozora2Html
     end
   end
 
-  def apply_warichu (command)
+  def apply_warichu(command)
     if command.match(/終わり/)
       check = @stream.peek_char(0)
       if check == "）"
