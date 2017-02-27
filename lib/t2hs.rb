@@ -1321,31 +1321,38 @@ class Aozora2Html
     end
   end
 
+  def detect_command_mode(command)
+    if command.match(/字下げ/)
+      :jisage
+    elsif command.match(/(地付き|字上げ)終わり$/)
+      :chitsuki
+    elsif command.match(/見出し/)
+      :midashi
+    elsif command.match(/字詰め/)
+      :jizume
+    elsif command.match(/横組み/)
+      :yokogumi
+    elsif command.match(/罫囲み/)
+      :keigakomi
+    elsif command.match(/キャプション/)
+      :caption
+    elsif command.match(/太字/)
+      :futoji
+    elsif command.match(/斜体/)
+      :shatai
+    elsif command.match(/大きな文字/)
+      :dai
+    elsif command.match(/小さな文字/)
+      :sho
+    else
+      nil
+    end
+  end
+
   def exec_block_end_command(command)
     match = false
-    if mode = if command.match(/字下げ/)
-                :jisage
-              elsif command.match(/(地付き|字上げ)終わり$/)
-                :chitsuki
-              elsif command.match(/見出し/)
-                :midashi
-              elsif command.match(/字詰め/)
-                :jizume
-              elsif command.match(/横組み/)
-                :yokogumi
-              elsif command.match(/罫囲み/)
-                :keigakomi
-              elsif command.match(/キャプション/)
-                :caption
-              elsif command.match(/太字/)
-                :futoji
-              elsif command.match(/斜体/)
-                :shatai
-              elsif command.match(/大きな文字/)
-                :dai
-              elsif command.match(/小さな文字/)
-                :sho
-              end
+    mode = detect_command_mode(command)
+    if mode
       explicit_close(mode)
       match = @indent_stack.pop
     end
