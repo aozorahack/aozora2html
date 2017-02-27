@@ -237,7 +237,7 @@ class Aozora2Html
     Aozora2Html::AccentParser.new(@stream, "〕", @chuuki_table, @images).process
   end
 
-  def read_to_nest (endchar)
+  def read_to_nest(endchar)
     Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images).process
   end
 
@@ -247,7 +247,7 @@ class Aozora2Html
     tmp
   end
 
-  def process ()
+  def process
     catch(:terminate) do
       loop do
         begin
@@ -265,7 +265,7 @@ class Aozora2Html
     close
   end
 
-  def char_type (char)
+  def char_type(char)
     if char.is_a?(Aozora2Html::Tag::Accent)
       :hankaku
     elsif char.is_a?(Aozora2Html::Tag::Gaiji)
@@ -293,21 +293,21 @@ class Aozora2Html
     end
   end
 
-  def finalize ()
+  def finalize
     hyoki
     dynamic_contents
     @out.print("</body>\r\n</html>\r\n")
   end
 
   def dynamic_contents
-    @out.print("<div id=\"card\">\r\n<hr />\r\n<br />\r\n")
-    @out.print("<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a>")
-    @out.print("<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n")
-    @out.print("<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n")
-    @out.print("</div>")
+    @out.print "<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
+               "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a>" +
+               "<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n" +
+               "<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n" +
+               "</div>"
   end
 
-  def close ()
+  def close
     @stream.close
     @out.close
   end
@@ -470,7 +470,7 @@ class Aozora2Html
     type
   end
 
-  def process_header()
+  def process_header
     header_info = {:title => @header[0]}
     case @header.length
     when 2
@@ -670,7 +670,7 @@ class Aozora2Html
     @ruby_buf = [""]
   end
 
-  def push_chars (obj)
+  def push_chars(obj)
     if obj.is_a?(Array)
       obj.each{|x|
         push_chars(x)
@@ -687,7 +687,7 @@ class Aozora2Html
     end
   end
 
-  def push_char (char)
+  def push_char(char)
    ctype = char_type(char)
     if ctype == :hankaku_terminate and @ruby_buf_type == :hankaku
       if @ruby_buf.last.is_a?(String)
@@ -710,7 +710,7 @@ class Aozora2Html
     end
   end
 
-  def buf_is_blank? (buf)
+  def buf_is_blank?(buf)
     buf.each{|token|
       if token.is_a?(String) and not(token=="")
         return false
@@ -721,7 +721,7 @@ class Aozora2Html
     true
   end
 
-  def terpri? (buf)
+  def terpri?(buf)
     flag = true
     buf.each{|x|
       if x.is_a?(Aozora2Html::Tag::Multiline)
@@ -1057,7 +1057,7 @@ class Aozora2Html
     nil
   end
 
-  def chitsuki_length (command)
+  def chitsuki_length(command)
     command = convert_japanese_number(command)
     if match = command.match(/([0-9]+)字/)
       match[1]
@@ -1066,7 +1066,7 @@ class Aozora2Html
     end
   end
 
-  def apply_chitsuki (string, multiline = false)
+  def apply_chitsuki(string, multiline = false)
     if string.match(/ここで地付き終わり/) or
         string.match(/ここで字上げ終わり/)
       explicit_close(:chitsuki)
@@ -1095,7 +1095,7 @@ class Aozora2Html
       midashi_type = :normal
       if command.match(/同行/)
         midashi_type = :dogyo
-      elsif command.match (/窓/)
+      elsif command.match(/窓/)
         midashi_type = :mado
       else
         @terprip = false
@@ -1124,12 +1124,12 @@ class Aozora2Html
     Aozora2Html::Tag::Jizume.new(self, w)
   end
 
-  def push_block_tag (tag,closing)
+  def push_block_tag(tag,closing)
     push_chars(tag)
     closing.concat(tag.close_tag)
   end
 
-  def exec_inline_start_command (command)
+  def exec_inline_start_command(command)
     case command
     when "注記付き"
       @style_stack.push([command,'</ruby>'])
@@ -1241,7 +1241,7 @@ class Aozora2Html
     end
   end
 
-  def exec_inline_end_command (command)
+  def exec_inline_end_command(command)
     encount = command.sub("終わり","")
     if encount == "本文"
       # force to finish main_text
@@ -1261,7 +1261,7 @@ class Aozora2Html
     end
   end
 
-  def exec_block_start_command (command)
+  def exec_block_start_command(command)
     match = ""
     if command.match(/字下げ/)
       push_block_tag(apply_jisage(command),match)
@@ -1340,7 +1340,7 @@ class Aozora2Html
     end
   end
 
-  def exec_block_end_command (command)
+  def exec_block_end_command(command)
     match = false
     if mode = if command.match(/字下げ/)
                 :jisage
@@ -1379,7 +1379,7 @@ class Aozora2Html
     end
   end
 
-  def exec_img_command (command,raw)
+  def exec_img_command(command,raw)
     match = raw.match(/(.*)（(fig.+\.png)(、横([0-9]+)×縦([0-9]+))*）入る/)
     if match
       _whole, alt, src, _wh, width, height = match.to_a
@@ -1394,7 +1394,7 @@ class Aozora2Html
     end
   end
 
-  def exec_frontref_command (command)
+  def exec_frontref_command(command)
     _whole, reference, spec1, spec2 = command.match(/「([^「」]*(?:「.+」)*[^「」]*)」[に|は|の](「.+」の)*(.+)/).to_a
     spec = if spec1
              spec1 + spec2
@@ -1413,7 +1413,7 @@ class Aozora2Html
     apply_rest_notes(command)
   end
 
-  def multiply (bouki, times)
+  def multiply(bouki, times)
     s = ""
     (times-1).times{
       s += bouki
@@ -1422,7 +1422,7 @@ class Aozora2Html
     s + bouki
   end
 
-  def include_ruby? (array)
+  def include_ruby?(array)
     array.index{|elt|
       if elt.is_a?(Aozora2Html::Tag::Ruby)
         true
@@ -1437,13 +1437,13 @@ class Aozora2Html
   end
 
   # complex ruby wrap up utilities -- don't erase! we will use soon ...
-  def rearrange_ruby_tag (targets, upper_ruby, under_ruby = "")
+  def rearrange_ruby_tag(targets, upper_ruby, under_ruby = "")
     target,upper,under = rearrange_ruby(targets, upper_ruby, under_ruby)
     Aozora2Html::Tag::Ruby.new(self, target,upper,under)
   end
 
   # rubyタグの再割り当て
-  def rearrange_ruby (targets, upper_ruby, under_ruby = "")
+  def rearrange_ruby(targets, upper_ruby, under_ruby = "")
     if include_ruby?(targets)
       new_targets = []
       new_upper = if upper_ruby != ""
@@ -1525,7 +1525,7 @@ class Aozora2Html
     end
   end
 
-  def exec_style (targets, command)
+  def exec_style(targets, command)
     try_kuten = kuten2png(command)
     if try_kuten != command
       try_kuten
@@ -1545,7 +1545,7 @@ class Aozora2Html
       midashi_type = :normal
       if command.match(/同行/)
         midashi_type = :dogyo
-      elsif command.match (/窓/)
+      elsif command.match(/窓/)
         midashi_type = :mado
       else
         @terprip = false
@@ -1610,7 +1610,7 @@ class Aozora2Html
     end
   end
 
-  def apply_dakuten_katakana (command)
+  def apply_dakuten_katakana(command)
     n = command.match(/1-7-8([2345])/).to_a[1]
     frontref =
       case n
@@ -1642,7 +1642,7 @@ class Aozora2Html
     end
   end
 
-  def apply_rest_notes (command)
+  def apply_rest_notes(command)
     @chuuki_table[:chuki] = true
     Aozora2Html::Tag::EditorNote.new(self, command)
   end
@@ -1715,7 +1715,7 @@ class Aozora2Html
     end
   end
 
-  def hyoki ()
+  def hyoki
     # <br /> times fix
     @out.print "<br />\r\n</div>\r\n<div class=\"notation_notes\">\r\n<hr />\r\n<br />\r\n●表記について<br />\r\n<ul>\r\n"
     @out.print "\t<li>このファイルは W3C 勧告 XHTML1.1 にそった形式で作成されています。</li>\r\n"
