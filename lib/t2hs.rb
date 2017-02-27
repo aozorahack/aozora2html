@@ -316,7 +316,8 @@ class Aozora2Html
 
   def implicit_close (type)
     if @indent_stack.last
-      if n = check_close_match(type)
+      n = check_close_match(type)
+      if n
         # ok, nested multiline tags, go ahead
       else
         # not nested, please close
@@ -335,7 +336,8 @@ class Aozora2Html
   end
 
   def explicit_close (type)
-    if n = check_close_match(type)
+    n = check_close_match(type)
+    if n
       raise Aozora2Html::Error.new("#{n}を閉じようとしましたが、#{n}中ではありません")
     end
     if tag = @tag_stack.pop
@@ -879,10 +881,10 @@ class Aozora2Html
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d",*codes)
       code = sprintf("%1d-%02d-%02d",*codes)
-       Aozora2Html::Tag::EmbedGaiji.new(self, folder,code,desc.gsub!("＃",""))
-     else
-       substring
-     end
+      Aozora2Html::Tag::EmbedGaiji.new(self, folder,code,desc.gsub!("＃",""))
+    else
+      substring
+    end
   end
 
   def escape_gaiji (command)
@@ -1028,9 +1030,9 @@ class Aozora2Html
         push_chars('</span>')
       end
     else
-    check = @ruby_buf.last
-    if check.is_a?(String) and check.match(/（$/)
-      push_chars('<span class="warichu">')
+      check = @ruby_buf.last
+      if check.is_a?(String) and check.match(/（$/)
+        push_chars('<span class="warichu">')
       else
         push_chars('<span class="warichu">')
         push_chars('（')
