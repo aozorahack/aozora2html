@@ -106,7 +106,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
       begin
         char = parser.read_char
         assert_equal "／".encode("shift_jis"), char
-        assert_equal Aozora2Html.class_eval("@@ku"), char
+        assert_equal Aozora2Html::KU, char
       ensure
         parser.close
       end

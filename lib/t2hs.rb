@@ -14,15 +14,18 @@ $css_files = Array["../../aozora.css"]
 
 # 変換器本体
 class Aozora2Html
+
   # 全角バックスラッシュが出せないから直打ち
-  @@ku = ["18e5"].pack("h*").force_encoding("shift_jis")
-  @@noji = ["18f5"].pack("h*").force_encoding("shift_jis")
-  @@dakuten = ["18d8"].pack("h*").force_encoding("shift_jis")
-  # @@kunoji = ["18e518f5"].pack("h*")
+  KU = ["18e5"].pack("h*").force_encoding("shift_jis")
+  NOJI = ["18f5"].pack("h*").force_encoding("shift_jis")
+  DAKUTEN = ["18d8"].pack("h*").force_encoding("shift_jis")
+
+  # KUNOJI = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
-  # @@dakutenkunoji = ["18e518d818f5"].pack("h*")
+  # DAKUTENKUNOJI = ["18e518d818f5"].pack("h*")
   # utf8 ["fecbf82e083bfecbcb"].pack("h*")
-  @@accent_table = {
+
+  ACCENT_TABLE = {
     "!"=>{
       "@"=>["1-09/1-09-03","逆感嘆符"]
     },
@@ -134,8 +137,9 @@ class Aozora2Html
       ":"=>["1-09/1-09-84","ダイエレシス付きY小文字"]
     }
   }
+
   # [class, tag]
-  @@command_table = {
+  COMMAND_TABLE = {
     "傍点" => ["sesame_dot","em"],
     "白ゴマ傍点" => ["white_sesame_dot","em"],
     "丸傍点" => ["black_circle","em"],
@@ -602,7 +606,7 @@ class Aozora2Html
       char = dispatch_gaiji
     when "［"
       char = dispatch_aozora_command
-    when @@ku
+    when KU
       assign_kunoji
     when "《"
       char = apply_ruby
@@ -1204,7 +1208,7 @@ class Aozora2Html
           end
         end
 
-        found = @@command_table[key]
+        found = COMMAND_TABLE[key]
         # found = [class, tag]
         if found
           @style_stack.push([command,"</#{found[1]}>"])
@@ -1575,7 +1579,7 @@ class Aozora2Html
         end
       end
 
-      found = @@command_table[command]
+      found = COMMAND_TABLE[command]
       # found = [class, tag]
       if found
         if found[1] == "em" # or found[1] == "strong"
@@ -1611,10 +1615,10 @@ class Aozora2Html
   def assign_kunoji
     second = @stream.peek_char(0)
     case second
-    when @@noji
+    when NOJI
       @chuuki_table[:kunoji] = true
-    when @@dakuten
-      if @stream.peek_char(1) == @@noji
+    when DAKUTEN
+      if @stream.peek_char(1) == NOJI
         @chuuki_table[:dakutenkunoji] = true
       end
     end
@@ -1662,7 +1666,7 @@ class Aozora2Html
       char = dispatch_gaiji
     when "［"
       char = dispatch_aozora_command
-    when @@ku
+    when KU
         assign_kunoji
     when "《"
       char = apply_ruby
@@ -1702,12 +1706,12 @@ class Aozora2Html
     end
     if @chuuki_table[:kunoji]
       if @chuuki_table[:dakutenkunoji]
-        @out.print "\t<li>「くの字点」は「#{@@ku}#{@@noji}」で、「濁点付きくの字点」は「#{@@ku}#{@@dakuten}#{@@noji}」で表しました。</li>\r\n"
+        @out.print "\t<li>「くの字点」は「#{KU}#{NOJI}」で、「濁点付きくの字点」は「#{KU}#{DAKUTEN}#{NOJI}」で表しました。</li>\r\n"
       else
-        @out.print "\t<li>「くの字点」は「#{@@ku}#{@@noji}」で表しました。</li>\r\n"
+        @out.print "\t<li>「くの字点」は「#{KU}#{NOJI}」で表しました。</li>\r\n"
       end
     elsif @chuuki_table[:dakutenkunoji]
-      @out.print "\t<li>「濁点付きくの字点」は「#{@@ku}#{@@dakuten}#{@@noji}」で表しました。</li>\r\n"
+      @out.print "\t<li>「濁点付きくの字点」は「#{KU}#{DAKUTEN}#{NOJI}」で表しました。</li>\r\n"
     end
     if @chuuki_table[:newjis]
       @out.print "\t<li>「くの字点」をのぞくJIS X 0213にある文字は、画像化して埋め込みました。</li>\r\n"

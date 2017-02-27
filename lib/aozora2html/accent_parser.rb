@@ -36,7 +36,7 @@ class Aozora2Html
 
     def parse
       first = read_char
-      if found = @@accent_table[first]
+      if found = Aozora2Html::ACCENT_TABLE[first]
         if found2 = found[@stream.peek_char(0)]
           if found2.is_a?(Hash)
             if found3 = found2[@stream.peek_char(1)]
@@ -59,7 +59,7 @@ class Aozora2Html
         first = dispatch_gaiji
       when "［".encode("shift_jis")
         first = dispatch_aozora_command
-      when @@ku
+      when Aozora2Html::KU
         assign_kunoji
       when "《".encode("shift_jis")
         first = apply_ruby
