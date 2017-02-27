@@ -7,6 +7,7 @@ require "jstream"
 require "aozora2html/tag"
 require "aozora2html/tag_parser"
 require "aozora2html/accent_parser"
+require "aozora2html/style_stack"
 
 $gaiji_dir = "../../../gaiji/"
 
@@ -192,7 +193,7 @@ class Aozora2Html
     @ruby_char_type = nil  ## 未使用??
     @section = :head  ## 現在処理中のセクション(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
     @header = []  ## ヘッダ行の配列
-    @style_stack = []  ##スタイルのスタック
+    @style_stack = StyleStack.new  ##スタイルのスタック
     @chuuki_table = {} ## 最後にどの注記を出すかを保持しておく
     @images = []  ## 使用した外字の画像保持用
     @indent_stack = []
@@ -210,7 +211,7 @@ class Aozora2Html
 
   def block_allowed_context?
     # inline_tagが開いていないかチェックすれば十分
-    not(@style_stack.last)
+    @style_stack.empty?
   end
 
   def read_char
@@ -737,7 +738,7 @@ class Aozora2Html
 
   def general_output
     if @style_stack.last
-      raise Aozora2Html::Error.new("#{@style_stack.last[0]}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください")
+      raise Aozora2Html::Error.new("#{@style_stack.last_command}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください")
     end
     # bufferにインデントタグだけがあったら改行しない！
     if @noprint
@@ -1249,15 +1250,15 @@ class Aozora2Html
       ensure_close
       @noprint = true
       @out.print "</div>\r\n<div class=\"after_text\">\r\n<hr />\r\n"
-    elsif encount.match("注記付き") and @style_stack.last[0] == "注記付き"
+    elsif encount.match("注記付き") and @style_stack.last_command == "注記付き"
       # special inline ruby
       @style_stack.pop
       _whole, ruby = encount.match("「(.*)」の注記付き").to_a
       push_char("</rb><rp>（</rp><rt>#{ruby}</rt><rp>）</rp></ruby>")
-    elsif @style_stack.last[0].match(encount)
+    elsif @style_stack.last_command.match(encount)
       push_chars(@style_stack.pop[1])
     else
-      raise Aozora2Html::Error.new("#{encount}を終了しようとしましたが、#{@style_stack.last[0]}中です")
+      raise Aozora2Html::Error.new("#{encount}を終了しようとしましたが、#{@style_stack.last_command}中です")
     end
   end
 
@@ -1679,13 +1680,13 @@ class Aozora2Html
       check = false
       char = read_accent
     when @endchar
-        throw :terminate
+      throw :terminate
     when "※"
       char = dispatch_gaiji
     when "［"
       char = dispatch_aozora_command
     when KU
-        assign_kunoji
+      assign_kunoji
     when "《"
       char = apply_ruby
     end
