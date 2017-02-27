@@ -794,7 +794,7 @@ class Aozora2Html
       if last_string == ""
         searching_buf.pop
         search_front_reference(string.sub(Regexp.new(Regexp.quote(last_string)+"$"),""))
-      elsif match = last_string.match(Regexp.new(Regexp.quote(string)+"$"))
+      elsif last_string.match(Regexp.new(Regexp.quote(string)+"$"))
         # 完全一致
         # start = match.begin(0)
         # tail = match.end(0)
@@ -888,7 +888,7 @@ class Aozora2Html
   end
 
   def escape_gaiji (command)
-    whole, kanji, line = command.match(/(?:＃)(.*)(?:、)(.*)/).to_a
+    _whole, kanji, line = command.match(/(?:＃)(.*)(?:、)(.*)/).to_a
     tmp = @images.assoc(kanji)
     if tmp
       tmp.push(line)
@@ -903,7 +903,7 @@ class Aozora2Html
     if hook ==  "［"
       read_char
       # embed?
-      command,raw = read_to_nest("］")
+      command, _raw = read_to_nest("］")
       try_emb = kuten2png(command)
       if try_emb != command
         try_emb
@@ -1163,7 +1163,7 @@ class Aozora2Html
     else
       if command.match(/(.*)段階(..)な文字/)
         @style_stack.push([command,'</span>'])
-        whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+        _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
         times = convert_japanese_number(nest).to_i
         daisho = if style.match("小")
                    :sho
@@ -1194,7 +1194,7 @@ class Aozora2Html
         key = command
         filter = lambda{|x| x}
         if command.match(/(右|左|上|下)に(.*)/)
-          whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
+          _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
           # renew command
           key = com
           if command.match(/点/)
@@ -1236,7 +1236,7 @@ class Aozora2Html
     elsif encount.match("注記付き") and @style_stack.last[0] == "注記付き"
       # special inline ruby
       @style_stack.pop
-      whole, ruby = encount.match("「(.*)」の注記付き").to_a
+      _whole, ruby = encount.match("「(.*)」の注記付き").to_a
       push_char("</rb><rp>（</rp><rt>#{ruby}</rt><rp>）</rp></ruby>")
     elsif @style_stack.last[0].match(encount)
       push_chars(@style_stack.pop[1])
@@ -1301,7 +1301,7 @@ class Aozora2Html
     end
 
     if command.match(/(.*)段階(..)な文字/)
-      whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+      _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
       if match != ""
         @indent_stack.pop
       end
@@ -1366,7 +1366,7 @@ class Aozora2Html
   def exec_img_command (command,raw)
     match = raw.match(/(.*)（(fig.+\.png)(、横([0-9]+)×縦([0-9]+))*）入る/)
     if match
-      whole, alt, src, wh, width, height = match.to_a
+      _whole, alt, src, _wh, width, height = match.to_a
       css_class = if alt.match(/写真/)
                     "photo"
                   else
@@ -1379,7 +1379,7 @@ class Aozora2Html
   end
 
   def exec_frontref_command (command)
-    whole, reference, spec1, spec2 = command.match(/「([^「」]*(?:「.+」)*[^「」]*)」[に|は|の](「.+」の)*(.+)/).to_a
+    _whole, reference, spec1, spec2 = command.match(/「([^「」]*(?:「.+」)*[^「」]*)」[に|は|の](「.+」の)*(.+)/).to_a
     spec = if spec1
              spec1 + spec2
            else
@@ -1536,7 +1536,7 @@ class Aozora2Html
       end
       Aozora2Html::Tag::Midashi.new(self, targets, command, midashi_type)
     elsif command.match(/(.*)段階(..)な文字/)
-      whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+      _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
       Aozora2Html::Tag::InlineFontSize.new(self,targets,
                                convert_japanese_number(nest).to_i,
                                if style.match("小")
@@ -1545,7 +1545,7 @@ class Aozora2Html
                                  :dai
                                end)
     elsif command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/)
-      whole, dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
+      _whole, dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
       if targets.length == 1 and targets[0].is_a?(Aozora2Html::Tag::Ruby)
         tag = targets[0]
         if tag.under_ruby == ""
@@ -1565,7 +1565,7 @@ class Aozora2Html
       ## direction fix! ##
       filter = lambda{|x| x}
       if command.match(/(右|左|上|下)に(.*)/)
-        whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
+        _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
         # renew command
         command = com
         if command.match(/点/)
@@ -1634,7 +1634,7 @@ class Aozora2Html
   # ｜が来たときは文字種を無視してruby_bufを守らなきゃいけない
   def apply_ruby
     @ruby_buf_protected = nil
-    ruby,raw = read_to_nest("》")
+    ruby, _raw = read_to_nest("》")
     if ruby.length == 0
       # escaped ruby character
       return "《》"
