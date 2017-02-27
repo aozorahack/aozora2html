@@ -5,16 +5,7 @@ class Jstream
 
   attr_accessor :line
 
-  def store_to_buffer
-    if tmp = @file.readline.chomp!("\r\n")
-      @buffer = tmp.each_char.to_a
-    else
-      raise Aozora2Html::Error.new(Aozora2Html::I18n.t(:use_crlf))
-    end
-    @entry = true
-  end
-
-  def initialize (file_io)
+  def initialize(file_io)
     @line = 0
     @entry = false
     @file = file_io
@@ -26,6 +17,15 @@ class Jstream
         exit(2)
       end
     end
+  end
+
+  def store_to_buffer
+    if tmp = @file.readline.chomp!("\r\n")
+      @buffer = tmp.each_char.to_a
+    else
+      raise Aozora2Html::Error.new(Aozora2Html::I18n.t(:use_crlf))
+    end
+    @entry = true
   end
 
   def inspect
@@ -51,7 +51,7 @@ class Jstream
     end
   end
 
-  def peek_char (pos)
+  def peek_char(pos)
     found = @buffer[pos]
     if found
       found
