@@ -189,17 +189,17 @@ class Aozora2Html
     end
     @buffer = []
     @ruby_buf = [""]
-    @ruby_char_type = nil
-    @section = :head
-    @header = []
-    @style_stack = []
-    @chuuki_table = {}
-    @images = []
+    @ruby_char_type = nil  ## 未使用??
+    @section = :head  ## 現在処理中のセクション(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
+    @header = []  ## ヘッダ行の配列
+    @style_stack = []  ##スタイルのスタック
+    @chuuki_table = {} ## 最後にどの注記を出すかを保持しておく
+    @images = []  ## 使用した外字の画像保持用
     @indent_stack = []
     @tag_stack = []
-    @midashi_id = 0
-    @terprip = true
-    @endchar = :eof
+    @midashi_id = 0  ## 見出しのカウンタ、見出しの種類によって増分が異なる
+    @terprip = true  ## 改行制御用 (terpriはLisp由来?)
+    @endchar = :eof  ## 解析終了文字、AccentParserやTagParserでは異なる
     @ruby_buf_protected = nil
     @ruby_buf_type = nil
   end
