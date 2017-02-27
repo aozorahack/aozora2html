@@ -157,6 +157,21 @@ class Aozora2Html
     "行右小書き"=>["superscript","sup"],
     "行左小書き"=>["subscript","sub"]
   }
+
+  INDENT_TYPE = {
+    :jisage => "字下げ",
+    :chitsuki => "地付き",
+    :midashi => "見出し",
+    :jizume => "字詰め",
+    :yokogumi => "横組み",
+    :keigakomi => "罫囲み",
+    :caption => "キャプション",
+    :futoji => "太字",
+    :shatai => "斜体",
+    :dai => "大きな文字",
+    :sho => "小さな文字",
+  }
+
   def initialize (input, output)
     @stream = Jstream.new(File.open(input,"rb:Shift_JIS"))
     @buffer = []; @ruby_buf = [""]; @ruby_char_type = nil
@@ -275,29 +290,8 @@ class Aozora2Html
     @out.close
   end
 
-  def convert_indent_type (type)
-    case type
-    when :jisage
-      "字下げ"
-    when :chitsuki
-      "地付き"
-    when :keigakomi
-      "罫囲み"
-    when :caption
-      "キャプション"
-    when :jizume
-      "字詰め"
-    when :futoji
-      "太字"
-    when :shatai
-      "斜体"
-    when :sho
-      "小さな文字"
-    when :dai
-      "大きな文字"
-    else
-      type
-    end
+  def convert_indent_type(type)
+    INDENT_TYPE[type] || type
   end
 
   def check_close_match (type)
