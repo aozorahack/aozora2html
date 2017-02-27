@@ -174,6 +174,44 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
+  def test_convert_japanese_number
+    input = StringIO.new("abc\r\n")
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+
+    assert_equal "3字下げ",
+                 parser.convert_japanese_number("三字下げ".encode("shift_jis")).encode("utf-8")
+    assert_equal "10字下げ",
+                 parser.convert_japanese_number("十字下げ".encode("shift_jis")).encode("utf-8")
+    assert_equal "12字下げ",
+                 parser.convert_japanese_number("十二字下げ".encode("shift_jis")).encode("utf-8")
+    assert_equal "20字下げ",
+                 parser.convert_japanese_number("二十字下げ".encode("shift_jis")).encode("utf-8")
+    assert_equal "20字下げ",
+                 parser.convert_japanese_number("二〇字下げ".encode("shift_jis")).encode("utf-8")
+    assert_equal "23字下げ",
+                 parser.convert_japanese_number("二十三字下げ".encode("shift_jis")).encode("utf-8")
+    assert_equal "2字下げ",
+                 parser.convert_japanese_number("２字下げ".encode("shift_jis")).encode("utf-8")
+
+  end
+
+  def test_kuten2png
+    input = StringIO.new("abc\r\n")
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+
+    assert_equal %q|<img src="../../../gaiji/1-84/1-84-77.png" alt="※(「てへん＋劣」、第3水準1-84-77)" class="gaiji" />|,
+                 parser.kuten2png("＃「てへん＋劣」、第3水準1-84-77".encode("shift_jis")).to_s.encode("utf-8")
+    assert_equal %q|<img src="../../../gaiji/1-02/1-02-22.png" alt="※(二の字点、1-2-22)" class="gaiji" />|,
+                 parser.kuten2png("＃二の字点、1-2-22".encode("shift_jis")).to_s.encode("utf-8")
+    assert_equal %q|<img src="../../../gaiji/1-06/1-06-57.png" alt="※(ファイナルシグマ、1-6-57)" class="gaiji" />|,
+                 parser.kuten2png("＃ファイナルシグマ、1-6-57".encode("shift_jis")).to_s.encode("utf-8")
+    assert_equal %q|＃「口＋世」、151-23|,
+                 parser.kuten2png("＃「口＋世」、151-23".encode("shift_jis")).to_s.encode("utf-8")
+  end
+
+
   def teardown
   end
 end
