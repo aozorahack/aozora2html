@@ -177,8 +177,16 @@ class Aozora2Html
   }
 
   def initialize(input, output)
-    @stream = Jstream.new(File.open(input,"rb:Shift_JIS"))
-    @out = File.open(output,"w")
+    if input.respond_to?(:read) ## readable IO?
+      @stream = Jstream.new(input)
+    else
+      @stream = Jstream.new(File.open(input,"rb:Shift_JIS"))
+    end
+    if output.respond_to?(:print) ## writable IO?
+      @out = output
+    else
+      @out = File.open(output,"w")
+    end
     @buffer = []
     @ruby_buf = [""]
     @ruby_char_type = nil
