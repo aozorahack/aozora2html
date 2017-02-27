@@ -176,12 +176,21 @@ class Aozora2Html
     :sho => "¬‚³‚È•¶š",
   }
 
-  def initialize (input, output)
+  def initialize(input, output)
     @stream = Jstream.new(File.open(input,"rb:Shift_JIS"))
-    @buffer = []; @ruby_buf = [""]; @ruby_char_type = nil
-    @out = File.open(output,"w"); @section = :head; @header = []; @style_stack = []
-    @chuuki_table = {}; @images = []; @indent_stack = []; @tag_stack = []
-    @midashi_id = 0; @terprip = true
+    @out = File.open(output,"w")
+    @buffer = []
+    @ruby_buf = [""]
+    @ruby_char_type = nil
+    @section = :head
+    @header = []
+    @style_stack = []
+    @chuuki_table = {}
+    @images = []
+    @indent_stack = []
+    @tag_stack = []
+    @midashi_id = 0
+    @terprip = true
     @endchar = :eof
     @ruby_buf_protected = nil
     @ruby_buf_type = nil
