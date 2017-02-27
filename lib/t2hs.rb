@@ -746,7 +746,7 @@ class Aozora2Html
     end
     ruby_buf_dump
     buf = @buffer
-    @ruby_buf = [""]; @ruby_buf_mode = nil; @buffer = []
+    @ruby_buf = [""]; @buffer = []
     tail = []
 
     indent_type = buf_is_blank?(buf)
@@ -1705,7 +1705,7 @@ class Aozora2Html
   def tail_output
     ruby_buf_dump
     string = @buffer.join
-    @ruby_buf = [""]; @ruby_buf_mode = nil; @buffer = []
+    @ruby_buf = [""]; @buffer = []
     string.gsub!("info@aozora.gr.jp",'<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
     string.gsub!("ê¬ãÛï∂å…Åihttp://www.aozora.gr.jp/Åj"){"<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>"}
     if string.match(/(<br \/>$|<\/p>$|<\/h\d>$|<div.*>$|<\/div>$|^<[^>]*>$)/)
