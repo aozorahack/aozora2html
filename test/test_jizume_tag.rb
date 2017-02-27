@@ -3,7 +3,8 @@ require 'aozora2html'
 
 class JizumeTagTest < Test::Unit::TestCase
   def setup
-    stub(@parser).block_allowed_context?{true} 
+    @parser = Object.new
+    stub(@parser).block_allowed_context?{true}
   end
 
   def test_jizume_new

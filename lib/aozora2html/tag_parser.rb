@@ -14,6 +14,8 @@ class Aozora2Html
       @endchar = endchar # 改行を越えるべきか否か…
       @section = :tail # 末尾処理と記法内はインデントをしないので等価
       @raw = "" # 外字変換前の生テキストを残したいことがあるらしい
+      @ruby_buf_protected = nil
+      @ruby_buf_type = nil
     end
 
     def read_char # method override!

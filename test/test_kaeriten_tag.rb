@@ -4,6 +4,7 @@ require 'aozora2html'
 
 class KaeritenTagTest < Test::Unit::TestCase
   def setup
+    @parser = Object.new
     stub(@parser).block_allowed_context?{true}
   end
 

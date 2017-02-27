@@ -3,11 +3,12 @@ require 'aozora2html'
 
 class MultilineYokogumiTagTest < Test::Unit::TestCase
   def setup
+    @parser = Object.new
     stub(@parser).block_allowed_context?{true}
   end
 
   def test_multiline_yokogumi_new
-    tag = Aozora2Html::Tag::MultilineYokogumi.new(@parser0)
+    tag = Aozora2Html::Tag::MultilineYokogumi.new(@parser)
     assert_equal Aozora2Html::Tag::MultilineYokogumi, tag.class
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Multiline)

@@ -3,6 +3,9 @@ class Aozora2Html
     class EmbedGaiji < Aozora2Html::Tag::Gaiji
       attr_accessor :unicode
 
+      @use_jisx0213 = nil
+      @use_unicode = nil
+
       def self.use_jisx0213=(val)
         @use_jisx0213 = val
       end

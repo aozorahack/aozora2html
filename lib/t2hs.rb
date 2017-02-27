@@ -164,8 +164,10 @@ class Aozora2Html
     @chuuki_table = {}; @images = []; @indent_stack = []; @tag_stack = []
     @midashi_id = 0; @terprip = true
     @endchar = :eof
+    @ruby_buf_protected = nil
+    @ruby_buf_type = nil
   end
-  
+
   def scount
     @stream.line
   end

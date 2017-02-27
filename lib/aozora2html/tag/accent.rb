@@ -1,6 +1,9 @@
 class Aozora2Html
   class Tag
     class Accent < Aozora2Html::Tag
+
+      @use_jisx0213 = nil
+
       def self.use_jisx0213=(val)
         @use_jisx0213 = val
       end

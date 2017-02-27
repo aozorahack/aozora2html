@@ -4,6 +4,7 @@ require 'aozora2html'
 
 class DakutenKatakanaTagTest < Test::Unit::TestCase
   def setup
+    @parser = Object.new
     @orig_gaiji_dir = $gaiji_dir
     $gaiji_dir = "g_dir"
     stub(@parser).block_allowed_context?{true}

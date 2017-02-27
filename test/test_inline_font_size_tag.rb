@@ -4,6 +4,7 @@ require 'aozora2html'
 
 class InlineFontSizeTagTest < Test::Unit::TestCase
   def setup
+    @parser = Object.new
     stub(@parser).block_allowed_context?{true}
   end
 

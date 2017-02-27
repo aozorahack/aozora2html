@@ -7,7 +7,7 @@ class Aozora2Html
       attr_accessor :target
 
       def initialize (*args)
-        if block_element?(@target)
+        if defined?(@target) && block_element?(@target)
           syntax_error
         end
       end

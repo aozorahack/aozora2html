@@ -17,6 +17,8 @@ class Aozora2Html
       @endchar = endchar # 改行は越えられない <br />を出力していられない
       @closed = nil # 改行での強制撤退チェックフラグ
       @encount_accent = nil
+      @ruby_buf_protected = nil
+      @ruby_buf_type = nil
     end
 
     def general_output # 出力は配列で返す

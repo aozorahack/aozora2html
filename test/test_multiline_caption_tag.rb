@@ -3,11 +3,12 @@ require 'aozora2html'
 
 class MultilineCaptionTagTest < Test::Unit::TestCase
   def setup
-    stub(@parser).block_allowed_context?{true} 
+    @parser = Object.new
+    stub(@parser).block_allowed_context?{true}
   end
 
   def test_multiline_caption_new
-    tag = Aozora2Html::Tag::MultilineCaption.new(@parser0)
+    tag = Aozora2Html::Tag::MultilineCaption.new(@parser)
     assert_equal Aozora2Html::Tag::MultilineCaption, tag.class
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Multiline)
