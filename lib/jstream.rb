@@ -1,6 +1,13 @@
 require "aozora2html/error"
 require "aozora2html/i18n"
 
+##
+# Stream class for reading a file.
+#
+# It's just a wrapper class of IO to read characters.
+# when finished to read IO, return a symbol :eof.
+# when found line terminator except CR+LF, exit.
+#
 class Jstream
 
   attr_accessor :line
@@ -19,15 +26,6 @@ class Jstream
     end
   end
 
-  def store_to_buffer
-    if tmp = @file.readline.chomp!("\r\n")
-      @buffer = tmp.each_char.to_a
-    else
-      raise Aozora2Html::Error.new(Aozora2Html::I18n.t(:use_crlf))
-    end
-    @entry = true
-  end
-
   def inspect
     "#<jcode-stream input " + @file.inspect + ">"
   end
@@ -35,32 +33,36 @@ class Jstream
   def read_char
     found = @buffer.shift
     if @entry
-      @line = @line + 1
+      @line += 1
       @entry = false
     end
     if found
-      found
-    else
-      begin
-        store_to_buffer
-        "\r\n"
-      rescue EOFError
-        @buffer = [:eof]
-        "\r\n"
-      end
+      return found
     end
+
+    begin
+      store_to_buffer
+    rescue EOFError
+      @buffer = [:eof]
+    end
+    "\r\n"
   end
 
   def peek_char(pos)
-    found = @buffer[pos]
-    if found
-      found
-    else
-      "\r\n"
-    end
+    @buffer[pos] || "\r\n"
   end
 
   def close
     @file.close
+  end
+
+  private
+  def store_to_buffer
+    if tmp = @file.readline.chomp!("\r\n")
+      @buffer = tmp.each_char.to_a
+    else
+      raise Aozora2Html::Error, Aozora2Html::I18n.t(:use_crlf)
+    end
+    @entry = true
   end
 end
