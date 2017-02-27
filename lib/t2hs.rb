@@ -537,7 +537,7 @@ class Aozora2Html
     end
   end
 
-  def illegal_char_check (char)
+  def illegal_char_check(char, line)
     if char.is_a?(String)
       code = char.unpack("H*")[0]
       if code == "21" or
@@ -550,11 +550,11 @@ class Aozora2Html
           code == "3f" or
           code == "2b" or
           ("7b" <= code and code <= "7d")
-        puts "警告(#{scount}行目):1バイトの「#{char}」が使われています"
+        puts "警告(#{line}行目):1バイトの「#{char}」が使われています"
       end
 
       if code == "81f2"
-        puts "警告(#{scount}行目):注記記号の誤用の可能性がある、「#{char}」が使われています"
+        puts "警告(#{line}行目):注記記号の誤用の可能性がある、「#{char}」が使われています"
       end
 
       if ("81ad" <=  code and code <= "81b7") or
@@ -584,7 +584,7 @@ class Aozora2Html
           ("ed40" <=  code and code <= "edfc") or
           ("ee40" <=  code and code <= "eefc") or
           ("ef40" <=  code and code <= "effc")
-        puts "警告(#{scount}行目):JIS外字「#{char}」が使われています"
+        puts "警告(#{line}行目):JIS外字「#{char}」が使われています"
       end
     end
   end
@@ -624,7 +624,7 @@ class Aozora2Html
         throw :terminate
     elsif char != nil
       if check
-        illegal_char_check(char)
+        illegal_char_check(char, scount)
       end
       push_chars(char)
     end
@@ -1680,7 +1680,7 @@ class Aozora2Html
       @ruby_buf_protected = true
     elsif char != nil
       if check
-        illegal_char_check(char)
+        illegal_char_check(char, scount)
       end
       push_chars(char)
     end

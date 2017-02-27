@@ -113,6 +113,78 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
+  def test_illegal_char_check
+    Dir.mktmpdir do |dir|
+      input = File.join(dir,'dummy.txt')
+      output = File.join(dir,'dummy2.txt')
+      File.binwrite(input, "ab\r\nc\r\n")
+      parser = Aozora2Html.new(input, output)
+      out = StringIO.new
+      $stdout = out
+      begin
+        parser.illegal_char_check("#", 123)
+        outstr = out.string
+        assert_equal "警告(123行目):1バイトの「#」が使われています\n", outstr
+      ensure
+        $stdout = STDOUT
+      end
+    end
+  end
+
+  def test_illegal_char_check_sharp
+    Dir.mktmpdir do |dir|
+      input = File.join(dir,'dummy.txt')
+      output = File.join(dir,'dummy2.txt')
+      File.binwrite(input, "ab\r\nc\r\n")
+      parser = Aozora2Html.new(input, output)
+      out = StringIO.new
+      $stdout = out
+      begin
+        parser.illegal_char_check("♯".encode("shift_jis"), 123)
+        outstr = out.string
+        assert_equal "警告(123行目):注記記号の誤用の可能性がある、「♯」が使われています\n", outstr
+      ensure
+        $stdout = STDOUT
+      end
+    end
+  end
+
+  def test_illegal_char_check_notjis
+    Dir.mktmpdir do |dir|
+      input = File.join(dir,'dummy.txt')
+      output = File.join(dir,'dummy2.txt')
+      File.binwrite(input, "ab\r\nc\r\n")
+      parser = Aozora2Html.new(input, output)
+      out = StringIO.new
+      $stdout = out
+      begin
+        parser.illegal_char_check("①".encode("cp932").force_encoding("shift_jis"), 123)
+        outstr = out.string
+        assert_equal "警告(123行目):JIS外字「①」が使われています\n", outstr.force_encoding("cp932").encode("utf-8")
+      ensure
+        $stdout = STDOUT
+      end
+    end
+  end
+
+  def test_illegal_char_check_ok
+    Dir.mktmpdir do |dir|
+      input = File.join(dir,'dummy.txt')
+      output = File.join(dir,'dummy2.txt')
+      File.binwrite(input, "ab\r\nc\r\n")
+      parser = Aozora2Html.new(input, output)
+      out = StringIO.new
+      $stdout = out
+      begin
+        parser.illegal_char_check("あ".encode("shift_jis"), 123)
+        outstr = out.string
+        assert_equal "", outstr
+      ensure
+        $stdout = STDOUT
+      end
+    end
+  end
+
   def teardown
   end
 end

@@ -76,7 +76,7 @@ class Aozora2Html
         ruby_buf_dump
         @ruby_buf_protected = true
       elsif first != "" and first != nil
-        illegal_char_check(first)
+        illegal_char_check(first, scount)
         push_chars(first)
       end
     end
