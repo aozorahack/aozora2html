@@ -23,6 +23,10 @@ class Aozora2Html
         Aozora2Html::JIS2UCS[code]
       end
 
+      def char_type
+        :hankaku
+      end
+
       def to_s
         if Aozora2Html::Tag::Accent.use_jisx0213
           jisx0213_to_unicode(@code.sub(%r|.*/|,"").to_sym)

@@ -267,29 +267,9 @@ class Aozora2Html
   end
 
   def char_type(char)
-    if char.is_a?(Aozora2Html::Tag::Accent)
-      :hankaku
-    elsif char.is_a?(Aozora2Html::Tag::Gaiji)
-      :kanji
-    elsif char.is_a?(Aozora2Html::Tag::Kunten) # just remove this line
-      :else
-    elsif char.is_a?(Aozora2Html::Tag::DakutenKatakana)
-      :katakana
-    elsif char.is_a?(Aozora2Html::Tag)
-      :else
-    elsif char.match(/[‚Ÿ-‚ñTU]/)
-      :hiragana
-    elsif char.match(/[ƒ@-ƒ“[RSƒ”]/)
-      :katakana
-    elsif char.match(/[‚O-‚X‚`-‚y‚-‚šƒŸ-ƒ¶ƒ¿-ƒÖ„@-„`„p-„‘|•fCD]/)
-      :zenkaku
-    elsif char.match(/[A-Za-z0-9#\-\&'\,]/)
-      :hankaku
-    elsif char.match(/[ˆŸ-ê¤X¦WYZƒ–]/)
-      :kanji
-    elsif char.match(/[\.\;\"\?\!\)]/)
-      :hankaku_terminate
-    else
+    begin
+      char.char_type
+    rescue
       :else
     end
   end

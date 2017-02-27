@@ -98,11 +98,13 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal :hiragana, parser.char_type("っ".encode("shift_jis"))
     assert_equal :katakana, parser.char_type("ヴ".encode("shift_jis"))
     assert_equal :katakana, parser.char_type("ー".encode("shift_jis"))
+    assert_equal :zenkaku, parser.char_type("Ａ".encode("shift_jis"))
     assert_equal :zenkaku, parser.char_type("ｗ".encode("shift_jis"))
     assert_equal :hankaku, parser.char_type("z".encode("shift_jis"))
     assert_equal :kanji, parser.char_type("漢".encode("shift_jis"))
     assert_equal :hankaku_terminate, parser.char_type("!".encode("shift_jis"))
     assert_equal :else, parser.char_type("？".encode("shift_jis"))
+    assert_equal :else, parser.char_type("Å".encode("shift_jis"))
   end
 
   def test_read_char

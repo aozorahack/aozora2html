@@ -44,6 +44,10 @@ class Aozora2Html
       to_s
     end
 
+    def char_type
+      :else
+    end
+
     def syntax_error
       raise Aozora2Html::Error.new(I18n.t(:tag_syntax_error))
     end
