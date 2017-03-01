@@ -125,7 +125,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     begin
       parser.illegal_char_check("#", 123)
       outstr = out.string
-      assert_equal "警告(123行目):1バイトの「#」が使われています\n", outstr
+      assert_equal "警告(123行目):1バイトの「#」が使われています\n", outstr.encode("utf-8")
     ensure
       $stdout = STDOUT
     end
@@ -140,7 +140,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     begin
       parser.illegal_char_check("♯".encode("shift_jis"), 123)
       outstr = out.string
-      assert_equal "警告(123行目):注記記号の誤用の可能性がある、「♯」が使われています\n", outstr
+      assert_equal "警告(123行目):注記記号の誤用の可能性がある、「♯」が使われています\n", outstr.encode("utf-8")
     ensure
       $stdout = STDOUT
     end
