@@ -8,7 +8,6 @@ class Aozora2Html
       @stream = input
       @buffer = []
       @ruby_buf = [""]
-      @ruby_char_type = nil
       @chuuki_table = chuuki
       @images = image # globalな環境を記録するアイテムは共有する必要あり
       @endchar = endchar # 改行を越えるべきか否か…

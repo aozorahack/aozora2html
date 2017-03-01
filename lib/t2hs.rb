@@ -194,7 +194,6 @@ class Aozora2Html
     end
     @buffer = []
     @ruby_buf = [""]
-    @ruby_char_type = nil  ## 未使用??
     @section = :head  ## 現在処理中のセクション(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
     @header = []  ## ヘッダ行の配列
     @style_stack = StyleStack.new  ##スタイルのスタック
