@@ -5,12 +5,12 @@ class Aozora2Html
       if not(input.is_a?(Jstream))
         raise ArgumentError, "tag_parser must supply Jstream as input"
       end
-      @stream = input;
+      @stream = input
       @buffer = []
       @ruby_buf = [""]
       @ruby_char_type = nil
       @chuuki_table = chuuki
-      @images = image; # globalな環境を記録するアイテムは共有する必要あり
+      @images = image # globalな環境を記録するアイテムは共有する必要あり
       @endchar = endchar # 改行を越えるべきか否か…
       @section = :tail # 末尾処理と記法内はインデントをしないので等価
       @raw = "" # 外字変換前の生テキストを残したいことがあるらしい
