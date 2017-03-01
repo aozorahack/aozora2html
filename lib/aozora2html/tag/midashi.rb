@@ -5,13 +5,13 @@ class Aozora2Html
       def initialize(parser, target, size, type)
         super
         @target = target
-        @tag = if size.match("小".encode("shift_jis"))
+        @tag = if size.match(SIZE_SMALL)
                  @id = parser.new_midashi_id(1)
                  "h5"
-               elsif size.match("中".encode("shift_jis"))
+               elsif size.match(SIZE_MIDDLE)
                  @id = parser.new_midashi_id(10)
                  "h4"
-               elsif size.match("大".encode("shift_jis"))
+               elsif size.match(SIZE_LARGE)
                  @id = parser.new_midashi_id(100)
                  "h3"
                else

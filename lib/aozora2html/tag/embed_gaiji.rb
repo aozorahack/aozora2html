@@ -39,7 +39,7 @@ class Aozora2Html
         elsif Aozora2Html::Tag::EmbedGaiji.use_unicode && @unicode
           '&#x'+@unicode+';'
         else
-          "<img src=\"#{$gaiji_dir}#{@folder}/#{@code}.png\" alt=\"" + "※".encode("shift_jis") + "(#{@name})\" class=\"gaiji\" />"
+          "<img src=\"#{$gaiji_dir}#{@folder}/#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
         end
       end
     end

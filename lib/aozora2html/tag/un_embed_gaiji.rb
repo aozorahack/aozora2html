@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Aozora2Html
   class Tag
     class UnEmbedGaiji < Aozora2Html::Tag::Gaiji

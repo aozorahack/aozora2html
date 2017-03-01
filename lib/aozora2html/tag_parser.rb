@@ -36,7 +36,7 @@ class Aozora2Html
       @buffer.each{|s|
         if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
           # 消してあった※を復活させて
-          ans.concat("※".encode("shift_jis"))
+          ans.concat(GAIJI_MARK)
         end
         ans.concat(s.to_s)
       }

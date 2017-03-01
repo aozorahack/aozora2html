@@ -31,7 +31,7 @@ class Aozora2Html
         if Aozora2Html::Tag::Accent.use_jisx0213
           jisx0213_to_unicode(@code.sub(%r|.*/|,"").to_sym)
         else
-          "<img src=\"#{$gaiji_dir}#{@code}.png\" alt=\"" + "※".encode("shift_jis") + "(#{@name})\" class=\"gaiji\" />"
+          "<img src=\"#{$gaiji_dir}#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
         end
       end
     end

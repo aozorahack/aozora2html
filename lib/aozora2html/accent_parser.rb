@@ -55,7 +55,7 @@ class Aozora2Html
         end
       end
       case first
-      when "※".encode("shift_jis")
+      when Aozora2Html::GAIJI_MARK
         first = dispatch_gaiji
       when "［".encode("shift_jis")
         first = dispatch_aozora_command

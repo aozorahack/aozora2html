@@ -20,7 +20,11 @@ class Aozora2Html
   KU = ["18e5"].pack("h*").force_encoding("shift_jis")
   NOJI = ["18f5"].pack("h*").force_encoding("shift_jis")
   DAKUTEN = ["18d8"].pack("h*").force_encoding("shift_jis")
-
+  GAIJI_MARK = "Å¶"
+  SIZE_SMALL = "è¨"
+  SIZE_MIDDLE = "íÜ"
+  SIZE_LARGE = "ëÂ"
+  
   # KUNOJI = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
   # DAKUTENKUNOJI = ["18e518d818f5"].pack("h*")
