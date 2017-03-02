@@ -6,6 +6,9 @@ require 'tmpdir'
 
 class Aozora2HtmlTest < Test::Unit::TestCase
   def setup
+    input = StringIO.new("abc\r\n")
+    output = StringIO.new
+    @parser = Aozora2Html.new(input, output)
   end
 
   def test_aozora2html_new
@@ -83,28 +86,24 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_char_type
-    input = StringIO.new("ab\r\nc\r\n")
-    output = StringIO.new
-    parser = Aozora2Html.new(input, output)
+    assert_equal :kanji, @parser.char_type(Aozora2Html::Tag::EmbedGaiji.new(nil,"foo","1-2-3","name"))
+    assert_equal :kanji, @parser.char_type(Aozora2Html::Tag::UnEmbedGaiji.new(nil,"foo"))
+    assert_equal :hankaku, @parser.char_type(Aozora2Html::Tag::Accent.new(nil,123,"abc"))
+    assert_equal :else, @parser.char_type(Aozora2Html::Tag::Okurigana.new(nil,"abc"))
+    assert_equal :else, @parser.char_type(Aozora2Html::Tag::InlineKeigakomi.new(nil,"abc"))
+    assert_equal :katakana, @parser.char_type(Aozora2Html::Tag::DakutenKatakana.new(nil,1,"abc"))
 
-    assert_equal :kanji, parser.char_type(Aozora2Html::Tag::EmbedGaiji.new(nil,"foo","1-2-3","name"))
-    assert_equal :kanji, parser.char_type(Aozora2Html::Tag::UnEmbedGaiji.new(nil,"foo"))
-    assert_equal :hankaku, parser.char_type(Aozora2Html::Tag::Accent.new(nil,123,"abc"))
-    assert_equal :else, parser.char_type(Aozora2Html::Tag::Okurigana.new(nil,"abc"))
-    assert_equal :else, parser.char_type(Aozora2Html::Tag::InlineKeigakomi.new(nil,"abc"))
-    assert_equal :katakana, parser.char_type(Aozora2Html::Tag::DakutenKatakana.new(nil,1,"abc"))
-
-    assert_equal :hiragana, parser.char_type("あ".encode("shift_jis"))
-    assert_equal :hiragana, parser.char_type("っ".encode("shift_jis"))
-    assert_equal :katakana, parser.char_type("ヴ".encode("shift_jis"))
-    assert_equal :katakana, parser.char_type("ー".encode("shift_jis"))
-    assert_equal :zenkaku, parser.char_type("Ａ".encode("shift_jis"))
-    assert_equal :zenkaku, parser.char_type("ｗ".encode("shift_jis"))
-    assert_equal :hankaku, parser.char_type("z".encode("shift_jis"))
-    assert_equal :kanji, parser.char_type("漢".encode("shift_jis"))
-    assert_equal :hankaku_terminate, parser.char_type("!".encode("shift_jis"))
-    assert_equal :else, parser.char_type("？".encode("shift_jis"))
-    assert_equal :else, parser.char_type("Å".encode("shift_jis"))
+    assert_equal :hiragana, @parser.char_type("あ".encode("shift_jis"))
+    assert_equal :hiragana, @parser.char_type("っ".encode("shift_jis"))
+    assert_equal :katakana, @parser.char_type("ヴ".encode("shift_jis"))
+    assert_equal :katakana, @parser.char_type("ー".encode("shift_jis"))
+    assert_equal :zenkaku, @parser.char_type("Ａ".encode("shift_jis"))
+    assert_equal :zenkaku, @parser.char_type("ｗ".encode("shift_jis"))
+    assert_equal :hankaku, @parser.char_type("z".encode("shift_jis"))
+    assert_equal :kanji, @parser.char_type("漢".encode("shift_jis"))
+    assert_equal :hankaku_terminate, @parser.char_type("!".encode("shift_jis"))
+    assert_equal :else, @parser.char_type("？".encode("shift_jis"))
+    assert_equal :else, @parser.char_type("Å".encode("shift_jis"))
   end
 
   def test_read_char
@@ -177,40 +176,45 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_convert_japanese_number
-    input = StringIO.new("abc\r\n")
-    output = StringIO.new
-    parser = Aozora2Html.new(input, output)
-
     assert_equal "3字下げ",
-                 parser.convert_japanese_number("三字下げ".encode("shift_jis")).encode("utf-8")
+                 @parser.convert_japanese_number("三字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "10字下げ",
-                 parser.convert_japanese_number("十字下げ".encode("shift_jis")).encode("utf-8")
+                 @parser.convert_japanese_number("十字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "12字下げ",
-                 parser.convert_japanese_number("十二字下げ".encode("shift_jis")).encode("utf-8")
+                 @parser.convert_japanese_number("十二字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "20字下げ",
-                 parser.convert_japanese_number("二十字下げ".encode("shift_jis")).encode("utf-8")
+                 @parser.convert_japanese_number("二十字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "20字下げ",
-                 parser.convert_japanese_number("二〇字下げ".encode("shift_jis")).encode("utf-8")
+                 @parser.convert_japanese_number("二〇字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "23字下げ",
-                 parser.convert_japanese_number("二十三字下げ".encode("shift_jis")).encode("utf-8")
+                 @parser.convert_japanese_number("二十三字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "2字下げ",
-                 parser.convert_japanese_number("２字下げ".encode("shift_jis")).encode("utf-8")
+                 @parser.convert_japanese_number("２字下げ".encode("shift_jis")).encode("utf-8")
 
   end
 
   def test_kuten2png
-    input = StringIO.new("abc\r\n")
-    output = StringIO.new
-    parser = Aozora2Html.new(input, output)
-
     assert_equal %q|<img src="../../../gaiji/1-84/1-84-77.png" alt="※(「てへん＋劣」、第3水準1-84-77)" class="gaiji" />|,
-                 parser.kuten2png("＃「てへん＋劣」、第3水準1-84-77".encode("shift_jis")).to_s.encode("utf-8")
+                 @parser.kuten2png("＃「てへん＋劣」、第3水準1-84-77".encode("shift_jis")).to_s.encode("utf-8")
     assert_equal %q|<img src="../../../gaiji/1-02/1-02-22.png" alt="※(二の字点、1-2-22)" class="gaiji" />|,
-                 parser.kuten2png("＃二の字点、1-2-22".encode("shift_jis")).to_s.encode("utf-8")
+                 @parser.kuten2png("＃二の字点、1-2-22".encode("shift_jis")).to_s.encode("utf-8")
     assert_equal %q|<img src="../../../gaiji/1-06/1-06-57.png" alt="※(ファイナルシグマ、1-6-57)" class="gaiji" />|,
-                 parser.kuten2png("＃ファイナルシグマ、1-6-57".encode("shift_jis")).to_s.encode("utf-8")
+                 @parser.kuten2png("＃ファイナルシグマ、1-6-57".encode("shift_jis")).to_s.encode("utf-8")
     assert_equal %q|＃「口＋世」、151-23|,
-                 parser.kuten2png("＃「口＋世」、151-23".encode("shift_jis")).to_s.encode("utf-8")
+                 @parser.kuten2png("＃「口＋世」、151-23".encode("shift_jis")).to_s.encode("utf-8")
+  end
+
+  def test_terpri?
+    assert_equal true, @parser.terpri?([])
+    assert_equal true, @parser.terpri?([""])
+    assert_equal true, @parser.terpri?(["a"])
+    tag = Aozora2Html::Tag::MultilineMidashi.new(@parser,"小".encode("shift_jis"),:normal)
+    assert_equal false, @parser.terpri?([tag])
+    assert_equal false, @parser.terpri?([tag,tag])
+    assert_equal false, @parser.terpri?([tag,"",""])
+    assert_equal false, @parser.terpri?(["",tag,""])
+    assert_equal true, @parser.terpri?([tag,"a"])
+    assert_equal true, @parser.terpri?(["a",tag])
   end
 
 

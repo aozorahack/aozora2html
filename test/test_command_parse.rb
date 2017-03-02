@@ -100,7 +100,6 @@ class CommandParseTest < Test::Unit::TestCase
         parser.parse
       end
     end
-
     output.string.encode("utf-8")
   end
 end
