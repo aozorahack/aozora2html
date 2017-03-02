@@ -9,6 +9,7 @@ require "aozora2html/tag_parser"
 require "aozora2html/accent_parser"
 require "aozora2html/style_stack"
 require "aozora2html/header"
+require "aozora2html/ruby_buffer"
 
 $gaiji_dir = "../../../gaiji/"
 
@@ -198,7 +199,7 @@ class Aozora2Html
       @out = File.open(output,"w")
     end
     @buffer = []
-    @ruby_buf = [""]
+    @ruby_buf = RubyBuffer.new
     @section = :head  ## 現在処理中のセクション(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
     @header = Aozora2Html::Header.new()  ## ヘッダ行の配列
     @style_stack = StyleStack.new  ##スタイルのスタック
@@ -209,8 +210,6 @@ class Aozora2Html
     @midashi_id = 0  ## 見出しのカウンタ、見出しの種類によって増分が異なる
     @terprip = true  ## 改行制御用 (terpriはLisp由来?)
     @endchar = :eof  ## 解析終了文字、AccentParserやTagParserでは異なる
-    @ruby_buf_protected = nil
-    @ruby_buf_type = nil
   end
 
   def scount
@@ -491,8 +490,8 @@ class Aozora2Html
     if char == "\r\n"
       general_output
     elsif char == "｜"
-      ruby_buf_dump
-      @ruby_buf_protected = true
+      @ruby_buf.dump(@buffer)
+      @ruby_buf.protected = true
     elsif char == @endchar
       # suddenly finished the file
       puts "警告(#{scount}行目):予期せぬファイル終端"
@@ -511,22 +510,6 @@ class Aozora2Html
       ensure_close
       @out.print "</div>\r\n<div class=\"bibliographical_information\">\r\n<hr />\r\n<br />\r\n"
     end
-  end
-
-  # buffer management
-  def ruby_buf_dump
-    if @ruby_buf_protected
-      @ruby_buf.unshift("｜")
-      @ruby_buf_protected = nil
-    end
-    top = @ruby_buf[0]
-    if top.is_a?(String) and @buffer.last.is_a?(String)
-      @buffer.last.concat(top)
-      @buffer = @buffer + @ruby_buf[1,@ruby_buf.length]
-    else
-      @buffer = @buffer + @ruby_buf
-    end
-    @ruby_buf = [""]
   end
 
   def push_chars(obj)
@@ -548,24 +531,24 @@ class Aozora2Html
 
   def push_char(char)
    ctype = char_type(char)
-    if ctype == :hankaku_terminate and @ruby_buf_type == :hankaku
-      if @ruby_buf.last.is_a?(String)
-        @ruby_buf.last.concat(char)
+    if ctype == :hankaku_terminate and @ruby_buf.char_type == :hankaku
+      if @ruby_buf.last_is_string?
+        @ruby_buf.last_concat(char)
       else
         @ruby_buf.push(char)
       end
-      @ruby_buf_type = :else
-    elsif @ruby_buf_protected or (ctype != :else and ctype == @ruby_buf_type)
-      if char.is_a?(String) and @ruby_buf.last.is_a?(String)
-        @ruby_buf.last.concat(char)
+      @ruby_buf.char_type = :else
+    elsif @ruby_buf.protected or (ctype != :else and ctype == @ruby_buf.char_type)
+      if char.is_a?(String) and @ruby_buf.last_is_string?
+        @ruby_buf.last_concat(char)
       else
         @ruby_buf.push(char)
         @ruby_buf.push("")
       end
     else
-      ruby_buf_dump
-      @ruby_buf_type = ctype
-      @ruby_buf = [char]
+      @ruby_buf.dump(@buffer)
+      @ruby_buf.clear(char)
+      @ruby_buf.char_type = ctype
     end
   end
 
@@ -603,9 +586,10 @@ class Aozora2Html
       @noprint = false
       return
     end
-    ruby_buf_dump
+    @ruby_buf.dump(@buffer)
     buf = @buffer
-    @ruby_buf = [""]; @buffer = []
+    @ruby_buf.clear
+    @buffer = []
     tail = []
 
     indent_type = buf_is_blank?(buf)
@@ -659,8 +643,8 @@ class Aozora2Html
     if string.length == 0
       return false
     end
-    searching_buf = if @ruby_buf.length != 0
-                      @ruby_buf
+    searching_buf = if @ruby_buf.present?
+                      @ruby_buf.to_a
                     else
                       @buffer
                     end
@@ -713,11 +697,11 @@ class Aozora2Html
   # 発見した前方参照を元に戻す
   def recovery_front_reference(reference)
     reference.each{|elt|
-#      if @ruby_buf_protected
-      if @ruby_buf.length > 0
-        if @ruby_buf.last.is_a?(String)
+#      if @ruby_buf.protected
+      if @ruby_buf.present?
+        if @ruby_buf.last_is_string?
           if elt.is_a?(String)
-            @ruby_buf.last.concat(elt)
+            @ruby_buf.last_concat(elt)
           else
             @ruby_buf.push(elt)
           end
@@ -725,7 +709,7 @@ class Aozora2Html
           @ruby_buf.push(elt)
         end
       else
-        if @buffer.last.is_a?(String)
+        if @buffer.last_is_string?
           if elt.is_a?(String)
             @buffer.last.concat(elt)
           else
@@ -1515,7 +1499,7 @@ class Aozora2Html
 
   # ｜が来たときは文字種を無視してruby_bufを守らなきゃいけない
   def apply_ruby
-    @ruby_buf_protected = nil
+    @ruby_buf.protected = nil
     ruby, _raw = read_to_nest("》")
     if ruby.length == 0
       # escaped ruby character
@@ -1533,7 +1517,7 @@ class Aozora2Html
       end}
     @buffer.push(Aozora2Html::Tag::Ruby.new(self, ans, ruby))
     @buffer = @buffer + notes
-    @ruby_buf = [""]
+    @ruby_buf.clear
     nil
   end
 
@@ -1558,8 +1542,8 @@ class Aozora2Html
     if char == "\r\n"
       tail_output
     elsif char == "｜"
-      ruby_buf_dump
-      @ruby_buf_protected = true
+      @ruby_buf.dump(@buffer)
+      @ruby_buf.protected = true
     elsif char != nil
       if check
         illegal_char_check(char, scount)
@@ -1569,9 +1553,10 @@ class Aozora2Html
   end
 
   def tail_output
-    ruby_buf_dump
+    @ruby_buf.dump(@buffer)
     string = @buffer.join
-    @ruby_buf = [""]; @buffer = []
+    @ruby_buf.clear
+    @buffer = []
     string.gsub!("info@aozora.gr.jp",'<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
     string.gsub!("青空文庫（http://www.aozora.gr.jp/）"){"<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>"}
     if string.match(/(<br \/>$|<\/p>$|<\/h\d>$|<div.*>$|<\/div>$|^<[^>]*>$)/)

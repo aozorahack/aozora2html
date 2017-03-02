@@ -1,4 +1,5 @@
 # encoding: utf-8
+require 'aozora2html/ruby_buffer'
 class Aozora2Html
 
   # accent特殊文字を生かすための再帰呼び出し
@@ -10,18 +11,16 @@ class Aozora2Html
       end
       @stream = input
       @buffer = []
-      @ruby_buf = [""]
+      @ruby_buf = Aozora2Html::RubyBuffer.new
       @chuuki_table = chuuki
       @images = image # globalな環境を記録するアイテムは共有する必要あり
       @endchar = endchar # 改行は越えられない <br />を出力していられない
       @closed = nil # 改行での強制撤退チェックフラグ
       @encount_accent = nil
-      @ruby_buf_protected = nil
-      @ruby_buf_type = nil
     end
 
     def general_output # 出力は配列で返す
-      ruby_buf_dump
+      @ruby_buf.dump(@buffer)
       if not(@encount_accent)
         @buffer.unshift("〔".encode("shift_jis"))
       end
@@ -72,8 +71,8 @@ class Aozora2Html
         @closed = true
         throw :terminate
       elsif first == "｜".encode("shift_jis")
-        ruby_buf_dump
-        @ruby_buf_protected = true
+        @ruby_buf.dump(@buffer)
+        @ruby_buf.protected = true
       elsif first != "" and first != nil
         illegal_char_check(first, scount)
         push_chars(first)
