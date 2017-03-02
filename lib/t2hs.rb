@@ -759,19 +759,14 @@ class Aozora2Html
 
   def apply_warichu(command)
     if command.match(/終わり/)
-      check = @stream.peek_char(0)
-      if check == "）"
-        push_chars('</span>')
-      else
+      if @stream.peek_char(0) != "）"
         push_chars('）')
-        push_chars('</span>')
       end
+      push_chars('</span>')
     else
       check = @ruby_buf.last
-      if check.is_a?(String) and check.match(/（$/)
-        push_chars('<span class="warichu">')
-      else
-        push_chars('<span class="warichu">')
+      push_chars('<span class="warichu">')
+      if !check.is_a?(String) or !check.match(/（$/)
         push_chars('（')
       end
     end
