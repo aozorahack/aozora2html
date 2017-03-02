@@ -616,7 +616,7 @@ class Aozora2Html
     if (match and not(desc.match(/”ñ0213ŠOš/)) and not(desc.match(/¦.*¦/)))
       @chuuki_table[:newjis] = true
       codes = match[0].split("-")
-      folder = sprintf("%1d-%02d",*codes)
+      folder = sprintf("%1d-%02d", codes[0], codes[1])
       code = sprintf("%1d-%02d-%02d",*codes)
       Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!("”",""))
     else

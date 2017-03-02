@@ -2,7 +2,7 @@
 require 'test_helper'
 require 'aozora2html'
 
-class RubyParseTest < Test::Unit::TestCase
+class CommandParseTest < Test::Unit::TestCase
   def setup
   end
 
@@ -80,6 +80,13 @@ class RubyParseTest < Test::Unit::TestCase
     src = "Which, teaching us, hath this exordium: Nothing from nothing ever yet was born.［＃「Nothing from nothing ever yet was born.」は斜体］\r\n"
     parsed = parse_text(src)
     expected = %Q|Which, teaching us, hath this exordium: <span class="shatai">Nothing from nothing ever yet was born.</span><br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_warichu
+    src = "［＃割り注］価は四百円であった。［＃割り注終わり］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|<span class="warichu">（価は四百円であった。）</span><br />\r\n|
     assert_equal expected, parsed
   end
 
