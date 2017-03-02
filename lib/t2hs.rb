@@ -188,6 +188,13 @@ class Aozora2Html
     :sho => "¬‚³‚È•¶š",
   }
 
+  DAKUTEN_KATAKANA_TABLE = {
+    "2" => "ƒJ",
+    "3" => "ƒJ",
+    "4" => "ƒ‘J",
+    "5" => "ƒ’J",
+  }
+
   def initialize(input, output)
     if input.respond_to?(:read) ## readable IO?
       @stream = Jstream.new(input)
@@ -1463,17 +1470,7 @@ class Aozora2Html
 
   def apply_dakuten_katakana(command)
     n = command.match(/1-7-8([2345])/).to_a[1]
-    frontref =
-      case n
-        when "2"
-        "ƒJ"
-        when "3"
-        "ƒJ"
-        when "4"
-        "ƒ‘J"
-        when "5"
-        "ƒ’J"
-      end
+    frontref = DAKUTEN_KATAKANA_TABLE[n]
     if found = search_front_reference(frontref)
       Aozora2Html::Tag::DakutenKatakana.new(self, n,found.join)
     else
