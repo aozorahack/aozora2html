@@ -9,19 +9,6 @@ class Aozora2Html
       @header.push(line)
     end
 
-    def html_title_push(string, hash, attr)
-      found = hash[attr]
-      if found
-        if found != ""
-          string + " " + found
-        else
-          found
-        end
-      else
-        string
-      end
-    end
-
     def out_header_info(hash, attr, true_name = nil)
       found = hash[attr]
       if found
@@ -71,8 +58,15 @@ class Aozora2Html
       type
     end
 
+    def build_title(header_info)
+      buf = [:author, :translator, :editor, :henyaku,
+             :title, :original_title,
+             :subtitle, :original_subtitle].map{|item| header_info[item]}.compact
+      buf_str = buf.join(" ")
+      "<title>#{buf_str}</title>"
+    end
 
-    def to_html
+    def build_header_info
       header_info = {:title => @header[0]}
       case @header.length
       when 2
@@ -113,17 +107,14 @@ class Aozora2Html
           raise Aozora2Html::Error.new("parser encounted author twice")
         end
       end
+      header_info
+    end
+
+    def to_html
+      header_info = build_header_info()
 
       # <title> 行を構築
-      html_title = "<title>#{header_info[:author]}"
-      html_title = html_title_push(html_title, header_info, :translator)
-      html_title = html_title_push(html_title, header_info, :editor)
-      html_title = html_title_push(html_title, header_info, :henyaku)
-      html_title = html_title_push(html_title, header_info, :title)
-      html_title = html_title_push(html_title, header_info, :original_title)
-      html_title = html_title_push(html_title, header_info, :subtitle)
-      html_title = html_title_push(html_title, header_info, :original_subtitle)
-      html_title += "</title>"
+      html_title = build_title(header_info)
 
       # 出力
       out_buf = []
