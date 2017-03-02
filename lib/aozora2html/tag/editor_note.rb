@@ -3,7 +3,7 @@ class Aozora2Html
   class Tag
     class EditorNote < Aozora2Html::Tag
       include Aozora2Html::Tag::Inline
-      def initialize (parser, desc)
+      def initialize(parser, desc)
         @desc = desc
         super
       end

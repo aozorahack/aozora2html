@@ -4,7 +4,7 @@ class Aozora2Html
   # accent特殊文字を生かすための再帰呼び出し
   class AccentParser < Aozora2Html
 
-    def initialize (input, endchar, chuuki, image)
+    def initialize(input, endchar, chuuki, image)
       if not(input.is_a?(Jstream))
         raise ArgumentError, "tag_parser must supply Jstream as input"
       end

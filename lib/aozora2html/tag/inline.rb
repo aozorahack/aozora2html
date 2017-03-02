@@ -4,7 +4,7 @@
 class Aozora2Html
   class Tag
     module Inline
-      def initialize (*args)
+      def initialize(*args)
         true
       end
     end

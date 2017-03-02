@@ -3,7 +3,7 @@ class Aozora2Html
     class MultilineMidashi < Aozora2Html::Tag
       include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
 
-      def initialize (parser,size,type)
+      def initialize(parser,size,type)
         super
         @tag = if size.match(SIZE_SMALL)
                  @id = parser.new_midashi_id(1)

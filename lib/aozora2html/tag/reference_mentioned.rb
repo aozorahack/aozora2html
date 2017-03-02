@@ -6,13 +6,13 @@ class Aozora2Html
       include Aozora2Html::Tag::Inline
       attr_accessor :target
 
-      def initialize (*args)
+      def initialize(*args)
         if defined?(@target) && block_element?(@target)
           syntax_error
         end
       end
 
-      def block_element? (elt)
+      def block_element?(elt)
         if elt.is_a?(Array)
           elt.each{|x|
             if block_element?(x)

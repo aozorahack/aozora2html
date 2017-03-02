@@ -1,7 +1,7 @@
 # 青空記法の入れ子に対応（？）
 class Aozora2Html
   class TagParser < Aozora2Html
-    def initialize (input, endchar, chuuki, image)
+    def initialize(input, endchar, chuuki, image)
       if not(input.is_a?(Jstream))
         raise ArgumentError, "tag_parser must supply Jstream as input"
       end
@@ -42,7 +42,7 @@ class Aozora2Html
       [ans,@raw]
     end
 
-    def process ()
+    def process()
       catch(:terminate){
         loop{
           parse

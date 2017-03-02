@@ -2,7 +2,7 @@
 class Aozora2Html
   class Tag
     class UnEmbedGaiji < Aozora2Html::Tag::Gaiji
-      def initialize (parser, desc)
+      def initialize(parser, desc)
         @desc = desc
         @escaped = false
         super

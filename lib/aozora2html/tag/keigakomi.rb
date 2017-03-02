@@ -1,7 +1,7 @@
 class Aozora2Html::Tag::Keigakomi < Aozora2Html::Tag
   include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
 
-  def initialize (parser, size = 1)
+  def initialize(parser, size = 1)
     @size = size
     super
   end
