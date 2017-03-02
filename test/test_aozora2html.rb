@@ -217,7 +217,6 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal true, @parser.terpri?(["a",tag])
   end
 
-
   def teardown
   end
 end

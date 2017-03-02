@@ -444,6 +444,8 @@ class Aozora2Html
     true
   end
 
+  # 行末で<br />を出力するべきかどうかの判別用
+  #
   def terpri?(buf)
     flag = true
     buf.each{|x|
@@ -458,6 +460,10 @@ class Aozora2Html
     flag
   end
 
+  # 読み込んだ行の出力を行う
+  #
+  # parserが改行文字を読み込んだら呼ばれる
+  #
   def general_output
     if @style_stack.last
       raise Aozora2Html::Error.new("#{@style_stack.last_command}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください")
