@@ -70,7 +70,7 @@ class Aozora2Html
       elsif first == "〕".encode("shift_jis")
         @closed = true
         throw :terminate
-      elsif first == "｜".encode("shift_jis")
+      elsif first == RUBY_PREFIX
         @ruby_buf.dump(@buffer)
         @ruby_buf.protected = true
       elsif first != "" and first != nil

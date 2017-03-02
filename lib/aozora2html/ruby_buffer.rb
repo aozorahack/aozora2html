@@ -57,7 +57,7 @@ class Aozora2Html
   # buffer management
     def dump(buffer)
       if @protected
-        @ruby_buf.unshift("｜")
+        @ruby_buf.unshift(RUBY_PREFIX)
         @protected = nil
       end
       top = @ruby_buf[0]

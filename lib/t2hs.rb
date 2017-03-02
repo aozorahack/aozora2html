@@ -30,6 +30,7 @@ class Aozora2Html
   PAT_EDITOR = /[çZí˘|ï“|ï“èW|ï“èWçZí˘|çZí˘ï“èW]$/
   PAT_HENYAKU = /ï“ñÛ$/
   PAT_TRANSLATOR = /ñÛ$/
+  RUBY_PREFIX = "Åb"
 
   # KUNOJI = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
@@ -392,7 +393,7 @@ class Aozora2Html
       @section = :head_end
       @out.print @header.to_html
     else
-      string.gsub!(/Åb/,"")
+      string.gsub!(RUBY_PREFIX,"")
       string.gsub!(/Ås.*?Åt/,"")
       @header.push(string)
     end
@@ -489,7 +490,7 @@ class Aozora2Html
 
     if char == "\r\n"
       general_output
-    elsif char == "Åb"
+    elsif char == RUBY_PREFIX
       @ruby_buf.dump(@buffer)
       @ruby_buf.protected = true
     elsif char == @endchar
@@ -1541,7 +1542,7 @@ class Aozora2Html
     end
     if char == "\r\n"
       tail_output
-    elsif char == "Åb"
+    elsif char == RUBY_PREFIX
       @ruby_buf.dump(@buffer)
       @ruby_buf.protected = true
     elsif char != nil
