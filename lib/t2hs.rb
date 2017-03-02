@@ -365,16 +365,19 @@ class Aozora2Html
       char = apply_ruby
     end
 
-    if char == "\r\n"
+    case char
+    when "\r\n"
       general_output
-    elsif char == RUBY_PREFIX
+    when RUBY_PREFIX
       @ruby_buf.dump(@buffer)
       @ruby_buf.protected = true
-    elsif char == @endchar
+    when @endchar
       # suddenly finished the file
       puts "警告(#{scount}行目):予期せぬファイル終端"
       throw :terminate
-    elsif char != nil
+    when nil
+      # noop
+    else
       if check
         illegal_char_check(char, scount)
       end
@@ -1402,12 +1405,16 @@ class Aozora2Html
     when "《"
       char = apply_ruby
     end
-    if char == "\r\n"
+
+    case char
+    when "\r\n"
       tail_output
-    elsif char == RUBY_PREFIX
+    when RUBY_PREFIX
       @ruby_buf.dump(@buffer)
       @ruby_buf.protected = true
-    elsif char != nil
+    when nil
+      # noop
+    else
       if check
         illegal_char_check(char, scount)
       end
