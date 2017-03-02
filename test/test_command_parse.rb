@@ -41,6 +41,48 @@ class RubyParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+  def test_parse_command6
+    src = "責［＃「責」に白ゴマ傍点］空文庫\r\n"
+    parsed = parse_text(src)
+    expected = %Q|<em class="white_sesame_dot">責</em>空文庫<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command7
+    src = "［＃丸傍点］青空文庫で読書しよう［＃丸傍点終わり］。\r\n"
+    parsed = parse_text(src)
+    expected = %Q|<em class="black_circle">青空文庫で読書しよう</em>。<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command8
+    src = "この形は傍線［＃「傍線」に傍線］と書いてください。\r\n"
+    parsed = parse_text(src)
+    expected = %Q|この形は<em class="underline_solid">傍線</em>と書いてください。<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command9
+    src = "［＃左に鎖線］青空文庫で読書しよう［＃左に鎖線終わり］。\r\n"
+    parsed = parse_text(src)
+    expected = %Q|<em class="overline_dotted">青空文庫で読書しよう</em>。<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command10
+    src = "「クリス、宇宙航行委員会が選考［＃「選考」は太字］するんだ。きみは志願できない。待つ［＃「待つ」は太字］んだ」\r\n"
+    parsed = parse_text(src)
+    expected = %Q|「クリス、宇宙航行委員会が<span class="futoji">選考</span>するんだ。きみは志願できない。<span class="futoji">待つ</span>んだ」<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command11
+    src = "Which, teaching us, hath this exordium: Nothing from nothing ever yet was born.［＃「Nothing from nothing ever yet was born.」は斜体］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|Which, teaching us, hath this exordium: <span class="shatai">Nothing from nothing ever yet was born.</span><br />\r\n|
+    assert_equal expected, parsed
+  end
+
   def parse_text(input_text)
     input = StringIO.new(input_text.encode("shift_jis"))
     output = StringIO.new
