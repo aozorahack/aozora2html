@@ -393,6 +393,9 @@ class Aozora2Html
     end
   end
 
+  # Original Aozora2Html#push_chars does not convert "'" into '&#39;'; it's old behaivor
+  # of CGI.escapeHTML().
+  #
   def push_chars(obj)
     if obj.is_a?(Array)
       obj.each{|x|
