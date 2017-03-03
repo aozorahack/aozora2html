@@ -493,22 +493,17 @@ class Aozora2Html
     buf.each{|s|
       if s.is_a?(Aozora2Html::Tag::OnelineIndent)
         tail.unshift(s.close_tag)
-      elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
+      elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
         # è¡ÇµÇƒÇ†Ç¡ÇΩÅ¶ÇïúäàÇ≥ÇπÇƒ
         @out.print "Å¶"
-      elsif s.is_a?(Aozora2Html::Tag::MultilineChitsuki)
-      elsif s.is_a?(String) and s.match("</em")
       end
       @out.print s.to_s
     }
+
     if @indent_stack.last.is_a?(String)
       # Ç‘ÇÁâ∫Ç∞indent
       # tail always active
-      if tail.last
-        tail.each{|s|
-          @out.print s.to_s
-        }
-      end
+      @out.print tail.map{|s| s.to_s}.join("")
       if indent_type == :inline
         @out.print "\r\n"
       elsif indent_type and terprip
@@ -516,14 +511,10 @@ class Aozora2Html
       else
         @out.print "</div>\r\n"
       end
-    elsif tail.last
-      tail.each{|s|
-        @out.print s.to_s
-      }
-      @out.print "\r\n"
-    elsif terprip
+    elsif tail.empty? and terprip
       @out.print "<br />\r\n"
     else
+      @out.print tail.map{|s| s.to_s}.join("")
       @out.print "\r\n"
     end
   end
@@ -599,7 +590,7 @@ class Aozora2Html
           @ruby_buf.push(elt)
         end
       else
-        if @buffer.last_is_string?
+        if @buffer.last.is_a?(String)
           if elt.is_a?(String)
             @buffer.last.concat(elt)
           else
@@ -1055,8 +1046,9 @@ class Aozora2Html
                  :dai
                end
       push_block_tag(Aozora2Html::Tag::FontSize.new(self,
-                                       convert_japanese_number(nest).to_i,
-                                       daisho),match)
+                                                    convert_japanese_number(nest).to_i,
+                                                    daisho),
+                     match)
       @indent_stack.push(daisho)
     end
 
