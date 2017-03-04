@@ -821,14 +821,19 @@ class Aozora2Html
   end
 
   def new_midashi_id(size)
-    if size.match(SIZE_SMALL)
-      inc = 1
-    elsif size.match(SIZE_MIDDLE)
-      inc = 10
-    elsif size.match(SIZE_LARGE)
-      inc = 100
+    inc = 1
+    if size.kind_of?(String)
+      if size.match(SIZE_SMALL)
+        inc = 1
+      elsif size.match(SIZE_MIDDLE)
+        inc = 10
+      elsif size.match(SIZE_LARGE)
+        inc = 100
+      else
+        raise Aozora2Html::Error, I18n.t(:undefined_header)
+      end
     else
-      raise Aozora2Html::Error, I18n.t(:undefined_header)
+      inc = size
     end
     @midashi_id += inc
   end
@@ -930,7 +935,7 @@ class Aozora2Html
                    :dai
                  end
         html_class = daisho.to_s + times.to_s
-        size = create_font_size(times, daisho)
+        size = Utils.create_font_size(times, daisho)
         push_chars("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
       else
         ## Decoration ##
@@ -1468,10 +1473,10 @@ class Aozora2Html
     elsif @chuuki_table[:dakutenkunoji]
       @out.print "\t<li>「濁点付きくの字点」は「#{KU}#{DAKUTEN}#{NOJI}」で表しました。</li>\r\n"
     end
-    if @chuuki_table[:newjis]
+    if @chuuki_table[:newjis] && !Aozora2Html::Tag::EmbedGaiji.use_jisx0213
       @out.print "\t<li>「くの字点」をのぞくJIS X 0213にある文字は、画像化して埋め込みました。</li>\r\n"
     end
-    if @chuuki_table[:accent]
+    if @chuuki_table[:accent] && !Aozora2Html::Tag::Accent.use_jisx0213
       @out.print "\t<li>アクセント符号付きラテン文字は、画像化して埋め込みました。</li>\r\n"
     end
 #    if @chuuki_table[:em]
