@@ -687,9 +687,9 @@ class Aozora2Html
         apply_burasage(command)
 
       elsif command.match(/^Ç±Ç±Ç©ÇÁ/)
-        exec_block_start_command(command.sub(/^Ç±Ç±Ç©ÇÁ/,""))
+        exec_block_start_command(command)
       elsif command.match(/^Ç±Ç±Ç≈/)
-        exec_block_end_command(command.sub(/^Ç±Ç±Ç≈/,""))
+        exec_block_end_command(command)
 
       elsif command.match(/äÑÇËíç/)
         apply_warichu(command)
@@ -993,6 +993,8 @@ class Aozora2Html
   end
 
   def exec_block_start_command(command)
+    original_command = command.dup
+    command.sub!(/^Ç±Ç±Ç©ÇÁ/, "")
     match = ""
     if command.match(/éöâ∫Ç∞/)
       push_block_tag(apply_jisage(command),match)
@@ -1065,7 +1067,7 @@ class Aozora2Html
     end
 
     if match == ""
-      apply_rest_notes("Ç±Ç±Ç©ÇÁ" + command)
+      apply_rest_notes(original_command)
     else
       @tag_stack.push(match)
       nil
@@ -1101,6 +1103,8 @@ class Aozora2Html
   end
 
   def exec_block_end_command(command)
+    original_command = command.dup
+    command.sub!(/^Ç±Ç±Ç≈/, "")
     match = false
     mode = detect_command_mode(command)
     if mode
@@ -1109,12 +1113,12 @@ class Aozora2Html
     end
 
     if match
-      if not(match.is_a?(String))
+      if !match.is_a?(String)
         @terprip = false
       end
       nil
     else
-      apply_rest_notes("Ç±Ç±Ç≈" + command)
+      apply_rest_notes(original_command)
     end
   end
 
