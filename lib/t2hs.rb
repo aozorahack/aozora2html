@@ -783,8 +783,10 @@ class Aozora2Html
       push_chars('</span>')
     else
       check = @ruby_buf.last
-      push_chars('<span class="warichu">')
-      if !check.is_a?(String) or !check.match(/Åi$/)
+      if check.is_a?(String) and check.match(/Åi$/)
+        push_chars('<span class="warichu">')
+      else
+        push_chars('<span class="warichu">')
         push_chars('Åi')
       end
     end
