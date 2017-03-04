@@ -31,22 +31,22 @@ class Aozora2Html
     def general_output # 出力は[String,String]返しで！
       @ruby_buf.dump(@buffer)
       ans=""
-      @buffer.each{|s|
-        if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and not(s.escaped?)
+      @buffer.each do |s|
+        if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
           # 消してあった※を復活させて
           ans.concat(GAIJI_MARK)
         end
         ans.concat(s.to_s)
-      }
+      end
       [ans,@raw]
     end
 
     def process()
-      catch(:terminate){
-        loop{
+      catch(:terminate) do
+        loop do
           parse
-        }
-      }
+        end
+      end
       general_output
     end
   end

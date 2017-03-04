@@ -21,10 +21,10 @@ class Aozora2Html
 
     def general_output # 出力は配列で返す
       @ruby_buf.dump(@buffer)
-      if not(@encount_accent)
+      if !@encount_accent
         @buffer.unshift("〔".encode("shift_jis"))
       end
-      if @closed and not(@encount_accent)
+      if @closed and !@encount_accent
         @buffer.push("〕".encode("shift_jis"))
       elsif not(@closed)
         @buffer.push("<br />\r\n")

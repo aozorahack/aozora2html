@@ -1386,14 +1386,15 @@ class Aozora2Html
     end
     ans = ""
     notes = []
-    @ruby_buf.each{|token|
+    @ruby_buf.each do |token|
       if token.is_a?(Aozora2Html::Tag::UnEmbedGaiji)
         ans.concat("Å¶")
         token.escape!
         notes.push(token)
       else
         ans.concat(token.to_s)
-      end}
+      end
+    end
     @buffer.push(Aozora2Html::Tag::Ruby.new(self, ans, ruby))
     @buffer = @buffer + notes
     @ruby_buf.clear

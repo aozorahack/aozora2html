@@ -14,11 +14,11 @@ class Aozora2Html
 
       def block_element?(elt)
         if elt.is_a?(Array)
-          elt.each{|x|
+          elt.each do |x|
             if block_element?(x)
               return true
             end
-          }
+          end
           nil
         elsif elt.is_a?(String)
           elt.match(/<div/)
