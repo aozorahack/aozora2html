@@ -5,7 +5,7 @@ class Aozora2Html
       def initialize(parser, target, times, daisho)
         @target = target
         @class = daisho.to_s + times.to_s
-        @style = create_font_size(times, daisho)
+        @style = Utils.create_font_size(times, daisho)
         super
       end
 
