@@ -11,6 +11,7 @@ require "aozora2html/style_stack"
 require "aozora2html/header"
 require "aozora2html/ruby_buffer"
 require "aozora2html/yaml_loader"
+require "aozora2html/zip"
 
 $gaiji_dir = "../../../gaiji/"
 
@@ -43,6 +44,7 @@ class Aozora2Html
 
   # [class, tag]
   COMMAND_TABLE = loader.load("../yml/command_table.yml")
+  JIS2UCS = loader.load("../yml/jis2ucs.yml")
 
   INDENT_TYPE = {
     :jisage => "Žš‰º‚°",
