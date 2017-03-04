@@ -90,11 +90,90 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+  def test_parse_command_warichu2
+    src = "飽海郡南平田村大字飛鳥［＃割り注］東は字大林四三七［＃改行］西は字神内一一一ノ一［＃割り注終わり］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|飽海郡南平田村大字飛鳥<span class="warichu">（東は字大林四三七<span class="notes">［＃改行］</span>西は字神内一一一ノ一）</span><br />\r\n|
+    assert_equal expected, parsed
+  end
+
   def test_parse_command_unicode
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "※［＃「衄のへん＋卩」、U+5379、287-2］\r\n"
     parsed = parse_text(src)
     expected = "&#x5379;<br />\r\n"
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei1
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "吹喋［＃「喋」に「ママ」の注記］\r\n"
+    parsed = parse_text(src)
+    expected = "吹<ruby><rb>喋</rb><rp>（</rp><rt>ママ</rt><rp>）</rp></ruby><br />\r\n"
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei2
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "紋附だとか［＃「紋附だとか」は底本では「絞附だとか」］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|紋附だとか<span class="notes">［＃「紋附だとか」は底本では「絞附だとか」］</span><br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei3
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "私は籠《ざる》［＃ルビの「ざる」は底本では「さる」］をさげ\r\n"
+    parsed = parse_text(src)
+    expected = %Q|私は<ruby><rb>籠</rb><rp>（</rp><rt>ざる</rt><rp>）</rp></ruby><span class="notes">［＃ルビの「ざる」は底本では「さる」］</span>をさげ<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei4
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "広場へに［＃「広場へに」はママ］店でもだそう。\r\n"
+    parsed = parse_text(src)
+    expected = %Q|広場へに<span class="notes">［＃「広場へに」はママ］</span>店でもだそう。<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei5
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "お湯《ゆう》［＃ルビの「ゆう」はママ］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|お<ruby><rb>湯</rb><rp>（</rp><rt>ゆう</rt><rp>）</rp></ruby><span class="notes">［＃ルビの「ゆう」はママ］</span><br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_tcy
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "米機Ｂ29［＃「29」は縦中横］の編隊は、\r\n"
+    parsed = parse_text(src)
+    expected = %Q|米機Ｂ<span dir="ltr">29</span>の編隊は、<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_tcy2
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "［＃縦中横］（※［＃ローマ数字1、1-13-21］）［＃縦中横終わり］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|<span dir="ltr">（<img src="../../../gaiji/1-13/1-13-21.png" alt="※(ローマ数字1、1-13-21)" class="gaiji" />）</span><br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_kogaki
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "それ以上である。（５）［＃「（５）」は行右小書き］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|それ以上である。<sup class="superscript">（５）</sup><br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_uetsuki
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "22［＃「2」は上付き小文字］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|2<sup class="superscript">2</sup><br />\r\n|
     assert_equal expected, parsed
   end
 
