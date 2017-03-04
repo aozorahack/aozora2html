@@ -12,6 +12,7 @@ require "aozora2html/header"
 require "aozora2html/ruby_buffer"
 require "aozora2html/yaml_loader"
 require "aozora2html/zip"
+require "aozora2html/utils"
 
 $gaiji_dir = "../../../gaiji/"
 
