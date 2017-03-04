@@ -177,6 +177,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+    def test_parse_command_bouki
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "支部長の顔にさっと血が流れ［＃「血が流れ」に「×」の傍記］た\r\n"
+    parsed = parse_text(src)
+    expected = %Q|支部長の顔にさっと<ruby><rb>血が流れ</rb><rp>（</rp><rt>×&nbsp;×&nbsp;×&nbsp;×</rt><rp>）</rp></ruby>た<br />\r\n|
+    assert_equal expected, parsed
+  end
+
   def parse_text(input_text)
     input = StringIO.new(input_text.encode("shift_jis"))
     output = StringIO.new

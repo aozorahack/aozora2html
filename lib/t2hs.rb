@@ -1160,7 +1160,7 @@ class Aozora2Html
     s = ""
     (times-1).times{
       s += bouki
-      s += "<!>"
+      s += "&nbsp;"
     }
     s + bouki
   end
@@ -1319,7 +1319,7 @@ class Aozora2Html
     elsif command.match(/「(.+?)」の注記/)
       rearrange_ruby_tag(targets,/「(.+?)」の注記/.match(command).to_a[1])
     elsif command.match(/「(.)」の傍記/)
-      rearrange_ruby_tag(targets,multiply( /「(.)」の傍記/.match(command).to_a[1], target.length))
+      rearrange_ruby_tag(targets,multiply( /「(.)」の傍記/.match(command).to_a[1], targets.to_s.length))
     else
       ## direction fix! ##
       filter = lambda{|x| x}
