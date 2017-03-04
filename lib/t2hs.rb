@@ -99,10 +99,14 @@ class Aozora2Html
     @style_stack.empty?
   end
 
+  # 一文字読み込む
   def read_char
     @stream.read_char
   end
 
+  # 指定された終端文字(1文字のStringかCRLF)まで読み込む
+  #
+  #  @param [String] endchar 終端文字
   def read_to(endchar)
     buf = ""
     loop do
@@ -133,6 +137,10 @@ class Aozora2Html
     tmp
   end
 
+  # parseする
+  #
+  # 終了時（終端まで来た場合）にはthrow :terminateで脱出する
+  #
   def process
     catch(:terminate) do
       loop do
@@ -341,6 +349,7 @@ class Aozora2Html
   end
 
   # 本体解析部
+  #
   # 1文字ずつ読み込み、dispatchして@buffer,@ruby_bufへしまう
   # 改行コードに当たったら溜め込んだものをgeneral_outputする
 
@@ -386,6 +395,7 @@ class Aozora2Html
   end
 
   def ending_check
+    # `底本：`でフッタ(:tail)に遷移
     if @stream.peek_char(0) == "本" and @stream.peek_char(1) == "："
       @section = :tail
       ensure_close
@@ -466,6 +476,7 @@ class Aozora2Html
   # 読み込んだ行の出力を行う
   #
   # parserが改行文字を読み込んだら呼ばれる
+  # @ruby_bufと@bufferは初期化する
   #
   def general_output
     if @style_stack.last
@@ -500,6 +511,7 @@ class Aozora2Html
       @out.print s.to_s
     }
 
+    # 最後はCRLFを出力する
     if @indent_stack.last.is_a?(String)
       # ぶら下げindent
       # tail always active
