@@ -90,6 +90,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+  def test_parse_command_unicode
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "※［＃「衄のへん＋卩」、U+5379、287-2］\r\n"
+    parsed = parse_text(src)
+    expected = "&#x5379;<br />\r\n"
+    assert_equal expected, parsed
+  end
+
   def parse_text(input_text)
     input = StringIO.new(input_text.encode("shift_jis"))
     output = StringIO.new
@@ -101,5 +109,10 @@ class CommandParseTest < Test::Unit::TestCase
       end
     end
     output.string.encode("utf-8")
+  end
+
+  def teardown
+    Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = false
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = false
   end
 end

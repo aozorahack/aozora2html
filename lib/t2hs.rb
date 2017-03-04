@@ -661,9 +661,7 @@ class Aozora2Html
         try_emb
       elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
         unicode_num = $1
-        ch = Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command)
-        ch.unicode = unicode_num
-        ch
+        Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num)
       else
         # Unemb
         escape_gaiji(command)
@@ -1449,6 +1447,7 @@ class Aozora2Html
     end
   end
 
+  # `●表記について`で使用した注記等を出力する
   def hyoki
     # <br /> times fix
     @out.print "<br />\r\n</div>\r\n<div class=\"notation_notes\">\r\n<hr />\r\n<br />\r\n●表記について<br />\r\n<ul>\r\n"

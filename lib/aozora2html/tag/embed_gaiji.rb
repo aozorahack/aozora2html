@@ -22,10 +22,11 @@ class Aozora2Html
         @use_unicode
       end
 
-      def initialize(parser, folder, code, name)
+      def initialize(parser, folder, code, name, unicode_num = nil)
         @folder = folder
         @code = code
         @name = name
+        @unicode = unicode_num
         super
       end
 

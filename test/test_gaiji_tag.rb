@@ -35,8 +35,15 @@ class EmbedGaijiTagTest < Test::Unit::TestCase
     assert_equal "&#x2603;", egt.to_s.encode("utf-8")
   end
 
+  def test_use_unicode
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    egt = Aozora2Html::Tag::EmbedGaiji.new(nil,"foo","1-06-75","snowman","2603")
+    assert_equal "&#x2603;", egt.to_s.encode("utf-8")
+  end
+
   def teardown
     Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = false
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = false
     $gaiji_dir = @orig_gaiji_dir
   end
 end
