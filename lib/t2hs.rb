@@ -962,9 +962,6 @@ class Aozora2Html
         # found = [class, tag]
         if found
           @style_stack.push([command,"</#{found[1]}>"])
-          if found[1] == "em" # or found[1] == "strong"
-            @chuuki_table[:em] = true
-          end
           push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
         else
           nil
@@ -1340,9 +1337,6 @@ class Aozora2Html
       found = COMMAND_TABLE[command]
       # found = [class, tag]
       if found
-        if found[1] == "em" # or found[1] == "strong"
-          @chuuki_table[:em] = true
-        end
         Aozora2Html::Tag::Decorate.new(self, targets, filter.call(found[0]), found[1])
       else
         nil
@@ -1479,9 +1473,6 @@ class Aozora2Html
     if @chuuki_table[:accent] && !Aozora2Html::Tag::Accent.use_jisx0213
       @out.print "\t<li>アクセント符号付きラテン文字は、画像化して埋め込みました。</li>\r\n"
     end
-#    if @chuuki_table[:em]
-#      @out.print "\t<li>傍点や圏点、傍線の付いた文字は、強調表示にしました。</li>\r\n"
-#   end
     if @images[0]
       @out.print "\t<li>この作品には、JIS X 0213にない、以下の文字が用いられています。（数字は、底本中の出現「ページ-行」数。）これらの文字は本文内では「※［＃…］」の形で示しました。</li>\r\n</ul>\r\n<br />\r\n\t\t<table class=\"gaiji_list\">\r\n"
       @images.each{|cell|
