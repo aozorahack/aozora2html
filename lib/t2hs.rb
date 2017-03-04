@@ -535,6 +535,8 @@ class Aozora2Html
   end
 
   # 前方参照の発見 Ruby,style重ねがけ等々のため、要素の配列で返す
+  #
+  # 前方参照は`○○［＃「○○」に傍点］`、`吹喋［＃「喋」に「ママ」の注記］`といった表記
   def search_front_reference(string)
     if string.length == 0
       return false
@@ -1353,6 +1355,9 @@ class Aozora2Html
     end
   end
 
+  # くの字点の処理
+  #
+  # くの字点は現状そのまま出力するのでフッタの「表記について」で出力するかどうかのフラグ処理だけ行う
   def assign_kunoji
     second = @stream.peek_char(0)
     case second
