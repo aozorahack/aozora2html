@@ -1,6 +1,35 @@
 # encoding: utf-8
 class Aozora2Html
   module Utils
+
+    def create_font_size(times, daisho)
+      size = ""
+      case times
+      when 1
+        size = ""
+      when 2
+        size = "x-"
+      else
+        if times >= 3
+          size = "xx-"
+        else
+          raise Aozora2Html::Error, I18n.t(:invalid_font_size)
+        end
+      end
+
+      case daisho
+      when :dai
+        size << "large"
+      when :sho
+        size << "small"
+      else
+        raise Aozora2Html::Error, I18n.t(:invalid_font_size)
+      end
+
+      size
+    end
+    module_function :create_font_size
+
     def create_midashi_tag(size)
       if size.match(SIZE_SMALL)
         "h5"

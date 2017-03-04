@@ -928,23 +928,7 @@ class Aozora2Html
                    :dai
                  end
         html_class = daisho.to_s + times.to_s
-        size = case times
-               when 1
-                 ""
-               when 2
-                 "x-"
-               else
-                 if times >= 3
-                   "xx-"
-                 else
-                   raise Aozora2Html::Error.new("文字サイズの指定が不正です")
-                 end
-               end + case daisho
-                     when :dai
-                       "large"
-                     when :sho
-                       "small"
-                     end
+        size = create_font_size(times, daisho)
         push_chars("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
       else
         ## Decoration ##

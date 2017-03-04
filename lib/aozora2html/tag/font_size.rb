@@ -5,23 +5,7 @@ class Aozora2Html
 
       def initialize(parser, times, daisho)
         @class = daisho.to_s + times.to_s
-        @style = case times
-                 when 1
-                   ""
-                 when 2
-                   "x-"
-                 else
-                   if times >= 3
-                     "xx-"
-                   else
-                     raise Aozora2Html::Error.new(:invalid_font_size)
-                   end
-                 end + case daisho
-                       when :dai
-                         "large"
-                       when :sho
-                         "small"
-                       end
+        @style = Utils.create_font_size(times, daisho)
         super
       end
 
