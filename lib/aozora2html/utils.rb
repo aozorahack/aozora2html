@@ -1,6 +1,19 @@
 # encoding: utf-8
 class Aozora2Html
   module Utils
+    def create_midashi_tag(size)
+      if size.match(SIZE_SMALL)
+        "h5"
+      elsif size.match(SIZE_MIDDLE)
+        "h4"
+      elsif size.match(SIZE_LARGE)
+        "h3"
+      else
+        raise Aozora2Html::Error.new(I18n.t(:undefined_header))
+      end
+    end
+    module_function :create_midashi_tag
+
     def create_midashi_class(type, tag)
       case type
       when :normal

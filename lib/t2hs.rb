@@ -818,7 +818,16 @@ class Aozora2Html
     end
   end
 
-  def new_midashi_id(inc)
+  def new_midashi_id(size)
+    if size.match(SIZE_SMALL)
+      inc = 1
+    elsif size.match(SIZE_MIDDLE)
+      inc = 10
+    elsif size.match(SIZE_LARGE)
+      inc = 100
+    else
+      raise Aozora2Html::Error, I18n.t(:undefined_header)
+    end
     @midashi_id += inc
   end
 

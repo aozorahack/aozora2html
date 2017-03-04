@@ -5,18 +5,8 @@ class Aozora2Html
 
       def initialize(parser,size,type)
         super
-        @tag = if size.match(SIZE_SMALL)
-                 @id = parser.new_midashi_id(1)
-                 "h5"
-               elsif size.match(SIZE_MIDDLE)
-                 @id = parser.new_midashi_id(10)
-                 "h4"
-               elsif size.match(SIZE_LARGE)
-                 @id = parser.new_midashi_id(100)
-                 "h3"
-               else
-                 raise Aozora2Html::Error.new(I18n.t(:undefined_header))
-               end
+        @tag = Utils.create_midashi_tag(size)
+        @id = parser.new_midashi_id(size)
         @class = Utils.create_midashi_class(type, @tag)
       end
 
