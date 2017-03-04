@@ -90,7 +90,7 @@ class Aozora2Html
     @endchar = :eof  ## 解析終了文字、AccentParserやTagParserでは異なる
   end
 
-  def scount
+  def line_number
     @stream.line
   end
 
@@ -139,7 +139,7 @@ class Aozora2Html
         begin
           parse
         rescue Aozora2Html::Error => e
-          puts e.message(scount)
+          puts e.message(line_number)
           if e.is_a?(Aozora2Html::Error)
             exit(2)
           end
@@ -373,13 +373,13 @@ class Aozora2Html
       @ruby_buf.protected = true
     when @endchar
       # suddenly finished the file
-      puts "警告(#{scount}行目):予期せぬファイル終端"
+      puts "警告(#{line_number}行目):予期せぬファイル終端"
       throw :terminate
     when nil
       # noop
     else
       if check
-        illegal_char_check(char, scount)
+        illegal_char_check(char, line_number)
       end
       push_chars(char)
     end
@@ -1417,7 +1417,7 @@ class Aozora2Html
       # noop
     else
       if check
-        illegal_char_check(char, scount)
+        illegal_char_check(char, line_number)
       end
       push_chars(char)
     end

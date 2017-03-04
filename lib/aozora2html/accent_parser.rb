@@ -64,7 +64,7 @@ class Aozora2Html
       end
       if first == "\r\n"
         if @encount_accent
-          puts "警告(#{scount}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません".encode("shift_jis")
+          puts "警告(#{line_number}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません".encode("shift_jis")
         end
         throw :terminate
       elsif first == "〕".encode("shift_jis")
@@ -74,7 +74,7 @@ class Aozora2Html
         @ruby_buf.dump(@buffer)
         @ruby_buf.protected = true
       elsif first != "" and first != nil
-        illegal_char_check(first, scount)
+        illegal_char_check(first, line_number)
         push_chars(first)
       end
     end

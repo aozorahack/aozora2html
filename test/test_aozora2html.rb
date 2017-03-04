@@ -25,7 +25,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
-  def test_scount
+  def test_line_number
     Dir.mktmpdir do |dir|
       input = File.join(dir,'dummy.txt')
       output = File.join(dir,'dummy2.txt')
@@ -33,48 +33,48 @@ class Aozora2HtmlTest < Test::Unit::TestCase
       parser = Aozora2Html.new(input, output)
 
       begin
-        assert_equal 0, parser.scount
+        assert_equal 0, parser.line_number
         ch = parser.read_char
         assert_equal "a",ch
-        assert_equal 1, parser.scount
+        assert_equal 1, parser.line_number
         ch = parser.read_char
         assert_equal "\r\n",ch
-        assert_equal 1, parser.scount
+        assert_equal 1, parser.line_number
         ch = parser.read_char
         assert_equal "b",ch
-        assert_equal 2, parser.scount
+        assert_equal 2, parser.line_number
         ch = parser.read_char
         assert_equal "\r\n",ch
-        assert_equal 2, parser.scount
+        assert_equal 2, parser.line_number
         ch = parser.read_char
         assert_equal "c",ch
-        assert_equal 3, parser.scount
+        assert_equal 3, parser.line_number
       ensure
         parser.close
       end
     end
   end
 
-  def test_scount_2
+  def test_line_number_2
     input = StringIO.new("a\r\nb\r\nc\r\n")
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
-    assert_equal 0, parser.scount
+    assert_equal 0, parser.line_number
     ch = parser.read_char
     assert_equal "a",ch
-    assert_equal 1, parser.scount
+    assert_equal 1, parser.line_number
     ch = parser.read_char
     assert_equal "\r\n",ch
-    assert_equal 1, parser.scount
+    assert_equal 1, parser.line_number
     ch = parser.read_char
     assert_equal "b",ch
-    assert_equal 2, parser.scount
+    assert_equal 2, parser.line_number
     ch = parser.read_char
     assert_equal "\r\n",ch
-    assert_equal 2, parser.scount
+    assert_equal 2, parser.line_number
     ch = parser.read_char
     assert_equal "c",ch
-    assert_equal 3, parser.scount
+    assert_equal 3, parser.line_number
   end
 
   def test_read_line
