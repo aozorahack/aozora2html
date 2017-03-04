@@ -1395,6 +1395,7 @@ class Aozora2Html
     nil
   end
 
+  # parse_bodyのフッタ版
   def parse_tail
     char = read_char
     check = true
@@ -1430,6 +1431,7 @@ class Aozora2Html
     end
   end
 
+  # general_outputのフッタ版
   def tail_output
     @ruby_buf.dump(@buffer)
     string = @buffer.join
