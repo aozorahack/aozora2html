@@ -17,7 +17,7 @@ class String
       :katakana
     elsif ch.match(Regexp.new("[０-９Ａ-Ｚａ-ｚΑ-Ωα-ωА-Яа-я−＆’，．]".encode("shift_jis")))
       :zenkaku
-    elsif ch.match(Regexp.new("[A-Za-z0-9#\-\&'\,]".encode("shift_jis")))
+    elsif ch.match(Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".encode("shift_jis")))
       :hankaku
     elsif ch.match(Regexp.new("[亜-熙々※仝〆〇ヶ]".encode("shift_jis")))
       :kanji
