@@ -147,21 +147,26 @@ class Aozora2Html
   # 終了時（終端まで来た場合）にはthrow :terminateで脱出する
   #
   def process
-    catch(:terminate) do
-      loop do
-        begin
-          parse
-        rescue Aozora2Html::Error => e
-          puts e.message(line_number)
-          if e.is_a?(Aozora2Html::Error)
-            exit(2)
+    begin
+      catch(:terminate) do
+        loop do
+          begin
+            parse
+          rescue Aozora2Html::Error => e
+            puts e.message(line_number)
+            if e.is_a?(Aozora2Html::Error)
+              exit(2)
+            end
           end
         end
       end
+      tail_output # final call
+      finalize
+      close
+    rescue => e
+      puts "ERROR: line: #{line_number}"
+      raise e
     end
-    tail_output # final call
-    finalize
-    close
   end
 
   def char_type(char)
