@@ -981,6 +981,9 @@ class Aozora2Html
           @style_stack.push([command,"</#{found[1]}>"])
           push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
         else
+          if $DEBUG
+            puts "警告(#{line_number}行目):「#{key}」は未対応のコマンドのため無視します"
+          end
           nil
         end
       end
