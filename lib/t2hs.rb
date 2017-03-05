@@ -270,8 +270,13 @@ class Aozora2Html
       when "-"
         i += 1
       when "\r\n"
-        @section = :chuuki
-        return
+        if i == 0 && @stream.peek_char(1) == "\r\n"
+          @section = :body
+          return
+        else
+          @section = :chuuki
+          return
+        end
       else
         @section = :body
         @out.print("<br />\r\n")
