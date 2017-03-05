@@ -92,6 +92,7 @@ class Aozora2Html
     @midashi_id = 0  ## 見出しのカウンタ、見出しの種類によって増分が異なる
     @terprip = true  ## 改行制御用 (terpriはLisp由来?)
     @endchar = :eof  ## 解析終了文字、AccentParserやTagParserでは異なる
+    @noprint = nil
   end
 
   def line_number
