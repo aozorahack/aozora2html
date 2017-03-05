@@ -177,11 +177,19 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-    def test_parse_command_bouki
+  def test_parse_command_bouki
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "支部長の顔にさっと血が流れ［＃「血が流れ」に「×」の傍記］た\r\n"
     parsed = parse_text(src)
     expected = %Q|支部長の顔にさっと<ruby><rb>血が流れ</rb><rp>（</rp><rt>×&nbsp;×&nbsp;×&nbsp;×</rt><rp>）</rp></ruby>た<br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_ruby
+    Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+    src = "グリーンランドの中央部八千尺の氷河地帯にあるといわれる、［＃横組み］“Ser-mik-Suah《セルミク・シュアー》”［＃横組み終わり］の冥路《よみじ》の国。\r\n"
+    parsed = parse_text(src)
+    expected = %Q|グリーンランドの中央部八千尺の氷河地帯にあるといわれる、<span class=\"yokogumi\">“<ruby><rb>Ser-mik-Suah</rb><rp>（</rp><rt>セルミク・シュアー</rt><rp>）</rp></ruby>”</span>の<ruby><rb>冥路</rb><rp>（</rp><rt>よみじ</rt><rp>）</rp></ruby>の国。<br />\r\n|
     assert_equal expected, parsed
   end
 
