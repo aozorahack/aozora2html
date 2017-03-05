@@ -908,6 +908,9 @@ class Aozora2Html
     when "キャプション"
       @style_stack.push([command,'</span>'])
       push_chars('<span class="caption">')
+    when "割書"
+      @style_stack.push([command,'</span>'])
+      push_chars('<span class="warigaki">')
     when "大見出し"
       @style_stack.push([command,'</a></h3>'])
       @terprip = false
