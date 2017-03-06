@@ -4,27 +4,28 @@ require 'aozora2html'
 
 class InlineFontSizeTagTest < Test::Unit::TestCase
   def setup
+    @parser = Object.new
     stub(@parser).block_allowed_context?{true}
   end
 
   def test_font_size_new
-    tag = Inline_font_size_tag.new(@parser,"aa",1,:dai)
-    assert_equal Inline_font_size_tag, tag.class
-    assert_equal true, tag.kind_of?(Inline_tag)
+    tag = Aozora2Html::Tag::InlineFontSize.new(@parser,"aa",1,:dai)
+    assert_equal Aozora2Html::Tag::InlineFontSize, tag.class
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Inline)
   end
 
   def test_to_s
-    tag = Inline_font_size_tag.new(@parser,"テスト".encode("shift_jis"),1,:dai)
+    tag = Aozora2Html::Tag::InlineFontSize.new(@parser,"テスト".encode("shift_jis"),1,:dai)
     assert_equal "<span class=\"dai1\" style=\"font-size: large;\">テスト</span>", tag.to_s.encode("utf-8")
   end
 
   def test_to_s2
-    tag = Inline_font_size_tag.new(@parser,"テスト".encode("shift_jis"),2,:sho)
+    tag = Aozora2Html::Tag::InlineFontSize.new(@parser,"テスト".encode("shift_jis"),2,:sho)
     assert_equal "<span class=\"sho2\" style=\"font-size: x-small;\">テスト</span>", tag.to_s.encode("utf-8")
   end
 
   def test_to_s3
-    tag = Inline_font_size_tag.new(@parser,"テスト".encode("shift_jis"),3,:sho)
+    tag = Aozora2Html::Tag::InlineFontSize.new(@parser,"テスト".encode("shift_jis"),3,:sho)
     assert_equal "<span class=\"sho3\" style=\"font-size: xx-small;\">テスト</span>", tag.to_s.encode("utf-8")
   end
 

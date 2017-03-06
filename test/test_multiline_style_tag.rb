@@ -3,18 +3,19 @@ require 'aozora2html'
 
 class MultilineStyleTagTest < Test::Unit::TestCase
   def setup
-    stub(@parser).block_allowed_context?{true} 
+    @parser = Object.new
+    stub(@parser).block_allowed_context?{true}
   end
 
   def test_multiline_style_new
-    tag = Multiline_style_tag.new(@parser,"style1")
-    assert_equal Multiline_style_tag, tag.class
-    assert_equal true, tag.kind_of?(Block_tag)
-    assert_equal true, tag.kind_of?(Multiline_tag)
+    tag = Aozora2Html::Tag::MultilineStyle.new(@parser,"style1")
+    assert_equal Aozora2Html::Tag::MultilineStyle, tag.class
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
+    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Multiline)
   end
 
   def test_to_s
-    tag = Multiline_style_tag.new(@parser,"s1")
+    tag = Aozora2Html::Tag::MultilineStyle.new(@parser,"s1")
     assert_equal "<div class=\"s1\">", tag.to_s
     assert_equal "</div>", tag.close_tag
   end

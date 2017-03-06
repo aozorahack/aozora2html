@@ -2,7 +2,7 @@
 require 'test_helper'
 require 'aozora2html'
 
-class Aozora2HtmlTest < Test::Unit::TestCase
+class Aozora2HtmlAccentParserTest < Test::Unit::TestCase
   def setup
   end
 
@@ -10,11 +10,22 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     str = "〔e'tiquette〕\r\n".encode("shift_jis")
     strio = StringIO.new(str)
     stream = Jstream.new(strio)
-    parsed = Aozora_accent_parser.new(stream,"〕".encode("shift_jis"),{},[]).process
+    parsed = Aozora2Html::AccentParser.new(stream,"〕".encode("shift_jis"),{},[]).process
     expected = "〔<img src=\"../../../gaiji/1-09/1-09-63.png\" alt=\"※(アキュートアクセント付きE小文字)\" class=\"gaiji\" />tiquette"
     assert_equal expected, parsed.to_s.encode("utf-8")
   end
 
+  def test_use_jisx0213
+    Aozora2Html::Tag::Accent.use_jisx0213 = true
+    str = "〔e'tiquette〕\r\n".encode("shift_jis")
+    strio = StringIO.new(str)
+    stream = Jstream.new(strio)
+    parsed = Aozora2Html::AccentParser.new(stream,"〕".encode("shift_jis"),{},[]).process
+    expected = "〔&#x00E9;tiquette"
+    assert_equal expected, parsed.to_s.encode("utf-8")
+  end
+
   def teardown
+    Aozora2Html::Tag::Accent.use_jisx0213 = nil
   end
 end
