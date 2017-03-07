@@ -6,7 +6,8 @@ class Aozora2Html
       :undefined_header => "未定義な見出しです",
       :use_crlf => "改行コードを、「CR+LF」にあらためてください",
       :error_stop => "エラー(%d行目):%s. \r\n処理を停止します",
-      :invalid_font_size => "文字サイズの指定が不正です"
+      :invalid_font_size => "文字サイズの指定が不正です",
+      :unsupported_ruby  => "サポートされていない複雑なルビ付けです"
     }
 
     def self.t(msg, *args)

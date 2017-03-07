@@ -38,7 +38,7 @@ class Aozora2Html
       elsif size.match(SIZE_LARGE)
         "h3"
       else
-        raise Aozora2Html::Error.new(I18n.t(:undefined_header))
+        raise Aozora2Html::Error, I18n.t(:undefined_header)
       end
     end
     module_function :create_midashi_tag
@@ -73,7 +73,7 @@ class Aozora2Html
           "mado-o-midashi"
         end
       else
-        raise Aozora2Html::Error.new(I18n.t(:undefined_header))
+        raise Aozora2Html::Error, I18n.t(:undefined_header)
       end
     end
     module_function :create_midashi_class
