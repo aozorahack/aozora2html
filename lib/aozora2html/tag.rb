@@ -49,7 +49,7 @@ class Aozora2Html
     end
 
     def syntax_error
-      raise Aozora2Html::Error.new(I18n.t(:tag_syntax_error))
+      raise Aozora2Html::Error, I18n.t(:tag_syntax_error)
     end
   end
 end

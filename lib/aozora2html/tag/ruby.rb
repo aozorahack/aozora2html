@@ -37,7 +37,7 @@ class Aozora2Html
     if @under_ruby.is_a?(Array) and @under_ruby.length > 0
       # cell is used, but two way cell is not supported
       if @rbspan
-        raise Aozora2Html::Error.new("サポートされていない複雑なルビ付けです")
+        raise Aozora2Html::Error, I18n.t(:unsupported_ruby)
       else
         @rbspan = @under_ruby.length
       end

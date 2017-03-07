@@ -96,7 +96,7 @@ class Aozora2Html
         header_info[:subtitle] = @header[2]
         header_info[:author] = @header[3]
         if process_person(@header[4], header_info) == :author
-          raise Aozora2Html::Error.new("parser encounted author twice")
+          raise Aozora2Html::Error, "parser encounted author twice"
         end
       when 6
         header_info[:original_title] = @header[1]
@@ -104,7 +104,7 @@ class Aozora2Html
         header_info[:original_subtitle] = @header[3]
         header_info[:author] = @header[4]
         if process_person(@header[5], header_info) == :author
-          raise Aozora2Html::Error.new("parser encounted author twice")
+          raise Aozora2Html::Error, "parser encounted author twice"
         end
       end
       header_info

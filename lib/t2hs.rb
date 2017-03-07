@@ -230,14 +230,14 @@ class Aozora2Html
 
   def ensure_close
     if n = @indent_stack.last
-      raise Aozora2Html::Error.new("#{convert_indent_type(n)}中に本文が終了しました")
+      raise Aozora2Html::Error, "#{convert_indent_type(n)}中に本文が終了しました"
     end
   end
 
   def explicit_close(type)
     n = check_close_match(type)
     if n
-      raise Aozora2Html::Error.new("#{n}を閉じようとしましたが、#{n}中ではありません")
+      raise Aozora2Html::Error, "#{n}を閉じようとしましたが、#{n}中ではありません"
     end
     if tag = @tag_stack.pop
       push_chars(tag)
@@ -258,7 +258,7 @@ class Aozora2Html
     when :tail
       parse_tail
     else
-      Aozora2Html::Error.new("encount undefined condition")
+      raise Aozora2Html::Error, "encount undefined condition"
     end
   end
 
@@ -495,7 +495,7 @@ class Aozora2Html
   #
   def general_output
     if @style_stack.last
-      raise Aozora2Html::Error.new("#{@style_stack.last_command}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください")
+      raise Aozora2Html::Error, "#{@style_stack.last_command}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください"
     end
     # bufferにインデントタグだけがあったら改行しない！
     if @noprint
@@ -1006,7 +1006,7 @@ class Aozora2Html
     elsif @style_stack.last_command.match(encount)
       push_chars(@style_stack.pop[1])
     else
-      raise Aozora2Html::Error.new("#{encount}を終了しようとしましたが、#{@style_stack.last_command}中です")
+      raise Aozora2Html::Error, "#{encount}を終了しようとしましたが、#{@style_stack.last_command}中です"
     end
   end
 
@@ -1218,26 +1218,26 @@ class Aozora2Html
                     []
                   end
       if new_upper.length > 1 and new_under.length > 1
-        raise Aozora2Html::Error.new("1つの単語に3つのルビはつけられません")
+        raise Aozora2Html::Error, "1つの単語に3つのルビはつけられません"
       end
 
       targets.each{|x|
         if x.is_a?(Aozora2Html::Tag::Ruby)
           if x.target.is_a?(Array)
             # inner Aozora2Html::Tag::Ruby is already complex ... give up
-            raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
+            raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
           else
             if x.ruby != ""
               if new_upper.is_a?(Array)
                 new_upper.push(x.ruby)
               else
-              raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
+              raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
               end
             else
               if new_under.is_a?(Array)
               new_under.push(x.under_ruby)
               else
-                raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
+                raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
               end
             end
             new_targets.push(x.target)
@@ -1254,12 +1254,12 @@ class Aozora2Html
             if new_under.is_a?(Array)
               new_under.concat(un)
             elsif un.to_s.length > 0
-              raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
+              raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
             end
             if new_upper.is_a?(Array)
               new_upper.concat(up)
             elsif up.to_s.length > 0
-              raise Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません")
+              raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
             end
           else
             new_targets.push(x)
@@ -1329,7 +1329,7 @@ class Aozora2Html
           tag.under_ruby = under
           tag
         else
-          raise Aozora2Html::Error.new("1つの単語に3つのルビはつけられません")
+          raise Aozora2Html::Error, "1つの単語に3つのルビはつけられません"
         end
       else
         rearrange_ruby_tag(targets,"",under)
