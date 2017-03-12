@@ -1,3 +1,28 @@
+<a name="0.9.0"></a>
+## 0.9.0
+
+### Features
+
+* 内部構造を大改造した
+     * lib/t2hs.rb内で定義されているクラスをRubyの命名規則に合わせて変更し、外部ファイルにした
+     * `Aozora2Html.new(input, output)`の引数`input`,`output`でIOも受け取れるようにした
+     * `bin/aozora2html`にあったmonkey patchingも`lib/`以下に移動させた
+
+<a name="0.7.1"></a>
+## 0.7.1
+
+### Bug Fixes
+
+* `--use-unicode`オプションをつけていない時の外字処理を修正した
+* くの字点が正しく処理されない場合があるのを修正した
+
+<a name="0.7.0"></a>
+## 0.7.0
+
+### Features
+
+* `--css-files`オプションを追加して、CSSを変更できるようにした
+
 <a name="0.6.1"></a>
 ## 0.6.1
 
