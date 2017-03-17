@@ -79,4 +79,6 @@ $ rake test
 
 CC0
 
+[![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png "CC0")](http://creativecommons.org/publicdomain/zero/1.0/deed.ja)
+
 To the extent possible under law, 青空文庫 has waived all copyright and related or neighboring rights to txt2xhtml. This work is published from Japan.
