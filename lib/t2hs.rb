@@ -87,12 +87,12 @@ class Aozora2Html
     @style_stack = StyleStack.new  ##スタイルのスタック
     @chuuki_table = {} ## 最後にどの注記を出すかを保持しておく
     @images = []  ## 使用した外字の画像保持用
-    @indent_stack = []
+    @indent_stack = [] ## 基本はシンボルだが、ぶらさげのときはdivタグの文字列が入る
     @tag_stack = []
     @midashi_id = 0  ## 見出しのカウンタ、見出しの種類によって増分が異なる
     @terprip = true  ## 改行制御用 (terpriはLisp由来?)
     @endchar = :eof  ## 解析終了文字、AccentParserやTagParserでは異なる
-    @noprint = nil
+    @noprint = nil  ## 行末を読み込んだとき、何も出力しないかどうかのフラグ
   end
 
   def line_number
@@ -196,6 +196,8 @@ class Aozora2Html
     @out.close
   end
 
+  # 記法のシンボル名から文字列へ変換する
+  # シンボルが見つからなければそのまま返す
   def convert_indent_type(type)
     INDENT_TYPE[type] || type
   end
@@ -1092,6 +1094,7 @@ class Aozora2Html
     end
   end
 
+  # コマンド文字列からモードのシンボルを取り出す
   def detect_command_mode(command)
     if command.match(/字下げ/)
       :jisage
