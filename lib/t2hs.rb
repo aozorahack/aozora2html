@@ -608,30 +608,24 @@ class Aozora2Html
 
   # 発見した前方参照を元に戻す
   def recovery_front_reference(reference)
-    reference.each{|elt|
+    reference.each do |elt|
 #      if @ruby_buf.protected
       if @ruby_buf.present?
-        if @ruby_buf.last_is_string?
-          if elt.is_a?(String)
-            @ruby_buf.last_concat(elt)
-          else
-            @ruby_buf.push(elt)
-          end
+        if @ruby_buf.last_is_string? && elt.is_a?(String)
+          @ruby_buf.last_concat(elt)
         else
           @ruby_buf.push(elt)
+        end
+      elsif @buffer.last.is_a?(String)
+        if elt.is_a?(String)
+          @buffer.last.concat(elt)
+        else
+          @buffer.push(elt)
         end
       else
-        if @buffer.last.is_a?(String)
-          if elt.is_a?(String)
-            @buffer.last.concat(elt)
-          else
-            @buffer.push(elt)
-          end
-        else
-          @ruby_buf.push(elt)
-        end
+        @ruby_buf.push(elt)
       end
-    }
+    end
   end
 
   def convert_japanese_number(command)
@@ -670,68 +664,72 @@ class Aozora2Html
   end
 
   def dispatch_gaiji
-    hook = @stream.peek_char(0)
-    if hook ==  "［"
-      read_char
-      # embed?
-      command, _raw = read_to_nest("］")
-      try_emb = kuten2png(command)
-      if try_emb != command
-        try_emb
-      elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
-        unicode_num = $1
-        Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num)
-      else
-        # Unemb
-        escape_gaiji(command)
-      end
-    else
+    # 「※」の次が「［」でなければ外字ではない
+    if @stream.peek_char(0) !=  "［"
       "※"
+    end
+
+    # 「［」を読み捨てる
+    _ = read_char
+    # embed?
+    command, _raw = read_to_nest("］")
+    try_emb = kuten2png(command)
+    if try_emb != command
+      try_emb
+    elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
+      unicode_num = $1
+      Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num)
+    else
+      # Unemb
+      escape_gaiji(command)
     end
   end
 
+  # 注記記法の場合分け
   def dispatch_aozora_command
+    # 「［」の次が「＃」でなければ注記ではない
     if @stream.peek_char(0) != "＃"
-      "［"
+      return "［"
+    end
+
+    # 「＃」を読み捨てる
+    _ = read_char
+    command,raw = read_to_nest("］")
+    # 適用順序はこれで大丈夫か？　誤爆怖いよ誤爆
+    if command.match(/折り返して/)
+      apply_burasage(command)
+
+    elsif command.match(/^ここから/)
+      exec_block_start_command(command)
+    elsif command.match(/^ここで/)
+      exec_block_end_command(command)
+
+    elsif command.match(/割り注/)
+      apply_warichu(command)
+    elsif command.match(/字下げ/)
+      apply_jisage(command)
+    elsif command.match(/fig(\d)+_(\d)+\.png/)
+      exec_img_command(command,raw)
+    # avoid to try complex ruby -- escape to notes
+    elsif command.match(/(左|下)に「(.*)」の(ルビ|注記|傍記)/)
+      apply_rest_notes(command)
+    elsif command.match(/終わり$/)
+      exec_inline_end_command(command)
+      nil
+    elsif command.match(/^「.+」/)
+      exec_frontref_command(command)
+    elsif command.match(/1-7-8[2345]/)
+      apply_dakuten_katakana(command)
+    elsif command.match(/^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$/)
+      Aozora2Html::Tag::Kaeriten.new(self, command)
+    elsif command.match(/^（(.+)）$/)
+      Aozora2Html::Tag::Okurigana.new(self, command.gsub!(/[（）]/,""))
+    elsif command.match(/(地付き|字上げ)(終わり)*$/)
+      apply_chitsuki(command)
+    elsif exec_inline_start_command(command)
+      nil
     else
-      read_char
-      command,raw = read_to_nest("］")
-      # 適用順序はこれで大丈夫か？　誤爆怖いよ誤爆
-      if command.match(/折り返して/)
-        apply_burasage(command)
-
-      elsif command.match(/^ここから/)
-        exec_block_start_command(command)
-      elsif command.match(/^ここで/)
-        exec_block_end_command(command)
-
-      elsif command.match(/割り注/)
-        apply_warichu(command)
-      elsif command.match(/字下げ/)
-        apply_jisage(command)
-      elsif command.match(/fig(\d)+_(\d)+\.png/)
-        exec_img_command(command,raw)
-      # avoid to try complex ruby -- escape to notes
-      elsif command.match(/(左|下)に「(.*)」の(ルビ|注記|傍記)/)
-        apply_rest_notes(command)
-      elsif command.match(/終わり$/)
-        exec_inline_end_command(command)
-        nil
-      elsif command.match(/^「.+」/)
-        exec_frontref_command(command)
-      elsif command.match(/1-7-8[2345]/)
-        apply_dakuten_katakana(command)
-      elsif command.match(/^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$/)
-        Aozora2Html::Tag::Kaeriten.new(self, command)
-      elsif command.match(/^（(.+)）$/)
-        Aozora2Html::Tag::Okurigana.new(self, command.gsub!(/[（）]/,""))
-      elsif command.match(/(地付き|字上げ)(終わり)*$/)
-        apply_chitsuki(command)
-      elsif exec_inline_start_command(command)
-        nil
-      else
-        apply_rest_notes(command)
-      end
+      apply_rest_notes(command)
     end
   end
 
@@ -767,25 +765,21 @@ class Aozora2Html
       explicit_close(:jisage)
       @indent_stack.pop
       nil
+    elsif command.match(/この行/)
+      # 1行だけ
+      @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
+      nil
+    elsif @buffer.length == 0 and @stream.peek_char(0) == "\r\n"
+      # commandのみ
+      @terprip = false
+      implicit_close(:jisage)
+      # adhook hack
+      @noprint = false
+      @indent_stack.push(:jisage)
+      Aozora2Html::Tag::MultilineJisage.new(self, jisage_width(command))
     else
-      if command.match(/この行/)
-        # 1行だけ
-        @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
-        nil
-      else
-        if @buffer.length == 0 and @stream.peek_char(0) == "\r\n"
-          # commandのみ
-          @terprip = false
-          implicit_close(:jisage)
-          # adhook hack
-          @noprint = false
-          @indent_stack.push(:jisage)
-          Aozora2Html::Tag::MultilineJisage.new(self, jisage_width(command))
-        else
-          @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
-          nil
-        end
-      end
+      @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
+      nil
     end
   end
 
@@ -837,19 +831,20 @@ class Aozora2Html
   end
 
   def new_midashi_id(size)
-    inc = 1
-    if size.kind_of?(String)
-      if size.match(SIZE_SMALL)
-        inc = 1
-      elsif size.match(SIZE_MIDDLE)
-        inc = 10
-      elsif size.match(SIZE_LARGE)
-        inc = 100
-      else
-        raise Aozora2Html::Error, I18n.t(:undefined_header)
-      end
+    if size.kind_of?(Integer)
+      @midashi_id += size
+      return @midashi_id
+    end
+
+    case size
+    when SIZE_SMALL
+      inc = 1
+    when SIZE_MIDDLE
+      inc = 10
+    when SIZE_LARGE
+      inc = 100
     else
-      inc = size
+      raise Aozora2Html::Error, I18n.t(:undefined_header)
     end
     @midashi_id += inc
   end

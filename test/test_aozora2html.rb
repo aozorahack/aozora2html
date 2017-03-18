@@ -217,6 +217,17 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal true, @parser.terpri?(["a",tag])
   end
 
+  def test_new_midashi_id
+    midashi_id = @parser.new_midashi_id(1)
+    assert_equal midashi_id + 1, @parser.new_midashi_id(1)
+    assert_equal midashi_id + 2, @parser.new_midashi_id("小".encode("shift_jis"))
+    assert_equal midashi_id + 12, @parser.new_midashi_id("中".encode("shift_jis"))
+    assert_equal midashi_id + 112, @parser.new_midashi_id("大".encode("shift_jis"))
+    assert_raise(Aozora2Html::Error) do
+      @parser.new_midashi_id("？".encode("shift_jis"))
+    end
+  end
+
   def teardown
   end
 end
