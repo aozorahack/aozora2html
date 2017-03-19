@@ -228,6 +228,11 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
+  def test_multiply
+    bouki = @parser.multiply("x", 5)
+    assert_equal "x&nbsp;x&nbsp;x&nbsp;x&nbsp;x", bouki
+  end
+
   def teardown
   end
 end

@@ -439,23 +439,23 @@ class Aozora2Html
   #
   def push_chars(obj)
     if obj.is_a?(Array)
-      obj.each{|x|
+      obj.each do |x|
         push_chars(x)
-      }
+      end
     elsif obj.is_a?(String)
       if obj.length == 1
         obj = obj.gsub(/[&\"<>]/, {'&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;'})
       end
-      obj.each_char{|x|
+      obj.each_char do |x|
         push_char(x)
-      }
+      end
     else
       push_char(obj)
     end
   end
 
   def push_char(char)
-   ctype = char_type(char)
+    ctype = char_type(char)
     if ctype == :hankaku_terminate and @ruby_buf.char_type == :hankaku
       if @ruby_buf.last_is_string?
         @ruby_buf.last_concat(char)
@@ -484,13 +484,13 @@ class Aozora2Html
   # @return [true, false, :inline] 空文字ではない文字列が入っていればfalse、1行注記なら:inline、それ以外しか入っていなければtrue
   #
   def buf_is_blank?(buf)
-    buf.each{|token|
-      if token.is_a?(String) and not(token=="")
+    buf.each do |token|
+      if token.is_a?(String) and token != ""
         return false
       elsif token.is_a?(Aozora2Html::Tag::OnelineIndent)
         return :inline
       end
-    }
+    end
     true
   end
 
@@ -500,15 +500,15 @@ class Aozora2Html
   #
   def terpri?(buf)
     flag = true
-    buf.each{|x|
+    buf.each do |x|
       if x.is_a?(Aozora2Html::Tag::Multiline)
         flag = false
-      elsif (x.is_a?(String) and x == "")
-        nil
+      elsif x == ""
+        # skip
       else
         return true
       end
-    }
+    end
     flag
   end
 
@@ -538,11 +538,11 @@ class Aozora2Html
     terprip = (terpri?(buf) and @terprip)
     @terprip = true
 
-    if @indent_stack.last.is_a?(String) and not(indent_type)
+    if @indent_stack.last.is_a?(String) and !indent_type
       @out.print @indent_stack.last
     end
 
-    buf.each{|s|
+    buf.each do |s|
       if s.is_a?(Aozora2Html::Tag::OnelineIndent)
         tail.unshift(s.close_tag)
       elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
@@ -550,7 +550,7 @@ class Aozora2Html
         @out.print "※"
       end
       @out.print s.to_s
-    }
+    end
 
     # 最後はCRLFを出力する
     if @indent_stack.last.is_a?(String)
@@ -588,7 +588,7 @@ class Aozora2Html
     if last_string.is_a?(String)
       if last_string == ""
         searching_buf.pop
-        search_front_reference(string.sub(Regexp.new(Regexp.quote(last_string)+"$"),""))
+        search_front_reference(string)
       elsif last_string.match(Regexp.new(Regexp.quote(string)+"$"))
         # 完全一致
         # start = match.begin(0)
@@ -671,7 +671,7 @@ class Aozora2Html
   def kuten2png(substring)
     desc = substring.gsub(/「※」[は|の]/,"")
     match = desc.match(/[12]\-\d{1,2}\-\d{1,2}/)
-    if (match and not(desc.match(/非0213外字/)) and not(desc.match(/※.*※/)))
+    if match and !desc.match(/非0213外字/) and !desc.match(/※.*※/)
       @chuuki_table[:newjis] = true
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d", codes[0], codes[1])
@@ -1205,12 +1205,8 @@ class Aozora2Html
   # 傍記を並べる用
   #
   def multiply(bouki, times)
-    s = ""
-    (times-1).times{
-      s += bouki
-      s += "&nbsp;"
-    }
-    s + bouki
+    sep = "&nbsp;"
+    ([bouki]*times).join(sep)
   end
 
   # arrayがルビを含んでいればそのインデックスを返す
@@ -1218,7 +1214,7 @@ class Aozora2Html
   # @return [Integer, nil]
   #
   def include_ruby?(array)
-    array.index{|elt|
+    array.index do |elt|
       if elt.is_a?(Aozora2Html::Tag::Ruby)
         true
       elsif elt.is_a?(Aozora2Html::Tag::ReferenceMentioned)
@@ -1228,7 +1224,7 @@ class Aozora2Html
           elt.target.is_a?(Aozora2Html::Tag::Ruby)
         end
       end
-    }
+    end
   end
 
   # rubyタグの再生成(本体はrearrange_ruby)
@@ -1236,8 +1232,8 @@ class Aozora2Html
   # complex ruby wrap up utilities -- don't erase! we will use soon ...
   #
   def rearrange_ruby_tag(targets, upper_ruby, under_ruby = "")
-    target,upper,under = rearrange_ruby(targets, upper_ruby, under_ruby)
-    Aozora2Html::Tag::Ruby.new(self, target,upper,under)
+    target, upper, under = rearrange_ruby(targets, upper_ruby, under_ruby)
+    Aozora2Html::Tag::Ruby.new(self, target, upper, under)
   end
 
   # rubyタグの再割り当て
@@ -1268,11 +1264,11 @@ class Aozora2Html
               if new_upper.is_a?(Array)
                 new_upper.push(x.ruby)
               else
-              raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
+                raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
               end
             else
               if new_under.is_a?(Array)
-              new_under.push(x.under_ruby)
+                new_under.push(x.under_ruby)
               else
                 raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
               end
@@ -1282,7 +1278,7 @@ class Aozora2Html
         elsif x.is_a?(Aozora2Html::Tag::ReferenceMentioned)
           if x.target.is_a?(Array)
             # recursive
-            tar,up,un = rearrange_ruby(x.target,"","")
+            tar,up,un = rearrange_ruby(x.target, "", "")
             # rotation!!
             tar.each{|y|
               tmp = x.dup
@@ -1369,12 +1365,12 @@ class Aozora2Html
           raise Aozora2Html::Error, "1つの単語に3つのルビはつけられません"
         end
       else
-        rearrange_ruby_tag(targets,"",under)
+        rearrange_ruby_tag(targets, "", under)
       end
     elsif command.match(/「(.+?)」の注記/)
-      rearrange_ruby_tag(targets,/「(.+?)」の注記/.match(command).to_a[1])
+      rearrange_ruby_tag(targets, /「(.+?)」の注記/.match(command).to_a[1])
     elsif command.match(/「(.)」の傍記/)
-      rearrange_ruby_tag(targets,multiply( /「(.)」の傍記/.match(command).to_a[1], targets.to_s.length))
+      rearrange_ruby_tag(targets, multiply( /「(.)」の傍記/.match(command).to_a[1], targets.to_s.length))
     else
       ## direction fix! ##
       filter = lambda{|x| x}
