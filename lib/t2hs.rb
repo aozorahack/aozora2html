@@ -230,6 +230,7 @@ class Aozora2Html
     end
   end
 
+  # 本文が終わってよいかチェックし、終わっていなければ例外をあげる
   def ensure_close
     if n = @indent_stack.last
       raise Aozora2Html::Error, "#{convert_indent_type(n)}中に本文が終了しました"
@@ -313,6 +314,16 @@ class Aozora2Html
     end
   end
 
+  # 使うべきではない文字があるかチェックする
+  #
+  # 警告を出力するだけで結果には影響を与えない。警告する文字は以下:
+  #
+  # * 1バイト文字
+  # * `＃`ではなく`♯`
+  # * JIS(JIS X 0208)外字
+  #
+  # @return [void]
+  #
   def illegal_char_check(char, line)
     if char.is_a?(String)
       code = char.unpack("H*")[0]
@@ -369,7 +380,7 @@ class Aozora2Html
   #
   # 1文字ずつ読み込み、dispatchして@buffer,@ruby_bufへしまう
   # 改行コードに当たったら溜め込んだものをgeneral_outputする
-
+  #
   def parse_body
     char = read_char
     check = true
@@ -411,6 +422,9 @@ class Aozora2Html
     end
   end
 
+  # 本文が終了したかどうかチェックする
+  #
+  #
   def ending_check
     # `底本：`でフッタ(:tail)に遷移
     if @stream.peek_char(0) == "本" and @stream.peek_char(1) == "："
@@ -463,6 +477,12 @@ class Aozora2Html
     end
   end
 
+  # 行出力時に@bufferが空かどうか調べる
+  #
+  # @bufferの中身によって行末の出力が異なるため
+  #
+  # @return [true, false, :inline] 空文字ではない文字列が入っていればfalse、1行注記なら:inline、それ以外しか入っていなければtrue
+  #
   def buf_is_blank?(buf)
     buf.each{|token|
       if token.is_a?(String) and not(token=="")
@@ -475,6 +495,8 @@ class Aozora2Html
   end
 
   # 行末で<br />を出力するべきかどうかの判別用
+  #
+  # @return [true, false] Multilineの注記しか入っていなければfalse、Multilineでも空文字でもない要素が含まれていればtrue
   #
   def terpri?(buf)
     flag = true
@@ -492,8 +514,10 @@ class Aozora2Html
 
   # 読み込んだ行の出力を行う
   #
-  # parserが改行文字を読み込んだら呼ばれる
-  # @ruby_bufと@bufferは初期化する
+  # parserが改行文字を読み込んだら呼ばれる。
+  # 最終的に@ruby_bufと@bufferは初期化する
+  #
+  # @return [void]
   #
   def general_output
     if @style_stack.last
@@ -607,6 +631,12 @@ class Aozora2Html
   end
 
   # 発見した前方参照を元に戻す
+  #
+  # @ruby_bufがあれば@ruby_bufに、なければ@bufferにpushする
+  # バッファの最後と各要素が文字列ならconcatし、どちらが文字列でなければ（concatできないので）pushする
+  #
+  # @return [void]
+  #
   def recovery_front_reference(reference)
     reference.each do |elt|
 #      if @ruby_buf.protected
@@ -1172,6 +1202,8 @@ class Aozora2Html
     apply_rest_notes(command)
   end
 
+  # 傍記を並べる用
+  #
   def multiply(bouki, times)
     s = ""
     (times-1).times{
@@ -1181,6 +1213,10 @@ class Aozora2Html
     s + bouki
   end
 
+  # arrayがルビを含んでいればそのインデックスを返す
+  #
+  # @return [Integer, nil]
+  #
   def include_ruby?(array)
     array.index{|elt|
       if elt.is_a?(Aozora2Html::Tag::Ruby)
@@ -1195,7 +1231,10 @@ class Aozora2Html
     }
   end
 
+  # rubyタグの再生成(本体はrearrange_ruby)
+  #
   # complex ruby wrap up utilities -- don't erase! we will use soon ...
+  #
   def rearrange_ruby_tag(targets, upper_ruby, under_ruby = "")
     target,upper,under = rearrange_ruby(targets, upper_ruby, under_ruby)
     Aozora2Html::Tag::Ruby.new(self, target,upper,under)
