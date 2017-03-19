@@ -867,11 +867,11 @@ class Aozora2Html
     end
 
     case size
-    when SIZE_SMALL
+    when /#{SIZE_SMALL}/
       inc = 1
-    when SIZE_MIDDLE
+    when /#{SIZE_MIDDLE}/
       inc = 10
-    when SIZE_LARGE
+    when /#{SIZE_LARGE}/
       inc = 100
     else
       raise Aozora2Html::Error, I18n.t(:undefined_header)

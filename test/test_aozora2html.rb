@@ -233,6 +233,13 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal "x&nbsp;x&nbsp;x&nbsp;x&nbsp;x", bouki
   end
 
+  def test_apply_midashi
+    midashi = @parser.apply_midashi("中見出し".encode("shift_jis"))
+    assert_equal %Q|<h4 class="naka-midashi"><a class="midashi_anchor" id="midashi10">|, midashi.to_s
+    midashi = @parser.apply_midashi("大見出し".encode("shift_jis"))
+    assert_equal %Q|<h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">|, midashi.to_s
+  end
+
   def teardown
   end
 end
