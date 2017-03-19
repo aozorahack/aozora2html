@@ -881,15 +881,16 @@ class Aozora2Html
 
   def apply_midashi(command)
     @indent_stack.push(:midashi)
+    case command
+    when /同行/
+      midashi_type = :dogyo
+    when /窓/
+      midashi_type = :mado
+    else
       midashi_type = :normal
-      if command.match(/同行/)
-        midashi_type = :dogyo
-      elsif command.match(/窓/)
-        midashi_type = :mado
-      else
-        @terprip = false
-      end
-    Aozora2Html::Tag::MultilineMidashi.new(self,command,midashi_type)
+      @terprip = false
+    end
+    Aozora2Html::Tag::MultilineMidashi.new(self, command, midashi_type)
   end
 
   def apply_yokogumi(command)
@@ -916,6 +917,14 @@ class Aozora2Html
   def push_block_tag(tag,closing)
     push_chars(tag)
     closing.concat(tag.close_tag)
+  end
+
+  def detect_style_size(style)
+    if style.match("小")
+      :sho
+    else
+      :dai
+    end
   end
 
   def exec_inline_start_command(command)
@@ -968,51 +977,45 @@ class Aozora2Html
     when "窓小見出し"
       @style_stack.push([command,'</a></h5>'])
       push_chars("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+    when /(.*)段階(..)な文字/
+      @style_stack.push([command,'</span>'])
+      _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+      times = convert_japanese_number(nest).to_i
+      daisho = detect_style_size(style)
+      html_class = daisho.to_s + times.to_s
+      size = Utils.create_font_size(times, daisho)
+      push_chars("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
     else
-      if command.match(/(.*)段階(..)な文字/)
-        @style_stack.push([command,'</span>'])
-        _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
-        times = convert_japanese_number(nest).to_i
-        daisho = if style.match("小")
-                   :sho
-                 else
-                   :dai
-                 end
-        html_class = daisho.to_s + times.to_s
-        size = Utils.create_font_size(times, daisho)
-        push_chars("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
-      else
-        ## Decoration ##
-        key = command
-        filter = lambda{|x| x}
-        if command.match(/(右|左|上|下)に(.*)/)
-          _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
-          # renew command
-          key = com
-          if command.match(/点/)
-            case dir
-            when "左", "下"
-              filter = lambda{|x| x + "_after"}
-            end
-          elsif command.match(/線/)
-            case dir
-            when "左", "上"
-              filter = lambda{|x| x.sub("under","over")}
-            end
+      ## Decoration ##
+      key = command
+      filter = lambda{|x| x}
+      if command.match(/(右|左|上|下)に(.*)/)
+        _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
+        # renew command
+        key = com
+        if command.match(/点/)
+          case dir
+          when "左", "下"
+            filter = lambda{|x| x + "_after"}
+          end
+        elsif command.match(/線/)
+          case dir
+          when "左", "上"
+            filter = lambda{|x| x.sub("under","over")}
           end
         end
+      end
 
-        found = COMMAND_TABLE[key]
-        # found = [class, tag]
-        if found
-          @style_stack.push([command,"</#{found[1]}>"])
-          push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
-        else
-          if $DEBUG
-            puts "警告(#{line_number}行目):「#{key}」は未対応のコマンドのため無視します"
-          end
-          nil
+      found = COMMAND_TABLE[key]
+      # found = [class, tag]
+      if found
+        @style_stack.push([command,"</#{found[1]}>"])
+        push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
+      else
+        if $DEBUG
+          puts "警告(#{line_number}行目):「#{key}」は未対応のコマンドのため無視します"
         end
+        nil
       end
     end
   end
@@ -1099,11 +1102,7 @@ class Aozora2Html
       if match != ""
         @indent_stack.pop
       end
-      daisho = if style == "小さ"
-                 :sho
-               else
-                 :dai
-               end
+      daisho = detect_style_size(style)
       push_block_tag(Aozora2Html::Tag::FontSize.new(self,
                                                     convert_japanese_number(nest).to_i,
                                                     daisho),
@@ -1120,28 +1119,32 @@ class Aozora2Html
   end
 
   # コマンド文字列からモードのシンボルを取り出す
+  #
+  # @return [Symbol]
+  #
   def detect_command_mode(command)
-    if command.match(/字下げ/)
+    case command
+    when /字下げ/
       :jisage
-    elsif command.match(/(地付き|字上げ)終わり$/)
+    when /(地付き|字上げ)終わり$/
       :chitsuki
-    elsif command.match(/見出し/)
+    when /見出し/
       :midashi
-    elsif command.match(/字詰め/)
+    when /字詰め/
       :jizume
-    elsif command.match(/横組み/)
+    when /横組み/
       :yokogumi
-    elsif command.match(/罫囲み/)
+    when /罫囲み/
       :keigakomi
-    elsif command.match(/キャプション/)
+    when /キャプション/
       :caption
-    elsif command.match(/太字/)
+    when /太字/
       :futoji
-    elsif command.match(/斜体/)
+    when /斜体/
       :shatai
-    elsif command.match(/大きな文字/)
+    when /大きな文字/
       :dai
-    elsif command.match(/小さな文字/)
+    when /小さな文字/
       :sho
     else
       nil
@@ -1185,11 +1188,11 @@ class Aozora2Html
 
   def exec_frontref_command(command)
     _whole, reference, spec1, spec2 = command.match(/「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)/).to_a
-    spec = if spec1
-             spec1 + spec2
-           else
-             spec2
-           end
+    if spec1
+      spec = spec1 + spec2
+    else
+      spec = spec2
+    end
     if reference and found = search_front_reference(reference)
       tmp = exec_style(found, spec)
       if tmp
@@ -1348,12 +1351,8 @@ class Aozora2Html
     elsif command.match(/(.*)段階(..)な文字/)
       _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
       Aozora2Html::Tag::InlineFontSize.new(self,targets,
-                               convert_japanese_number(nest).to_i,
-                               if style.match("小")
-                                 :sho
-                               else
-                                 :dai
-                               end)
+                                           convert_japanese_number(nest).to_i,
+                                           detect_style_size(style))
     elsif command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/)
       _whole, dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
       if targets.length == 1 and targets[0].is_a?(Aozora2Html::Tag::Ruby)

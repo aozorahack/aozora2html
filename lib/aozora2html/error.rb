@@ -4,11 +4,11 @@ require "aozora2html/i18n"
 class Aozora2Html
   class Error < StandardError
 
-    def initialize(message)
-      @message = message
+    def initialize(msg)
+      @message = msg
     end
 
-    def message(line)
+    def message(line = 0)
       I18n.t(:error_stop, line, @message)
     end
   end

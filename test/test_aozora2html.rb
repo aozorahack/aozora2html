@@ -240,6 +240,17 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal %Q|<h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">|, midashi.to_s
   end
 
+  def test_detect_command_mode
+    command = "字下げ終わり".encode("shift_jis")
+    assert_equal :jisage, @parser.detect_command_mode(command)
+    command = "地付き終わり".encode("shift_jis")
+    assert_equal :chitsuki, @parser.detect_command_mode(command)
+    command = "中見出し終わり".encode("shift_jis")
+    assert_equal :midashi, @parser.detect_command_mode(command)
+    command = "ここで太字終わり".encode("shift_jis")
+    assert_equal :futoji, @parser.detect_command_mode(command)
+  end
+
   def teardown
   end
 end
