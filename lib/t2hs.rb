@@ -136,6 +136,11 @@ class Aozora2Html
     Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images).process
   end
 
+  # 1行読み込み
+  #
+  # 合わせて@bufferもクリアする
+  # @return [String] 読み込んだ文字列を返す
+  #
   def read_line
     tmp = read_to("\r\n")
     @buffer = []
@@ -406,7 +411,7 @@ class Aozora2Html
     when "\r\n"
       general_output
     when RUBY_PREFIX
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       @ruby_buf.protected = true
     when @endchar
       # suddenly finished the file
@@ -471,7 +476,7 @@ class Aozora2Html
         @ruby_buf.push("")
       end
     else
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       @ruby_buf.clear(char)
       @ruby_buf.char_type = ctype
     end
@@ -528,7 +533,7 @@ class Aozora2Html
       @noprint = false
       return
     end
-    @ruby_buf.dump(@buffer)
+    @ruby_buf.dump_into(@buffer)
     buf = @buffer
     @ruby_buf.clear
     @buffer = []
@@ -1479,7 +1484,7 @@ class Aozora2Html
     when "\r\n"
       tail_output
     when RUBY_PREFIX
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       @ruby_buf.protected = true
     when nil
       # noop
@@ -1493,7 +1498,7 @@ class Aozora2Html
 
   # general_outputのフッタ版
   def tail_output
-    @ruby_buf.dump(@buffer)
+    @ruby_buf.dump_into(@buffer)
     string = @buffer.join
     @ruby_buf.clear
     @buffer = []
