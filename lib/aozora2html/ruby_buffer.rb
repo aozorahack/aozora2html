@@ -59,8 +59,8 @@ class Aozora2Html
       @ruby_buf.last.is_a?(String)
     end
 
-  # buffer management
-    def dump(buffer)
+    # buffer management
+    def dump_into(buffer)
       if @protected
         @ruby_buf.unshift(RUBY_PREFIX)
         @protected = nil

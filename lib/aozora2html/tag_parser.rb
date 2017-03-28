@@ -29,7 +29,7 @@ class Aozora2Html
     end
 
     def general_output # 出力は[String,String]返しで！
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       ans=""
       @buffer.each do |s|
         if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?

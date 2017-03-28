@@ -20,7 +20,7 @@ class Aozora2Html
     end
 
     def general_output # 出力は配列で返す
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       if !@encount_accent
         @buffer.unshift("〔".encode("shift_jis"))
       end
@@ -71,7 +71,7 @@ class Aozora2Html
         @closed = true
         throw :terminate
       elsif first == RUBY_PREFIX
-        @ruby_buf.dump(@buffer)
+        @ruby_buf.dump_into(@buffer)
         @ruby_buf.protected = true
       elsif first != "" and first != nil
         illegal_char_check(first, line_number)

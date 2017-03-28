@@ -217,6 +217,40 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal true, @parser.terpri?(["a",tag])
   end
 
+  def test_new_midashi_id
+    midashi_id = @parser.new_midashi_id(1)
+    assert_equal midashi_id + 1, @parser.new_midashi_id(1)
+    assert_equal midashi_id + 2, @parser.new_midashi_id("小".encode("shift_jis"))
+    assert_equal midashi_id + 12, @parser.new_midashi_id("中".encode("shift_jis"))
+    assert_equal midashi_id + 112, @parser.new_midashi_id("大".encode("shift_jis"))
+    assert_raise(Aozora2Html::Error) do
+      @parser.new_midashi_id("？".encode("shift_jis"))
+    end
+  end
+
+  def test_multiply
+    bouki = @parser.multiply("x", 5)
+    assert_equal "x&nbsp;x&nbsp;x&nbsp;x&nbsp;x", bouki
+  end
+
+  def test_apply_midashi
+    midashi = @parser.apply_midashi("中見出し".encode("shift_jis"))
+    assert_equal %Q|<h4 class="naka-midashi"><a class="midashi_anchor" id="midashi10">|, midashi.to_s
+    midashi = @parser.apply_midashi("大見出し".encode("shift_jis"))
+    assert_equal %Q|<h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">|, midashi.to_s
+  end
+
+  def test_detect_command_mode
+    command = "字下げ終わり".encode("shift_jis")
+    assert_equal :jisage, @parser.detect_command_mode(command)
+    command = "地付き終わり".encode("shift_jis")
+    assert_equal :chitsuki, @parser.detect_command_mode(command)
+    command = "中見出し終わり".encode("shift_jis")
+    assert_equal :midashi, @parser.detect_command_mode(command)
+    command = "ここで太字終わり".encode("shift_jis")
+    assert_equal :futoji, @parser.detect_command_mode(command)
+  end
+
   def teardown
   end
 end

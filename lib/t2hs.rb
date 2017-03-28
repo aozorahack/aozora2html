@@ -87,12 +87,12 @@ class Aozora2Html
     @style_stack = StyleStack.new  ##スタイルのスタック
     @chuuki_table = {} ## 最後にどの注記を出すかを保持しておく
     @images = []  ## 使用した外字の画像保持用
-    @indent_stack = []
+    @indent_stack = [] ## 基本はシンボルだが、ぶらさげのときはdivタグの文字列が入る
     @tag_stack = []
     @midashi_id = 0  ## 見出しのカウンタ、見出しの種類によって増分が異なる
     @terprip = true  ## 改行制御用 (terpriはLisp由来?)
     @endchar = :eof  ## 解析終了文字、AccentParserやTagParserでは異なる
-    @noprint = nil
+    @noprint = nil  ## 行末を読み込んだとき、何も出力しないかどうかのフラグ
   end
 
   def line_number
@@ -136,6 +136,11 @@ class Aozora2Html
     Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images).process
   end
 
+  # 1行読み込み
+  #
+  # 合わせて@bufferもクリアする
+  # @return [String] 読み込んだ文字列を返す
+  #
   def read_line
     tmp = read_to("\r\n")
     @buffer = []
@@ -196,6 +201,8 @@ class Aozora2Html
     @out.close
   end
 
+  # 記法のシンボル名から文字列へ変換する
+  # シンボルが見つからなければそのまま返す
   def convert_indent_type(type)
     INDENT_TYPE[type] || type
   end
@@ -228,6 +235,7 @@ class Aozora2Html
     end
   end
 
+  # 本文が終わってよいかチェックし、終わっていなければ例外をあげる
   def ensure_close
     if n = @indent_stack.last
       raise Aozora2Html::Error, "#{convert_indent_type(n)}中に本文が終了しました"
@@ -311,6 +319,16 @@ class Aozora2Html
     end
   end
 
+  # 使うべきではない文字があるかチェックする
+  #
+  # 警告を出力するだけで結果には影響を与えない。警告する文字は以下:
+  #
+  # * 1バイト文字
+  # * `＃`ではなく`♯`
+  # * JIS(JIS X 0208)外字
+  #
+  # @return [void]
+  #
   def illegal_char_check(char, line)
     if char.is_a?(String)
       code = char.unpack("H*")[0]
@@ -367,7 +385,7 @@ class Aozora2Html
   #
   # 1文字ずつ読み込み、dispatchして@buffer,@ruby_bufへしまう
   # 改行コードに当たったら溜め込んだものをgeneral_outputする
-
+  #
   def parse_body
     char = read_char
     check = true
@@ -393,7 +411,7 @@ class Aozora2Html
     when "\r\n"
       general_output
     when RUBY_PREFIX
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       @ruby_buf.protected = true
     when @endchar
       # suddenly finished the file
@@ -409,6 +427,9 @@ class Aozora2Html
     end
   end
 
+  # 本文が終了したかどうかチェックする
+  #
+  #
   def ending_check
     # `底本：`でフッタ(:tail)に遷移
     if @stream.peek_char(0) == "本" and @stream.peek_char(1) == "："
@@ -423,23 +444,23 @@ class Aozora2Html
   #
   def push_chars(obj)
     if obj.is_a?(Array)
-      obj.each{|x|
+      obj.each do |x|
         push_chars(x)
-      }
+      end
     elsif obj.is_a?(String)
       if obj.length == 1
         obj = obj.gsub(/[&\"<>]/, {'&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;'})
       end
-      obj.each_char{|x|
+      obj.each_char do |x|
         push_char(x)
-      }
+      end
     else
       push_char(obj)
     end
   end
 
   def push_char(char)
-   ctype = char_type(char)
+    ctype = char_type(char)
     if ctype == :hankaku_terminate and @ruby_buf.char_type == :hankaku
       if @ruby_buf.last_is_string?
         @ruby_buf.last_concat(char)
@@ -455,43 +476,53 @@ class Aozora2Html
         @ruby_buf.push("")
       end
     else
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       @ruby_buf.clear(char)
       @ruby_buf.char_type = ctype
     end
   end
 
+  # 行出力時に@bufferが空かどうか調べる
+  #
+  # @bufferの中身によって行末の出力が異なるため
+  #
+  # @return [true, false, :inline] 空文字ではない文字列が入っていればfalse、1行注記なら:inline、それ以外しか入っていなければtrue
+  #
   def buf_is_blank?(buf)
-    buf.each{|token|
-      if token.is_a?(String) and not(token=="")
+    buf.each do |token|
+      if token.is_a?(String) and token != ""
         return false
       elsif token.is_a?(Aozora2Html::Tag::OnelineIndent)
         return :inline
       end
-    }
+    end
     true
   end
 
   # 行末で<br />を出力するべきかどうかの判別用
   #
+  # @return [true, false] Multilineの注記しか入っていなければfalse、Multilineでも空文字でもない要素が含まれていればtrue
+  #
   def terpri?(buf)
     flag = true
-    buf.each{|x|
+    buf.each do |x|
       if x.is_a?(Aozora2Html::Tag::Multiline)
         flag = false
-      elsif (x.is_a?(String) and x == "")
-        nil
+      elsif x == ""
+        # skip
       else
         return true
       end
-    }
+    end
     flag
   end
 
   # 読み込んだ行の出力を行う
   #
-  # parserが改行文字を読み込んだら呼ばれる
-  # @ruby_bufと@bufferは初期化する
+  # parserが改行文字を読み込んだら呼ばれる。
+  # 最終的に@ruby_bufと@bufferは初期化する
+  #
+  # @return [void]
   #
   def general_output
     if @style_stack.last
@@ -502,7 +533,7 @@ class Aozora2Html
       @noprint = false
       return
     end
-    @ruby_buf.dump(@buffer)
+    @ruby_buf.dump_into(@buffer)
     buf = @buffer
     @ruby_buf.clear
     @buffer = []
@@ -512,11 +543,11 @@ class Aozora2Html
     terprip = (terpri?(buf) and @terprip)
     @terprip = true
 
-    if @indent_stack.last.is_a?(String) and not(indent_type)
+    if @indent_stack.last.is_a?(String) and !indent_type
       @out.print @indent_stack.last
     end
 
-    buf.each{|s|
+    buf.each do |s|
       if s.is_a?(Aozora2Html::Tag::OnelineIndent)
         tail.unshift(s.close_tag)
       elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
@@ -524,7 +555,7 @@ class Aozora2Html
         @out.print "※"
       end
       @out.print s.to_s
-    }
+    end
 
     # 最後はCRLFを出力する
     if @indent_stack.last.is_a?(String)
@@ -562,7 +593,7 @@ class Aozora2Html
     if last_string.is_a?(String)
       if last_string == ""
         searching_buf.pop
-        search_front_reference(string.sub(Regexp.new(Regexp.quote(last_string)+"$"),""))
+        search_front_reference(string)
       elsif last_string.match(Regexp.new(Regexp.quote(string)+"$"))
         # 完全一致
         # start = match.begin(0)
@@ -605,31 +636,31 @@ class Aozora2Html
   end
 
   # 発見した前方参照を元に戻す
+  #
+  # @ruby_bufがあれば@ruby_bufに、なければ@bufferにpushする
+  # バッファの最後と各要素が文字列ならconcatし、どちらが文字列でなければ（concatできないので）pushする
+  #
+  # @return [void]
+  #
   def recovery_front_reference(reference)
-    reference.each{|elt|
+    reference.each do |elt|
 #      if @ruby_buf.protected
       if @ruby_buf.present?
-        if @ruby_buf.last_is_string?
-          if elt.is_a?(String)
-            @ruby_buf.last_concat(elt)
-          else
-            @ruby_buf.push(elt)
-          end
+        if @ruby_buf.last_is_string? && elt.is_a?(String)
+          @ruby_buf.last_concat(elt)
         else
           @ruby_buf.push(elt)
+        end
+      elsif @buffer.last.is_a?(String)
+        if elt.is_a?(String)
+          @buffer.last.concat(elt)
+        else
+          @buffer.push(elt)
         end
       else
-        if @buffer.last.is_a?(String)
-          if elt.is_a?(String)
-            @buffer.last.concat(elt)
-          else
-            @buffer.push(elt)
-          end
-        else
-          @ruby_buf.push(elt)
-        end
+        @ruby_buf.push(elt)
       end
-    }
+    end
   end
 
   def convert_japanese_number(command)
@@ -645,7 +676,7 @@ class Aozora2Html
   def kuten2png(substring)
     desc = substring.gsub(/「※」[は|の]/,"")
     match = desc.match(/[12]\-\d{1,2}\-\d{1,2}/)
-    if (match and not(desc.match(/非0213外字/)) and not(desc.match(/※.*※/)))
+    if match and !desc.match(/非0213外字/) and !desc.match(/※.*※/)
       @chuuki_table[:newjis] = true
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d", codes[0], codes[1])
@@ -668,68 +699,72 @@ class Aozora2Html
   end
 
   def dispatch_gaiji
-    hook = @stream.peek_char(0)
-    if hook ==  "［"
-      read_char
-      # embed?
-      command, _raw = read_to_nest("］")
-      try_emb = kuten2png(command)
-      if try_emb != command
-        try_emb
-      elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
-        unicode_num = $1
-        Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num)
-      else
-        # Unemb
-        escape_gaiji(command)
-      end
-    else
+    # 「※」の次が「［」でなければ外字ではない
+    if @stream.peek_char(0) !=  "［"
       "※"
+    end
+
+    # 「［」を読み捨てる
+    _ = read_char
+    # embed?
+    command, _raw = read_to_nest("］")
+    try_emb = kuten2png(command)
+    if try_emb != command
+      try_emb
+    elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
+      unicode_num = $1
+      Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num)
+    else
+      # Unemb
+      escape_gaiji(command)
     end
   end
 
+  # 注記記法の場合分け
   def dispatch_aozora_command
+    # 「［」の次が「＃」でなければ注記ではない
     if @stream.peek_char(0) != "＃"
-      "［"
+      return "［"
+    end
+
+    # 「＃」を読み捨てる
+    _ = read_char
+    command,raw = read_to_nest("］")
+    # 適用順序はこれで大丈夫か？　誤爆怖いよ誤爆
+    if command.match(/折り返して/)
+      apply_burasage(command)
+
+    elsif command.match(/^ここから/)
+      exec_block_start_command(command)
+    elsif command.match(/^ここで/)
+      exec_block_end_command(command)
+
+    elsif command.match(/割り注/)
+      apply_warichu(command)
+    elsif command.match(/字下げ/)
+      apply_jisage(command)
+    elsif command.match(/fig(\d)+_(\d)+\.png/)
+      exec_img_command(command,raw)
+    # avoid to try complex ruby -- escape to notes
+    elsif command.match(/(左|下)に「(.*)」の(ルビ|注記|傍記)/)
+      apply_rest_notes(command)
+    elsif command.match(/終わり$/)
+      exec_inline_end_command(command)
+      nil
+    elsif command.match(/^「.+」/)
+      exec_frontref_command(command)
+    elsif command.match(/1-7-8[2345]/)
+      apply_dakuten_katakana(command)
+    elsif command.match(/^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$/)
+      Aozora2Html::Tag::Kaeriten.new(self, command)
+    elsif command.match(/^（(.+)）$/)
+      Aozora2Html::Tag::Okurigana.new(self, command.gsub!(/[（）]/,""))
+    elsif command.match(/(地付き|字上げ)(終わり)*$/)
+      apply_chitsuki(command)
+    elsif exec_inline_start_command(command)
+      nil
     else
-      read_char
-      command,raw = read_to_nest("］")
-      # 適用順序はこれで大丈夫か？　誤爆怖いよ誤爆
-      if command.match(/折り返して/)
-        apply_burasage(command)
-
-      elsif command.match(/^ここから/)
-        exec_block_start_command(command)
-      elsif command.match(/^ここで/)
-        exec_block_end_command(command)
-
-      elsif command.match(/割り注/)
-        apply_warichu(command)
-      elsif command.match(/字下げ/)
-        apply_jisage(command)
-      elsif command.match(/fig(\d)+_(\d)+\.png/)
-        exec_img_command(command,raw)
-      # avoid to try complex ruby -- escape to notes
-      elsif command.match(/(左|下)に「(.*)」の(ルビ|注記|傍記)/)
-        apply_rest_notes(command)
-      elsif command.match(/終わり$/)
-        exec_inline_end_command(command)
-        nil
-      elsif command.match(/^「.+」/)
-        exec_frontref_command(command)
-      elsif command.match(/1-7-8[2345]/)
-        apply_dakuten_katakana(command)
-      elsif command.match(/^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$/)
-        Aozora2Html::Tag::Kaeriten.new(self, command)
-      elsif command.match(/^（(.+)）$/)
-        Aozora2Html::Tag::Okurigana.new(self, command.gsub!(/[（）]/,""))
-      elsif command.match(/(地付き|字上げ)(終わり)*$/)
-        apply_chitsuki(command)
-      elsif exec_inline_start_command(command)
-        nil
-      else
-        apply_rest_notes(command)
-      end
+      apply_rest_notes(command)
     end
   end
 
@@ -765,25 +800,21 @@ class Aozora2Html
       explicit_close(:jisage)
       @indent_stack.pop
       nil
+    elsif command.match(/この行/)
+      # 1行だけ
+      @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
+      nil
+    elsif @buffer.length == 0 and @stream.peek_char(0) == "\r\n"
+      # commandのみ
+      @terprip = false
+      implicit_close(:jisage)
+      # adhook hack
+      @noprint = false
+      @indent_stack.push(:jisage)
+      Aozora2Html::Tag::MultilineJisage.new(self, jisage_width(command))
     else
-      if command.match(/この行/)
-        # 1行だけ
-        @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
-        nil
-      else
-        if @buffer.length == 0 and @stream.peek_char(0) == "\r\n"
-          # commandのみ
-          @terprip = false
-          implicit_close(:jisage)
-          # adhook hack
-          @noprint = false
-          @indent_stack.push(:jisage)
-          Aozora2Html::Tag::MultilineJisage.new(self, jisage_width(command))
-        else
-          @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
-          nil
-        end
-      end
+      @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
+      nil
     end
   end
 
@@ -835,34 +866,36 @@ class Aozora2Html
   end
 
   def new_midashi_id(size)
-    inc = 1
-    if size.kind_of?(String)
-      if size.match(SIZE_SMALL)
-        inc = 1
-      elsif size.match(SIZE_MIDDLE)
-        inc = 10
-      elsif size.match(SIZE_LARGE)
-        inc = 100
-      else
-        raise Aozora2Html::Error, I18n.t(:undefined_header)
-      end
+    if size.kind_of?(Integer)
+      @midashi_id += size
+      return @midashi_id
+    end
+
+    case size
+    when /#{SIZE_SMALL}/
+      inc = 1
+    when /#{SIZE_MIDDLE}/
+      inc = 10
+    when /#{SIZE_LARGE}/
+      inc = 100
     else
-      inc = size
+      raise Aozora2Html::Error, I18n.t(:undefined_header)
     end
     @midashi_id += inc
   end
 
   def apply_midashi(command)
     @indent_stack.push(:midashi)
+    case command
+    when /同行/
+      midashi_type = :dogyo
+    when /窓/
+      midashi_type = :mado
+    else
       midashi_type = :normal
-      if command.match(/同行/)
-        midashi_type = :dogyo
-      elsif command.match(/窓/)
-        midashi_type = :mado
-      else
-        @terprip = false
-      end
-    Aozora2Html::Tag::MultilineMidashi.new(self,command,midashi_type)
+      @terprip = false
+    end
+    Aozora2Html::Tag::MultilineMidashi.new(self, command, midashi_type)
   end
 
   def apply_yokogumi(command)
@@ -889,6 +922,14 @@ class Aozora2Html
   def push_block_tag(tag,closing)
     push_chars(tag)
     closing.concat(tag.close_tag)
+  end
+
+  def detect_style_size(style)
+    if style.match("小")
+      :sho
+    else
+      :dai
+    end
   end
 
   def exec_inline_start_command(command)
@@ -941,51 +982,45 @@ class Aozora2Html
     when "窓小見出し"
       @style_stack.push([command,'</a></h5>'])
       push_chars("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+    when /(.*)段階(..)な文字/
+      @style_stack.push([command,'</span>'])
+      _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+      times = convert_japanese_number(nest).to_i
+      daisho = detect_style_size(style)
+      html_class = daisho.to_s + times.to_s
+      size = Utils.create_font_size(times, daisho)
+      push_chars("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
     else
-      if command.match(/(.*)段階(..)な文字/)
-        @style_stack.push([command,'</span>'])
-        _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
-        times = convert_japanese_number(nest).to_i
-        daisho = if style.match("小")
-                   :sho
-                 else
-                   :dai
-                 end
-        html_class = daisho.to_s + times.to_s
-        size = Utils.create_font_size(times, daisho)
-        push_chars("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
-      else
-        ## Decoration ##
-        key = command
-        filter = lambda{|x| x}
-        if command.match(/(右|左|上|下)に(.*)/)
-          _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
-          # renew command
-          key = com
-          if command.match(/点/)
-            case dir
-            when "左", "下"
-              filter = lambda{|x| x + "_after"}
-            end
-          elsif command.match(/線/)
-            case dir
-            when "左", "上"
-              filter = lambda{|x| x.sub("under","over")}
-            end
+      ## Decoration ##
+      key = command
+      filter = lambda{|x| x}
+      if command.match(/(右|左|上|下)に(.*)/)
+        _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
+        # renew command
+        key = com
+        if command.match(/点/)
+          case dir
+          when "左", "下"
+            filter = lambda{|x| x + "_after"}
+          end
+        elsif command.match(/線/)
+          case dir
+          when "左", "上"
+            filter = lambda{|x| x.sub("under","over")}
           end
         end
+      end
 
-        found = COMMAND_TABLE[key]
-        # found = [class, tag]
-        if found
-          @style_stack.push([command,"</#{found[1]}>"])
-          push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
-        else
-          if $DEBUG
-            puts "警告(#{line_number}行目):「#{key}」は未対応のコマンドのため無視します"
-          end
-          nil
+      found = COMMAND_TABLE[key]
+      # found = [class, tag]
+      if found
+        @style_stack.push([command,"</#{found[1]}>"])
+        push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
+      else
+        if $DEBUG
+          puts "警告(#{line_number}行目):「#{key}」は未対応のコマンドのため無視します"
         end
+        nil
       end
     end
   end
@@ -1072,11 +1107,7 @@ class Aozora2Html
       if match != ""
         @indent_stack.pop
       end
-      daisho = if style == "小さ"
-                 :sho
-               else
-                 :dai
-               end
+      daisho = detect_style_size(style)
       push_block_tag(Aozora2Html::Tag::FontSize.new(self,
                                                     convert_japanese_number(nest).to_i,
                                                     daisho),
@@ -1092,28 +1123,33 @@ class Aozora2Html
     end
   end
 
+  # コマンド文字列からモードのシンボルを取り出す
+  #
+  # @return [Symbol]
+  #
   def detect_command_mode(command)
-    if command.match(/字下げ/)
+    case command
+    when /字下げ/
       :jisage
-    elsif command.match(/(地付き|字上げ)終わり$/)
+    when /(地付き|字上げ)終わり$/
       :chitsuki
-    elsif command.match(/見出し/)
+    when /見出し/
       :midashi
-    elsif command.match(/字詰め/)
+    when /字詰め/
       :jizume
-    elsif command.match(/横組み/)
+    when /横組み/
       :yokogumi
-    elsif command.match(/罫囲み/)
+    when /罫囲み/
       :keigakomi
-    elsif command.match(/キャプション/)
+    when /キャプション/
       :caption
-    elsif command.match(/太字/)
+    when /太字/
       :futoji
-    elsif command.match(/斜体/)
+    when /斜体/
       :shatai
-    elsif command.match(/大きな文字/)
+    when /大きな文字/
       :dai
-    elsif command.match(/小さな文字/)
+    when /小さな文字/
       :sho
     else
       nil
@@ -1157,11 +1193,11 @@ class Aozora2Html
 
   def exec_frontref_command(command)
     _whole, reference, spec1, spec2 = command.match(/「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)/).to_a
-    spec = if spec1
-             spec1 + spec2
-           else
-             spec2
-           end
+    if spec1
+      spec = spec1 + spec2
+    else
+      spec = spec2
+    end
     if reference and found = search_front_reference(reference)
       tmp = exec_style(found, spec)
       if tmp
@@ -1174,17 +1210,19 @@ class Aozora2Html
     apply_rest_notes(command)
   end
 
+  # 傍記を並べる用
+  #
   def multiply(bouki, times)
-    s = ""
-    (times-1).times{
-      s += bouki
-      s += "&nbsp;"
-    }
-    s + bouki
+    sep = "&nbsp;"
+    ([bouki]*times).join(sep)
   end
 
+  # arrayがルビを含んでいればそのインデックスを返す
+  #
+  # @return [Integer, nil]
+  #
   def include_ruby?(array)
-    array.index{|elt|
+    array.index do |elt|
       if elt.is_a?(Aozora2Html::Tag::Ruby)
         true
       elsif elt.is_a?(Aozora2Html::Tag::ReferenceMentioned)
@@ -1194,13 +1232,16 @@ class Aozora2Html
           elt.target.is_a?(Aozora2Html::Tag::Ruby)
         end
       end
-    }
+    end
   end
 
+  # rubyタグの再生成(本体はrearrange_ruby)
+  #
   # complex ruby wrap up utilities -- don't erase! we will use soon ...
+  #
   def rearrange_ruby_tag(targets, upper_ruby, under_ruby = "")
-    target,upper,under = rearrange_ruby(targets, upper_ruby, under_ruby)
-    Aozora2Html::Tag::Ruby.new(self, target,upper,under)
+    target, upper, under = rearrange_ruby(targets, upper_ruby, under_ruby)
+    Aozora2Html::Tag::Ruby.new(self, target, upper, under)
   end
 
   # rubyタグの再割り当て
@@ -1231,11 +1272,11 @@ class Aozora2Html
               if new_upper.is_a?(Array)
                 new_upper.push(x.ruby)
               else
-              raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
+                raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
               end
             else
               if new_under.is_a?(Array)
-              new_under.push(x.under_ruby)
+                new_under.push(x.under_ruby)
               else
                 raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
               end
@@ -1245,7 +1286,7 @@ class Aozora2Html
         elsif x.is_a?(Aozora2Html::Tag::ReferenceMentioned)
           if x.target.is_a?(Array)
             # recursive
-            tar,up,un = rearrange_ruby(x.target,"","")
+            tar,up,un = rearrange_ruby(x.target, "", "")
             # rotation!!
             tar.each{|y|
               tmp = x.dup
@@ -1315,12 +1356,8 @@ class Aozora2Html
     elsif command.match(/(.*)段階(..)な文字/)
       _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
       Aozora2Html::Tag::InlineFontSize.new(self,targets,
-                               convert_japanese_number(nest).to_i,
-                               if style.match("小")
-                                 :sho
-                               else
-                                 :dai
-                               end)
+                                           convert_japanese_number(nest).to_i,
+                                           detect_style_size(style))
     elsif command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/)
       _whole, dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
       if targets.length == 1 and targets[0].is_a?(Aozora2Html::Tag::Ruby)
@@ -1332,12 +1369,12 @@ class Aozora2Html
           raise Aozora2Html::Error, "1つの単語に3つのルビはつけられません"
         end
       else
-        rearrange_ruby_tag(targets,"",under)
+        rearrange_ruby_tag(targets, "", under)
       end
     elsif command.match(/「(.+?)」の注記/)
-      rearrange_ruby_tag(targets,/「(.+?)」の注記/.match(command).to_a[1])
+      rearrange_ruby_tag(targets, /「(.+?)」の注記/.match(command).to_a[1])
     elsif command.match(/「(.)」の傍記/)
-      rearrange_ruby_tag(targets,multiply( /「(.)」の傍記/.match(command).to_a[1], targets.to_s.length))
+      rearrange_ruby_tag(targets, multiply( /「(.)」の傍記/.match(command).to_a[1], targets.to_s.length))
     else
       ## direction fix! ##
       filter = lambda{|x| x}
@@ -1447,7 +1484,7 @@ class Aozora2Html
     when "\r\n"
       tail_output
     when RUBY_PREFIX
-      @ruby_buf.dump(@buffer)
+      @ruby_buf.dump_into(@buffer)
       @ruby_buf.protected = true
     when nil
       # noop
@@ -1461,7 +1498,7 @@ class Aozora2Html
 
   # general_outputのフッタ版
   def tail_output
-    @ruby_buf.dump(@buffer)
+    @ruby_buf.dump_into(@buffer)
     string = @buffer.join
     @ruby_buf.clear
     @buffer = []
