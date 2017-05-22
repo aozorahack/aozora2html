@@ -852,15 +852,15 @@ class Aozora2Html
       @indent_stack.pop
       nil
     else
-      l = chitsuki_length(string)
+      len = chitsuki_length(string)
       if multiline
         # •¡”sw’è
         implicit_close(:chitsuki)
         @indent_stack.push(:chitsuki)
-        Aozora2Html::Tag::MultilineChitsuki.new(self, l)
+        Aozora2Html::Tag::MultilineChitsuki.new(self, len)
       else
         # 1s‚Ì‚İ
-        Aozora2Html::Tag::OnelineChitsuki.new(self, l)
+        Aozora2Html::Tag::OnelineChitsuki.new(self, len)
       end
     end
   end
