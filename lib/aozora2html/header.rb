@@ -20,8 +20,8 @@ class Aozora2Html
 
     def header_element_type(string)
       original = true
-      string.each_char do |x|
-        code = x.unpack("H*")[0]
+      string.each_char do |ch|
+        code = ch.unpack("H*")[0]
         if ("00" <= code and code <= "7f") or # 1byte
           ("8140" <= code and code <= "8258") or # 1-1, 3-25
           ("839f" <= code and code <= "8491") # 6-1, 7-81
