@@ -31,7 +31,7 @@ class Aozora2Html
   SIZE_LARGE = "大"
   AOZORABUNKO = "青空文庫"
   #PAT_EDITOR = /[校訂|編|編集|編集校訂|校訂編集]$/
-  PAT_EDITOR = /(校訂|編|編集|編集校訂|校訂編集)$/
+  PAT_EDITOR = /(校訂|編|編集)$/
   PAT_HENYAKU = /編訳$/
   PAT_TRANSLATOR = /訳$/
   RUBY_PREFIX = "｜"
