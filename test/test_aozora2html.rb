@@ -251,6 +251,80 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal :futoji, @parser.detect_command_mode(command)
   end
 
+  def test_tcy
+    input = StringIO.new("［＃縦中横］（※［＃ローマ数字1、1-13-21］）\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    message = nil
+    begin
+      parser.parse_body
+      parser.general_output
+    rescue Aozora2Html::Error => e
+      message = e.message.encode("utf-8")
+    ensure
+      assert_equal "エラー(0行目):縦中横中に改行されました。改行をまたぐ要素にはブロック表記を用いてください. \r\n処理を停止します", message
+    end
+  end
+
+  def test_ensure_close
+    input = StringIO.new("［＃ここから５字下げ］\r\n底本： test\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    message = nil
+    begin
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.general_output
+    rescue Aozora2Html::Error => e
+      message = e.message.encode("utf-8")
+    ensure
+      assert_equal "エラー(0行目):字下げ中に本文が終了しました. \r\n処理を停止します", message
+    end
+  end
+
+  def test_invalid_closing
+    input = StringIO.new("［＃ここで太字終わり］\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    message = nil
+    begin
+      parser.parse_body
+    rescue Aozora2Html::Error => e
+      message = e.message.encode("utf-8")
+    ensure
+      assert_equal "エラー(0行目):太字を閉じようとしましたが、太字中ではありません. \r\n処理を停止します", message
+    end
+  end
+
+  def test_invalid_nest
+    input = StringIO.new("［＃太字］［＃傍線］あ［＃太字終わり］\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    message = nil
+    begin
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+    rescue Aozora2Html::Error => e
+      message = e.message.encode("utf-8")
+    ensure
+      assert_equal "エラー(0行目):太字を終了しようとしましたが、傍線中です. \r\n処理を停止します", message
+    end
+  end
+
   def teardown
   end
 end
