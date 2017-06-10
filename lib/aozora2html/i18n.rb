@@ -11,6 +11,12 @@ class Aozora2Html
       :warn_onebyte => "警告(%d行目):1バイトの「%s」が使われています",
       :warn_chuki => "警告(%d行目):注記記号の誤用の可能性がある、「%s」が使われています",
       :warn_jis_gaiji => "警告(%d行目):JIS外字「%s」が使われています",
+      :dont_crlf_in_style => "%s中に改行されました。改行をまたぐ要素にはブロック表記を用いてください",
+      :terminate_in_style => "%s中に本文が終了しました",
+      :invalid_closing => "%sを閉じようとしましたが、%s中ではありません",
+      :invalid_nesting => "%sを終了しようとしましたが、%s中です",
+      :dont_use_double_ruby => "同じ箇所に2つのルビはつけられません",
+      :dont_allow_triple_ruby => "1つの単語に3つのルビはつけられません",
     }
 
     def self.t(msg, *args)
