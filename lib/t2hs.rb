@@ -280,11 +280,10 @@ class Aozora2Html
       when "\r\n"
         if i == 0 && @stream.peek_char(1) == "\r\n"
           @section = :body
-          return
         else
           @section = :chuuki
-          return
         end
+        return
       else
         @section = :body
         @out.print("<br />\r\n")
@@ -332,7 +331,7 @@ class Aozora2Html
   def illegal_char_check(char, line)
     if char.is_a?(String)
       code = char.unpack("H*")[0]
-      if (code == "21" or
+      if code == "21" or
           code == "23" or
           ("a1" <= code and code <= "a5") or
           ("28" <= code and code <= "29") or
@@ -341,7 +340,7 @@ class Aozora2Html
           code == "3d" or
           code == "3f" or
           code == "2b" or
-          ("7b" <= code and code <= "7d"))
+          ("7b" <= code and code <= "7d")
         puts I18n.t(:warn_onebyte, line, char)
       end
 
@@ -349,7 +348,7 @@ class Aozora2Html
         puts I18n.t(:warn_chuki, line, char)
       end
 
-      if (("81ad" <=  code and code <= "81b7") or
+      if ("81ad" <=  code and code <= "81b7") or
           ("81c0" <=  code and code <= "81c7") or
           ("81cf" <=  code and code <= "81d9") or
           ("81e9" <=  code and code <= "81ef") or
@@ -375,7 +374,7 @@ class Aozora2Html
           ("ec40" <=  code and code <= "ecfc") or
           ("ed40" <=  code and code <= "edfc") or
           ("ee40" <=  code and code <= "eefc") or
-          ("ef40" <=  code and code <= "effc"))
+          ("ef40" <=  code and code <= "effc")
         puts I18n.t(:warn_jis_gaiji, line, char)
       end
     end
@@ -826,10 +825,8 @@ class Aozora2Html
       push_chars('</span>')
     else
       check = @ruby_buf.last
-      if check.is_a?(String) and check.match(/（$/)
-        push_chars('<span class="warichu">')
-      else
-        push_chars('<span class="warichu">')
+      push_chars('<span class="warichu">')
+      unless check.is_a?(String) and check.match(/（$/)
         push_chars('（')
       end
     end
@@ -1359,7 +1356,7 @@ class Aozora2Html
                                            convert_japanese_number(nest).to_i,
                                            detect_style_size(style))
     elsif command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/)
-      _whole, dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
+      _whole, _dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
       if targets.length == 1 and targets[0].is_a?(Aozora2Html::Tag::Ruby)
         tag = targets[0]
         if tag.under_ruby == ""
@@ -1455,7 +1452,7 @@ class Aozora2Html
       end
     end
     @buffer.push(Aozora2Html::Tag::Ruby.new(self, ans, ruby))
-    @buffer = @buffer + notes
+    @buffer += notes
     @ruby_buf.clear
     nil
   end
