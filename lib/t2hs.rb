@@ -31,7 +31,7 @@ class Aozora2Html
   SIZE_LARGE = "大"
   AOZORABUNKO = "青空文庫"
   #PAT_EDITOR = /[校訂|編|編集|編集校訂|校訂編集]$/
-  PAT_EDITOR = /(校訂|編|編集|編集校訂|校訂編集)$/
+  PAT_EDITOR = /(校訂|編|編集)$/
   PAT_HENYAKU = /編訳$/
   PAT_TRANSLATOR = /訳$/
   RUBY_PREFIX = "｜"
@@ -238,14 +238,14 @@ class Aozora2Html
   # 本文が終わってよいかチェックし、終わっていなければ例外をあげる
   def ensure_close
     if n = @indent_stack.last
-      raise Aozora2Html::Error, "#{convert_indent_type(n)}中に本文が終了しました"
+      raise Aozora2Html::Error, I18n.t(:terminate_in_style, convert_indent_type(n))
     end
   end
 
   def explicit_close(type)
     n = check_close_match(type)
     if n
-      raise Aozora2Html::Error, "#{n}を閉じようとしましたが、#{n}中ではありません"
+      raise Aozora2Html::Error, I18n.t(:invalid_closing, n, n)
     end
     if tag = @tag_stack.pop
       push_chars(tag)
@@ -342,11 +342,11 @@ class Aozora2Html
           code == "3f" or
           code == "2b" or
           ("7b" <= code and code <= "7d"))
-        puts "警告(#{line}行目):1バイトの「#{char}」が使われています"
+        puts I18n.t(:warn_onebyte, line, char)
       end
 
       if code == "81f2"
-        puts "警告(#{line}行目):注記記号の誤用の可能性がある、「#{char}」が使われています"
+        puts I18n.t(:warn_chuki, line, char)
       end
 
       if (("81ad" <=  code and code <= "81b7") or
@@ -376,7 +376,7 @@ class Aozora2Html
           ("ed40" <=  code and code <= "edfc") or
           ("ee40" <=  code and code <= "eefc") or
           ("ef40" <=  code and code <= "effc"))
-        puts "警告(#{line}行目):JIS外字「#{char}」が使われています"
+        puts I18n.t(:warn_jis_gaiji, line, char)
       end
     end
   end
@@ -526,7 +526,7 @@ class Aozora2Html
   #
   def general_output
     if @style_stack.last
-      raise Aozora2Html::Error, "#{@style_stack.last_command}中に改行されました。改行をまたぐ要素にはブロック表記を用いてください"
+      raise Aozora2Html::Error, I18n.t(:dont_crlf_in_style, @style_stack.last_command)
     end
     # bufferにインデントタグだけがあったら改行しない！
     if @noprint
@@ -1041,7 +1041,7 @@ class Aozora2Html
     elsif @style_stack.last_command.match(encount)
       push_chars(@style_stack.pop[1])
     else
-      raise Aozora2Html::Error, "#{encount}を終了しようとしましたが、#{@style_stack.last_command}中です"
+      raise Aozora2Html::Error, I18n.t(:invalid_nesting, encount, @style_stack.last_command)
     end
   end
 
