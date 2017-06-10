@@ -1,0 +1,227 @@
+inherit_gem:
+  meowcop:
+    - config/rubocop.yml
+
+AllCops:
+  TargetRubyVersion: 2.1
+
+# EnforcedStyle: with_first_parameter => 0 offense
+# EnforcedStyle: with_fixed_indentation => 17 offenses
+Layout/AlignParameters:
+  EnforcedStyle: with_first_parameter
+  Enabled: true
+
+# EnforcedStyle: empty_lines => 80 offenses
+# EnforcedStyle: no_empty_lines => 0 offense
+Layout/EmptyLinesAroundBlockBody:
+  EnforcedStyle: no_empty_lines
+  Enabled: true
+
+# EnforcedStyleInsidePipes: space => 39 offenses
+# EnforcedStyleInsidePipes: no_space => 0 offense
+Layout/SpaceAroundBlockParameters:
+  EnforcedStyleInsidePipes: no_space
+  Enabled: true
+
+# EnforcedStyle: space => 42 offenses
+# EnforcedStyle: no_space => 4 offenses
+Layout/SpaceBeforeBlockBraces:
+  EnforcedStyle: no_space
+  Enabled: true
+
+# EnforcedStyle: space => 98 offenses
+# EnforcedStyle: no_space => 0 offense
+Layout/SpaceInsideStringInterpolation:
+  EnforcedStyle: no_space
+  Enabled: true
+
+# EnforcedStyle: percent_q => 0 offense
+# EnforcedStyle: bare_percent => 30 offenses
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+  Enabled: true
+
+# EnforcedStyle: nested => 2 offenses
+# EnforcedStyle: compact => 81 offenses
+Style/ClassAndModuleChildren:
+  EnforcedStyle: nested
+  Enabled: true
+
+# EnforcedStyle: compact => 24 offenses
+# EnforcedStyle: expanded => 0 offense
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+  Enabled: true
+
+# EnforcedStyle: when_needed => 10 offenses
+# EnforcedStyle: always => 57 offenses
+# EnforcedStyle: never => 32 offenses
+Style/Encoding:
+  EnforcedStyle: when_needed
+  Enabled: true
+
+# EnforcedStyle: for => 13 offenses
+# EnforcedStyle: each => 0 offense
+Style/For:
+  EnforcedStyle: each
+  Enabled: true
+
+# EnforcedStyle: require_parentheses => 0 offense
+# EnforcedStyle: require_no_parentheses => 112 offenses
+# EnforcedStyle: require_no_parentheses_except_multiline => 112 offenses
+Style/MethodDefParentheses:
+  EnforcedStyle: require_parentheses
+  Enabled: true
+
+# EnforcedStyle: snake_case => 0 offense
+# EnforcedStyle: camelCase => 268 offenses
+Style/MethodName:
+  EnforcedStyle: snake_case
+  Enabled: true
+
+# EnforcedStyle: compact => 25 offenses
+# EnforcedStyle: exploded => 0 offense
+Style/RaiseArgs:
+  EnforcedStyle: exploded
+  Enabled: true
+
+# EnforcedStyle: only_raise => 0 offense
+# EnforcedStyle: only_fail => 26 offenses
+# EnforcedStyle: semantic => 25 offenses
+Style/SignalException:
+  EnforcedStyle: only_raise
+  Enabled: true
+
+# EnforcedStyle: snake_case => 0 offense
+# EnforcedStyle: camelCase => 126 offenses
+Style/VariableName:
+  EnforcedStyle: snake_case
+  Enabled: true
+
+# EnforcedStyle: snake_case => 11 offenses
+# EnforcedStyle: normalcase => 0 offense
+# EnforcedStyle: non_integer => 11 offenses
+Style/VariableNumber:
+  EnforcedStyle: normalcase
+  Enabled: true
+
+Style/StringLiterals:
+  Enabled: false
+
+Layout/SpaceAfterComma:
+  Enabled: false
+
+Layout/SpaceAroundOperators:
+  Enabled: false
+
+Layout/SpaceInsideBlockBraces:
+  Enabled: false
+
+Style/UnneededPercentQ:
+  Enabled: false
+
+Style/PercentQLiterals:
+  Enabled: false
+
+Style/SpecialGlobalVars:
+  Enabled: false
+
+Style/Encoding:
+  Enabled: false
+
+Style/ParallelAssignment:
+  Enabled: false
+
+Style/IfInsideElse:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+Style/ClassCheck:
+  Enabled: false
+
+Style/RedundantBegin:
+  Enabled: false
+
+Layout/EmptyLineAfterMagicComment:
+  Enabled: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/LineEndConcatenation:
+  Enabled: false
+
+Style/MethodCallWithoutArgsParentheses:
+  Enabled: false
+
+Style/GlobalVars:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/ZeroLengthPredicate:
+  Enabled: false
+
+Layout/TrailingBlankLines:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: true
+  Max: 260.05
+
+Metrics/BlockLength:
+  Enabled: true
+  Max: 150
+
+Metrics/BlockNesting:
+  Enabled: true
+  Max: 10
+
+Metrics/ClassLength:
+  Enabled: true
+  Max: 2000
+
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 100
+
+Metrics/LineLength:
+  Enabled: true
+  Max: 500
+
+Metrics/MethodLength:
+  Enabled: true
+  Max: 200
+
+Metrics/ModuleLength:
+  Enabled: true
+  Max: 100
+
+Metrics/ParameterLists:
+  Enabled: true
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Max: 100
+
+
+###
+Performance/RedundantMatch:
+  Enabled: false
+Performance/StringReplacement:
+  Enabled: false
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+
+### あとで直す
+Lint/StringConversionInInterpolation:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
