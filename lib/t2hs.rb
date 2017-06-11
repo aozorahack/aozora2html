@@ -700,7 +700,7 @@ class Aozora2Html
   def dispatch_gaiji
     # 「※」の次が「［」でなければ外字ではない
     if @stream.peek_char(0) !=  "［"
-      "※"
+      return "※"
     end
 
     # 「［」を読み捨てる
