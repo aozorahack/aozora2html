@@ -692,16 +692,6 @@ class Aozora2Html
     end
   end
 
-  def convert_japanese_number(command)
-    tmp = command.tr("０-９", "0-9")
-    tmp.tr!("一二三四五六七八九〇","1234567890")
-    tmp.gsub!(/(\d)十(\d)/){"#{$1}#{$2}"}
-    tmp.gsub!(/(\d)十/){"#{$1}0"}
-    tmp.gsub!(/十(\d)/){"1#{$1}"}
-    tmp.gsub!(/十/,"10")
-    tmp
-  end
-
   def kuten2png(substring)
     desc = substring.gsub(/「※」[は|の]/,"")
     match = desc.match(/[12]\-\d{1,2}\-\d{1,2}/)
@@ -804,7 +794,7 @@ class Aozora2Html
       general_output
     end
     @noprint = true # always no print
-    command = convert_japanese_number(command)
+    command = Utils.convert_japanese_number(command)
     if command.match(/天付き/)
       width = command.match(/折り返して(\d*)字下げ/)[1]
       tag = '<div class="burasage" style="margin-left: ' + width + 'em; text-indent: -' + width  + 'em;">'
@@ -820,7 +810,7 @@ class Aozora2Html
   end
 
   def jisage_width(command)
-    convert_japanese_number(command).match(/(\d*)(?:字下げ)/)[1]
+    Utils.convert_japanese_number(command).match(/(\d*)(?:字下げ)/)[1]
   end
 
   def apply_jisage(command)
@@ -864,7 +854,7 @@ class Aozora2Html
   end
 
   def chitsuki_length(command)
-    command = convert_japanese_number(command)
+    command = Utils.convert_japanese_number(command)
     if match = command.match(/([0-9]+)字/)
       match[1]
     else
@@ -941,7 +931,7 @@ class Aozora2Html
   end
 
   def apply_jizume(command)
-    w = convert_japanese_number(command).match(/(\d*)(?:字詰め)/)[1]
+    w = Utils.convert_japanese_number(command).match(/(\d*)(?:字詰め)/)[1]
     @indent_stack.push(:jizume)
     Aozora2Html::Tag::Jizume.new(self, w)
   end
@@ -1012,7 +1002,7 @@ class Aozora2Html
     when /(.*)段階(..)な文字/
       @style_stack.push([command,'</span>'])
       _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
-      times = convert_japanese_number(nest).to_i
+      times = Utils.convert_japanese_number(nest).to_i
       daisho = detect_style_size(style)
       html_class = daisho.to_s + times.to_s
       size = Utils.create_font_size(times, daisho)
@@ -1136,7 +1126,7 @@ class Aozora2Html
       end
       daisho = detect_style_size(style)
       push_block_tag(Aozora2Html::Tag::FontSize.new(self,
-                                                    convert_japanese_number(nest).to_i,
+                                                    Utils.convert_japanese_number(nest).to_i,
                                                     daisho),
                      match)
       @indent_stack.push(daisho)
@@ -1383,7 +1373,7 @@ class Aozora2Html
     elsif command.match(/(.*)段階(..)な文字/)
       _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
       Aozora2Html::Tag::InlineFontSize.new(self,targets,
-                                           convert_japanese_number(nest).to_i,
+                                           Utils.convert_japanese_number(nest).to_i,
                                            detect_style_size(style))
     elsif command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/)
       _whole, _dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a

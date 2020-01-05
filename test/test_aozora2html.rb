@@ -177,19 +177,19 @@ class Aozora2HtmlTest < Test::Unit::TestCase
 
   def test_convert_japanese_number
     assert_equal "3字下げ",
-                 @parser.convert_japanese_number("三字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("三字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "10字下げ",
-                 @parser.convert_japanese_number("十字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("十字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "12字下げ",
-                 @parser.convert_japanese_number("十二字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("十二字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "20字下げ",
-                 @parser.convert_japanese_number("二十字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("二十字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "20字下げ",
-                 @parser.convert_japanese_number("二〇字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("二〇字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "23字下げ",
-                 @parser.convert_japanese_number("二十三字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("二十三字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "2字下げ",
-                 @parser.convert_japanese_number("２字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("２字下げ".encode("shift_jis")).encode("utf-8")
 
   end
 
