@@ -26,18 +26,49 @@ class Aozora2Html
   NOJI = ["18f5"].pack("h*").force_encoding("shift_jis")
   DAKUTEN = ["18d8"].pack("h*").force_encoding("shift_jis")
   GAIJI_MARK = "※"
+  IGETA_MARK = "＃"
+  RUBY_BEGIN_MARK = "《"
   SIZE_SMALL = "小"
   SIZE_MIDDLE = "中"
   SIZE_LARGE = "大"
   TEIHON_MARK = "底本："
   COMMAND_BEGIN = "［"
+  COMMAND_END = "］"
   ACCENT_BEGIN = "〔"
+  ACCENT_END = "〕"
   AOZORABUNKO = "青空文庫"
   #PAT_EDITOR = /[校訂|編|編集|編集校訂|校訂編集]$/
   PAT_EDITOR = /(校訂|編|編集)$/
   PAT_HENYAKU = /編訳$/
   PAT_TRANSLATOR = /訳$/
   RUBY_PREFIX = "｜"
+  PAT_RUBY = /《.*?》/
+  CHUUKI_COMMAND = "注記付き"
+  TCY_COMMAND = "縦中横"
+  KEIGAKOMI_COMMAND = "罫囲み"
+  YOKOGUMI_COMMAND = "横組み"
+  CAPTION_COMMAND = "キャプション"
+  WARIGAKI_COMMAND = "割書"
+  OMIDASHI_COMMAND = "大見出し"
+  NAKAMIDASHI_COMMAND = "中見出し"
+  KOMIDASHI_COMMAND = "小見出し"
+  DOGYO_OMIDASHI_COMMAND = "同行大見出し"
+  DOGYO_NAKAMIDASHI_COMMAND = "同行中見出し"
+  DOGYO_KOMIDASHI_COMMAND = "同行小見出し"
+  MADO_OMIDASHI_COMMAND = "窓大見出し"
+  MADO_NAKAMIDASHI_COMMAND = "窓中見出し"
+  MADO_KOMIDASHI_COMMAND = "窓小見出し"
+  LEFT_MARK = "左"
+  UNDER_MARK = "下"
+  OVER_MARK = "上"
+  MAIN_MARK = "本文"
+  END_MARK = "終わり"
+
+  DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
+                     "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a>" +
+                     "<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n" +
+                     "<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n" +
+                     "</div>"
 
   # KUNOJI = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
@@ -132,7 +163,7 @@ class Aozora2Html
   end
 
   def read_accent
-    Aozora2Html::AccentParser.new(@stream, "〕", @chuuki_table, @images).process
+    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images).process
   end
 
   def read_to_nest(endchar)
@@ -192,11 +223,7 @@ class Aozora2Html
   end
 
   def dynamic_contents
-    @out.print "<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
-               "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a>" +
-               "<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n" +
-               "<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n" +
-               "</div>"
+    @out.print DYNAMIC_CONTENTS
   end
 
   def close
@@ -304,7 +331,7 @@ class Aozora2Html
       @out.print @header.to_html
     else
       string.gsub!(RUBY_PREFIX,"")
-      string.gsub!(/《.*?》/,"")
+      string.gsub!(PAT_RUBY,"")
       @header.push(string)
     end
   end
@@ -405,7 +432,7 @@ class Aozora2Html
       char = dispatch_aozora_command
     when KU
       assign_kunoji
-    when "《"
+    when RUBY_BEGIN_MARK
       char = apply_ruby
     end
 
@@ -683,7 +710,7 @@ class Aozora2Html
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d", codes[0], codes[1])
       code = sprintf("%1d-%02d-%02d",*codes)
-      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!("＃",""))
+      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK,""))
     else
       substring
     end
@@ -709,7 +736,7 @@ class Aozora2Html
     # 「［」を読み捨てる
     _ = read_char
     # embed?
-    command, _raw = read_to_nest("］")
+    command, _raw = read_to_nest(COMMAND_END)
     try_emb = kuten2png(command)
     if try_emb != command
       try_emb
@@ -725,13 +752,13 @@ class Aozora2Html
   # 注記記法の場合分け
   def dispatch_aozora_command
     # 「［」の次が「＃」でなければ注記ではない
-    if @stream.peek_char(0) != "＃"
+    if @stream.peek_char(0) != IGETA_MARK
       return COMMAND_BEGIN
     end
 
     # 「＃」を読み捨てる
     _ = read_char
-    command,raw = read_to_nest("］")
+    command,raw = read_to_nest(COMMAND_END)
     # 適用順序はこれで大丈夫か？　誤爆怖いよ誤爆
     if command.match(/折り返して/)
       apply_burasage(command)
@@ -934,52 +961,52 @@ class Aozora2Html
 
   def exec_inline_start_command(command)
     case command
-    when "注記付き"
+    when CHUUKI_COMMAND
       @style_stack.push([command,'</ruby>'])
       push_char('<ruby><rb>')
-    when "縦中横"
+    when TCY_COMMAND
       @style_stack.push([command,'</span>'])
       push_char('<span dir="ltr">')
-    when "罫囲み"
+    when KEIGAKOMI_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="keigakomi">')
-    when "横組み"
+    when YOKOGUMI_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="yokogumi">')
-    when "キャプション"
+    when CAPTION_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="caption">')
-    when "割書"
+    when WARIGAKI_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="warigaki">')
-    when "大見出し"
+    when OMIDASHI_COMMAND
       @style_stack.push([command,'</a></h3>'])
       @terprip = false
       push_chars("<h3 class=\"o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
-    when "中見出し"
+    when NAKAMIDASHI_COMMAND
       @style_stack.push([command,'</a></h4>'])
       @terprip = false
       push_chars("<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
-    when "小見出し"
+    when KOMIDASHI_COMMAND
       @style_stack.push([command,'</a></h5>'])
       @terprip = false
       push_chars("<h5 class=\"ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
-    when "同行大見出し"
+    when DOGYO_OMIDASHI_COMMAND
       @style_stack.push([command,'</a></h3>'])
       push_chars("<h3 class=\"dogyo-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
-    when "同行中見出し"
+    when DOGYO_NAKAMIDASHI_COMMAND
       @style_stack.push([command,'</a></h4>'])
       push_chars("<h4 class=\"dogyo-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
-    when "同行小見出し"
+    when DOGYO_KOMIDASHI_COMMAND
       @style_stack.push([command,'</a></h5>'])
       push_chars("<h5 class=\"dogyo-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
-    when "窓大見出し"
+    when MADO_OMIDASHI_COMMAND
       @style_stack.push([command,'</a></h3>'])
       push_chars("<h3 class=\"mado-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
-    when "窓中見出し"
+    when MADO_NAKAMIDASHI_COMMAND
       @style_stack.push([command,'</a></h4>'])
       push_chars("<h4 class=\"mado-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
-    when "窓小見出し"
+    when MADO_KOMIDASHI_COMMAND
       @style_stack.push([command,'</a></h5>'])
       push_chars("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
     when /(.*)段階(..)な文字/
@@ -1000,12 +1027,12 @@ class Aozora2Html
         key = com
         if command.match(/点/)
           case dir
-          when "左", "下"
+          when LEFT_MARK, UNDER_MARK
             filter = lambda{|x| x + "_after"}
           end
         elsif command.match(/線/)
           case dir
-          when "左", "上"
+          when LEFT_MARK, OVER_MARK
             filter = lambda{|x| x.sub("under","over")}
           end
         end
@@ -1026,14 +1053,14 @@ class Aozora2Html
   end
 
   def exec_inline_end_command(command)
-    encount = command.sub("終わり","")
-    if encount == "本文"
+    encount = command.sub(END_MARK,"")
+    if encount == MAIN_MARK
       # force to finish main_text
       @section = :tail
       ensure_close
       @noprint = true
       @out.print "</div>\r\n<div class=\"after_text\">\r\n<hr />\r\n"
-    elsif encount.match("注記付き") and @style_stack.last_command == "注記付き"
+    elsif encount.match(CHUUKI_COMMAND) and @style_stack.last_command == CHUUKI_COMMAND
       # special inline ruby
       @style_stack.pop
       _whole, ruby = encount.match("「(.*)」の注記付き").to_a
@@ -1259,26 +1286,26 @@ class Aozora2Html
                     []
                   end
       if new_upper.length > 1 and new_under.length > 1
-        raise Aozora2Html::Error, "1つの単語に3つのルビはつけられません"
+        raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
       end
 
       targets.each{|x|
         if x.is_a?(Aozora2Html::Tag::Ruby)
           if x.target.is_a?(Array)
             # inner Aozora2Html::Tag::Ruby is already complex ... give up
-            raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
+            raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
           else
             if x.ruby != ""
               if new_upper.is_a?(Array)
                 new_upper.push(x.ruby)
               else
-                raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
+                raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
             else
               if new_under.is_a?(Array)
                 new_under.push(x.under_ruby)
               else
-                raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
+                raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
             end
             new_targets.push(x.target)
@@ -1295,12 +1322,12 @@ class Aozora2Html
             if new_under.is_a?(Array)
               new_under.concat(un)
             elsif un.to_s.length > 0
-              raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
+              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
             end
             if new_upper.is_a?(Array)
               new_upper.concat(up)
             elsif up.to_s.length > 0
-              raise Aozora2Html::Error, "同じ箇所に2つのルビはつけられません"
+              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
             end
           else
             new_targets.push(x)
@@ -1366,7 +1393,7 @@ class Aozora2Html
           tag.under_ruby = under
           tag
         else
-          raise Aozora2Html::Error, "1つの単語に3つのルビはつけられません"
+          raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
         end
       else
         rearrange_ruby_tag(targets, "", under)
@@ -1384,12 +1411,12 @@ class Aozora2Html
         command = com
         if command.match(/点/)
           case dir
-          when "左", "下"
+          when LEFT_MARK, UNDER_MARK
             filter = lambda{|x| x + "_after"}
           end
         elsif command.match(/線/)
           case dir
-          when "左", "上"
+          when LEFT_MARK, OVER_MARK
             filter = lambda{|x| x.sub("under","over")}
           end
         end
