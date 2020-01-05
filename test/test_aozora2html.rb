@@ -264,6 +264,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):縦中横中に改行されました。改行をまたぐ要素にはブロック表記を用いてください. \r\n処理を停止します", message
     end
   end
@@ -283,6 +284,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):字下げ中に本文が終了しました. \r\n処理を停止します", message
     end
   end
@@ -299,6 +301,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):太字を閉じようとしましたが、太字中ではありません. \r\n処理を停止します", message
     end
   end
@@ -321,6 +324,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):太字を終了しようとしましたが、傍線中です. \r\n処理を停止します", message
     end
   end
