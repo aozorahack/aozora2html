@@ -414,7 +414,7 @@ class Aozora2Html
       @ruby_buf.protected = true
     when @endchar
       # suddenly finished the file
-      puts "警告(#{line_number}行目):予期せぬファイル終端"
+      puts I18n.t(:warn_unexpected_terminator, line_number)
       throw :terminate
     when nil
       # noop
@@ -1015,7 +1015,7 @@ class Aozora2Html
         push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
       else
         if $DEBUG
-          puts "警告(#{line_number}行目):「#{key}」は未対応のコマンドのため無視します"
+          puts I18n.t(:warn_undefined_command, line_number, key)
         end
         nil
       end
