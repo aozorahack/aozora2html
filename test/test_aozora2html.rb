@@ -352,6 +352,28 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
+  def test_command_do
+    input = StringIO.new("［＃ここから太字］\r\nテスト。\r\n［＃ここで太字終わり］\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    _message = nil
+    begin
+      9.times do
+        parser.parse_body
+      end
+    rescue Aozora2Html::Error => e
+      _message = e.message.encode("utf-8")
+    ensure
+      $stdout = STDOUT
+      output.seek(0)
+      out_text = output.read
+      assert_equal "<div class=\"futoji\">\r\nテスト。<br />\r\n</div>\r\n", out_text
+    end
+  end
+
+
   def teardown
   end
 end

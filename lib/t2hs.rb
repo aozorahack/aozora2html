@@ -28,6 +28,9 @@ class Aozora2Html
   GAIJI_MARK = "※"
   IGETA_MARK = "＃"
   RUBY_BEGIN_MARK = "《"
+  RUBY_END_MARK = "》"
+  PAREN_BEGIN_MARK = "（"
+  PAREN_END_MARK = "）"
   SIZE_SMALL = "小"
   SIZE_MIDDLE = "中"
   SIZE_LARGE = "大"
@@ -43,12 +46,17 @@ class Aozora2Html
   PAT_TRANSLATOR = /訳$/
   RUBY_PREFIX = "｜"
   PAT_RUBY = /《.*?》/
+  PAT_DIRECTION = /(右|左|上|下)に(.*)/
+  PAT_REF = /^「.+」/
   CHUUKI_COMMAND = "注記付き"
   TCY_COMMAND = "縦中横"
   KEIGAKOMI_COMMAND = "罫囲み"
   YOKOGUMI_COMMAND = "横組み"
   CAPTION_COMMAND = "キャプション"
   WARIGAKI_COMMAND = "割書"
+  KAERITEN_COMMAND = "返り点"
+  KUNTEN_OKURIGANA_COMMAND = "訓点送り仮名"
+  MIDASHI_COMMAND = "見出し"
   OMIDASHI_COMMAND = "大見出し"
   NAKAMIDASHI_COMMAND = "中見出し"
   KOMIDASHI_COMMAND = "小見出し"
@@ -63,6 +71,39 @@ class Aozora2Html
   OVER_MARK = "上"
   MAIN_MARK = "本文"
   END_MARK = "終わり"
+  TEN_MARK = "点"
+  SEN_MARK = "線"
+  OPEN_MARK = "ここから"
+  CLOSE_MARK = "ここで"
+  MADE_MARK = "まで"
+  DOGYO_MARK = "同行"
+  MADO_MARK = "窓"
+  JIAGE_COMMAND = "字上げ"
+  JISAGE_COMMAND = "字下げ"
+  PHOTO_COMMAND = "写真"
+  ORIKAESHI_COMMAND = "折り返して"
+  ONELINE_COMMAND = "この行"
+  NON_0213_GAIJI = "非0213外字"
+  WARICHU_COMMAND = "割り注"
+  TENTSUKI_COMMAND = "天付き"
+  PAT_REST_NOTES = /(左|下)に「(.*)」の(ルビ|注記|傍記)/
+  PAT_KUTEN = /「※」[は|の]/
+  PAT_KUTEN_DUAL = /※.*※/
+  PAT_GAIJI = /(?:＃)(.*)(?:、)(.*)/
+  PAT_KAERITEN = /^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$/
+  PAT_OKURIGANA = /^（(.+)）$/
+  PAT_REMOVE_OKURIGANA = /[（）]/
+  PAT_CHITSUKI = /(地付き|字上げ)(終わり)*$/
+  PAT_ORIKAESHI_JISAGE = /折り返して(\d*)字下げ/
+  PAT_ORIKAESHI_JISAGE2 = /(\d*)字下げ、折り返して(\d*)字下げ/
+  PAT_JI_LEN = /([0-9]+)字/
+  PAT_INLINE_RUBY = "「(.*)」の注記付き"
+  PAT_IMAGE = /(.*)（(fig.+\.png)(、横([0-9]+)×縦([0-9]+))*）入る/
+  PAT_FRONTREF = /「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)/
+  PAT_RUBY_DIR = /(左|下)に「([^」]*)」の(ルビ|注記)/
+  PAT_CHUUKI = /「(.+?)」の注記/
+  PAT_BOUKI = /「(.)」の傍記/
+  PAT_CHARSIZE = /(.*)段階(..)な文字/
 
   DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
                      "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a>" +
@@ -210,6 +251,7 @@ class Aozora2Html
 
   def char_type(char)
     begin
+      ## `String#char_type`も定義されているのに注意
       char.char_type
     rescue
       :else
@@ -693,9 +735,9 @@ class Aozora2Html
   end
 
   def kuten2png(substring)
-    desc = substring.gsub(/「※」[は|の]/,"")
+    desc = substring.gsub(PAT_KUTEN,"")
     match = desc.match(/[12]\-\d{1,2}\-\d{1,2}/)
-    if match and !desc.match(/非0213外字/) and !desc.match(/※.*※/)
+    if match and !desc.match(NON_0213_GAIJI) and !desc.match(PAT_KUTEN_DUAL)
       @chuuki_table[:newjis] = true
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d", codes[0], codes[1])
@@ -707,7 +749,7 @@ class Aozora2Html
   end
 
   def escape_gaiji(command)
-    _whole, kanji, line = command.match(/(?:＃)(.*)(?:、)(.*)/).to_a
+    _whole, kanji, line = command.match(PAT_GAIJI).to_a
     tmp = @images.assoc(kanji)
     if tmp
       tmp.push(line)
@@ -750,35 +792,35 @@ class Aozora2Html
     _ = read_char
     command,raw = read_to_nest(COMMAND_END)
     # 適用順序はこれで大丈夫か？　誤爆怖いよ誤爆
-    if command.match(/折り返して/)
+    if command.match(ORIKAESHI_COMMAND)
       apply_burasage(command)
 
-    elsif command.match(/^ここから/)
+    elsif command.start_with?(OPEN_MARK)
       exec_block_start_command(command)
-    elsif command.match(/^ここで/)
+    elsif command.start_with?(CLOSE_MARK)
       exec_block_end_command(command)
 
-    elsif command.match(/割り注/)
+    elsif command.match(WARICHU_COMMAND)
       apply_warichu(command)
-    elsif command.match(/字下げ/)
+    elsif command.match(JISAGE_COMMAND)
       apply_jisage(command)
     elsif command.match(/fig(\d)+_(\d)+\.png/)
       exec_img_command(command,raw)
     # avoid to try complex ruby -- escape to notes
-    elsif command.match(/(左|下)に「(.*)」の(ルビ|注記|傍記)/)
+    elsif command.match(PAT_REST_NOTES)
       apply_rest_notes(command)
-    elsif command.match(/終わり$/)
+    elsif command.end_with?(END_MARK)
       exec_inline_end_command(command)
       nil
-    elsif command.match(/^「.+」/)
+    elsif command.match(PAT_REF)
       exec_frontref_command(command)
     elsif command.match(/1-7-8[2345]/)
       apply_dakuten_katakana(command)
-    elsif command.match(/^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$/)
+    elsif command.match(PAT_KAERITEN)
       Aozora2Html::Tag::Kaeriten.new(self, command)
-    elsif command.match(/^（(.+)）$/)
-      Aozora2Html::Tag::Okurigana.new(self, command.gsub!(/[（）]/,""))
-    elsif command.match(/(地付き|字上げ)(終わり)*$/)
+    elsif command.match(PAT_OKURIGANA)
+      Aozora2Html::Tag::Okurigana.new(self, command.gsub!(PAT_REMOVE_OKURIGANA,""))
+    elsif command.match(PAT_CHITSUKI)
       apply_chitsuki(command)
     elsif exec_inline_start_command(command)
       nil
@@ -795,11 +837,11 @@ class Aozora2Html
     end
     @noprint = true # always no print
     command = Utils.convert_japanese_number(command)
-    if command.match(/天付き/)
-      width = command.match(/折り返して(\d*)字下げ/)[1]
+    if command.match(TENTSUKI_COMMAND)
+      width = command.match(PAT_ORIKAESHI_JISAGE)[1]
       tag = '<div class="burasage" style="margin-left: ' + width + 'em; text-indent: -' + width  + 'em;">'
     else
-      match = command.match(/(\d*)字下げ、折り返して(\d*)字下げ/)
+      match = command.match(PAT_ORIKAESHI_JISAGE2)
       left, indent = match.to_a[1,2]
       left = left.to_i - indent.to_i
       tag = "<div class=\"burasage\" style=\"margin-left: #{indent}em; text-indent: #{left}em;\">"
@@ -810,16 +852,16 @@ class Aozora2Html
   end
 
   def jisage_width(command)
-    Utils.convert_japanese_number(command).match(/(\d*)(?:字下げ)/)[1]
+    Utils.convert_japanese_number(command).match(/(\d*)(?:#{JISAGE_COMMAND})/)[1]
   end
 
   def apply_jisage(command)
-    if command.match(/まで/) or command.match(/終わり/)
+    if command.match(MADE_MARK) or command.match(END_MARK)
       # 字下げ終わり
       explicit_close(:jisage)
       @indent_stack.pop
       nil
-    elsif command.match(/この行/)
+    elsif command.match(ONELINE_COMMAND)
       # 1行だけ
       @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
       nil
@@ -838,16 +880,16 @@ class Aozora2Html
   end
 
   def apply_warichu(command)
-    if command.match(/終わり/)
-      if @stream.peek_char(0) != "）"
-        push_chars('）')
+    if command.match(END_MARK)
+      if @stream.peek_char(0) != PAREN_END_MARK
+        push_chars(PAREN_END_MARK)
       end
       push_chars('</span>')
     else
       check = @ruby_buf.last
       push_chars('<span class="warichu">')
-      unless check.is_a?(String) and check.match(/（$/)
-        push_chars('（')
+      unless check.is_a?(String) and check.end_with?(PAREN_BEGIN_MARK)
+        push_chars(PAREN_BEGIN_MARK)
       end
     end
     nil
@@ -855,7 +897,7 @@ class Aozora2Html
 
   def chitsuki_length(command)
     command = Utils.convert_japanese_number(command)
-    if match = command.match(/([0-9]+)字/)
+    if match = command.match(PAT_JI_LEN)
       match[1]
     else
       "0"
@@ -863,8 +905,8 @@ class Aozora2Html
   end
 
   def apply_chitsuki(string, multiline = false)
-    if string.match(/ここで地付き終わり/) or
-        string.match(/ここで字上げ終わり/)
+    if string.match(CLOSE_MARK+INDENT_TYPE[:chitsuki]+END_MARK) or
+        string.match(CLOSE_MARK+JIAGE_COMMAND+END_MARK)
       explicit_close(:chitsuki)
       @indent_stack.pop
       nil
@@ -903,10 +945,9 @@ class Aozora2Html
 
   def apply_midashi(command)
     @indent_stack.push(:midashi)
-    case command
-    when /同行/
+    if command.match(DOGYO_MARK)
       midashi_type = :dogyo
-    when /窓/
+    elsif command.match(MADO_MARK)
       midashi_type = :mado
     else
       midashi_type = :normal
@@ -931,7 +972,7 @@ class Aozora2Html
   end
 
   def apply_jizume(command)
-    w = Utils.convert_japanese_number(command).match(/(\d*)(?:字詰め)/)[1]
+    w = Utils.convert_japanese_number(command).match(/(\d*)(?:#{INDENT_TYPE[:jizume]})/)[1]
     @indent_stack.push(:jizume)
     Aozora2Html::Tag::Jizume.new(self, w)
   end
@@ -999,9 +1040,9 @@ class Aozora2Html
     when MADO_KOMIDASHI_COMMAND
       @style_stack.push([command,'</a></h5>'])
       push_chars("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
-    when /(.*)段階(..)な文字/
+    when PAT_CHARSIZE
       @style_stack.push([command,'</span>'])
-      _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+      _whole, nest, style = command.match(PAT_CHARSIZE).to_a
       times = Utils.convert_japanese_number(nest).to_i
       daisho = detect_style_size(style)
       html_class = daisho.to_s + times.to_s
@@ -1011,16 +1052,16 @@ class Aozora2Html
       ## Decoration ##
       key = command
       filter = lambda{|x| x}
-      if command.match(/(右|左|上|下)に(.*)/)
-        _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
+      if command.match(PAT_DIRECTION)
+        _whole, dir, com = command.match(PAT_DIRECTION).to_a
         # renew command
         key = com
-        if command.match(/点/)
+        if command.match(TEN_MARK)
           case dir
           when LEFT_MARK, UNDER_MARK
             filter = lambda{|x| x + "_after"}
           end
-        elsif command.match(/線/)
+        elsif command.match(SEN_MARK)
           case dir
           when LEFT_MARK, OVER_MARK
             filter = lambda{|x| x.sub("under","over")}
@@ -1053,7 +1094,7 @@ class Aozora2Html
     elsif encount.match(CHUUKI_COMMAND) and @style_stack.last_command == CHUUKI_COMMAND
       # special inline ruby
       @style_stack.pop
-      _whole, ruby = encount.match("「(.*)」の注記付き").to_a
+      _whole, ruby = encount.match(PAT_INLINE_RUBY).to_a
       push_char("</rb><rp>（</rp><rt>#{ruby}</rt><rp>）</rp></ruby>")
     elsif @style_stack.last_command.match(encount)
       push_chars(@style_stack.pop[1])
@@ -1064,54 +1105,54 @@ class Aozora2Html
 
   def exec_block_start_command(command)
     original_command = command.dup
-    command.sub!(/^ここから/, "")
+    command.sub!(/^#{OPEN_MARK}/, "")
     match = ""
-    if command.match(/字下げ/)
+    if command.match(INDENT_TYPE[:jisage])
       push_block_tag(apply_jisage(command),match)
-    elsif command.match(/(地付き|字上げ)$/)
+    elsif command.match(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
       push_block_tag(apply_chitsuki(command,true),match)
     end
 
-    if command.match(/見出し/)
+    if command.match(INDENT_TYPE[:midashi])
       push_block_tag(apply_midashi(command),match)
     end
 
-    if command.match(/字詰め/)
+    if command.match(INDENT_TYPE[:jizume])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_jizume(command),match)
     end
 
-    if command.match(/横組み/)
+    if command.match(INDENT_TYPE[:yokogumi])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_yokogumi(command),match)
     end
 
-    if command.match(/罫囲み/)
+    if command.match(INDENT_TYPE[:keigakomi])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_keigakomi(command),match)
     end
 
-    if command.match(/キャプション/)
+    if command.match(INDENT_TYPE[:caption])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_caption(command),match)
     end
 
-    if command.match(/太字/)
+    if command.match(INDENT_TYPE[:futoji])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, "futoji"),match)
       @indent_stack.push(:futoji)
     end
-    if command.match(/斜体/)
+    if command.match(INDENT_TYPE[:shatai])
       if match != ""
         @indent_stack.pop
       end
@@ -1119,8 +1160,8 @@ class Aozora2Html
       @indent_stack.push(:shatai)
     end
 
-    if command.match(/(.*)段階(..)な文字/)
-      _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+    if command.match(PAT_CHARSIZE)
+      _whole, nest, style = command.match(PAT_CHARSIZE).to_a
       if match != ""
         @indent_stack.pop
       end
@@ -1145,37 +1186,20 @@ class Aozora2Html
   # @return [Symbol]
   #
   def detect_command_mode(command)
-    case command
-    when /字下げ/
-      :jisage
-    when /(地付き|字上げ)終わり$/
-      :chitsuki
-    when /見出し/
-      :midashi
-    when /字詰め/
-      :jizume
-    when /横組み/
-      :yokogumi
-    when /罫囲み/
-      :keigakomi
-    when /キャプション/
-      :caption
-    when /太字/
-      :futoji
-    when /斜体/
-      :shatai
-    when /大きな文字/
-      :dai
-    when /小さな文字/
-      :sho
-    else
-      nil
+    if command.match(INDENT_TYPE[:chitsuki]+END_MARK) || command.match(JIAGE_COMMAND+END_MARK)
+      return :chitsuki
     end
+    INDENT_TYPE.keys.each do |key|
+      if command.match(INDENT_TYPE[key])
+        return key
+      end
+    end
+    return nil
   end
 
   def exec_block_end_command(command)
     original_command = command.dup
-    command.sub!(/^ここで/, "")
+    command.sub!(/^#{CLOSE_MARK}/, "")
     match = false
     mode = detect_command_mode(command)
     if mode
@@ -1194,10 +1218,10 @@ class Aozora2Html
   end
 
   def exec_img_command(command,raw)
-    match = raw.match(/(.*)（(fig.+\.png)(、横([0-9]+)×縦([0-9]+))*）入る/)
+    match = raw.match(PAT_IMAGE)
     if match
       _whole, alt, src, _wh, width, height = match.to_a
-      css_class = if alt.match(/写真/)
+      css_class = if alt.match(PHOTO_COMMAND)
                     "photo"
                   else
                     "illustration"
@@ -1209,7 +1233,7 @@ class Aozora2Html
   end
 
   def exec_frontref_command(command)
-    _whole, reference, spec1, spec2 = command.match(/「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)/).to_a
+    _whole, reference, spec1, spec2 = command.match(PAT_FRONTREF).to_a
     if spec1
       spec = spec1 + spec2
     else
@@ -1348,35 +1372,35 @@ class Aozora2Html
     try_kuten = kuten2png(command)
     if try_kuten != command
       try_kuten
-    elsif command.match(/縦中横/)
+    elsif command.match(TCY_COMMAND)
       Aozora2Html::Tag::Dir.new(self, targets)
-    elsif command.match(/横組み/)
+    elsif command.match(YOKOGUMI_COMMAND)
       Aozora2Html::Tag::InlineYokogumi.new(self, targets)
-    elsif command.match(/罫囲み/)
+    elsif command.match(KEIGAKOMI_COMMAND)
       Aozora2Html::Tag::InlineKeigakomi.new(self, targets)
-    elsif command.match(/キャプション/)
+    elsif command.match(CAPTION_COMMAND)
       Aozora2Html::Tag::InlineCaption.new(self, targets)
-    elsif command.match(/返り点/)
+    elsif command.match(KAERITEN_COMMAND)
       Aozora2Html::Tag::Kaeriten.new(self, targets)
-    elsif command.match(/訓点送り仮名/)
+    elsif command.match(KUNTEN_OKURIGANA_COMMAND)
       Aozora2Html::Tag::Okurigana.new(self, targets)
-    elsif command.match(/見出し/)
+    elsif command.match(MIDASHI_COMMAND)
       midashi_type = :normal
-      if command.match(/同行/)
+      if command.match(DOGYO_MARK)
         midashi_type = :dogyo
-      elsif command.match(/窓/)
+      elsif command.match(MADO_MARK)
         midashi_type = :mado
       else
         @terprip = false
       end
       Aozora2Html::Tag::Midashi.new(self, targets, command, midashi_type)
-    elsif command.match(/(.*)段階(..)な文字/)
-      _whole, nest, style = command.match(/(.*)段階(..)な文字/).to_a
+    elsif command.match(PAT_CHARSIZE)
+      _whole, nest, style = command.match(PAT_CHARSIZE).to_a
       Aozora2Html::Tag::InlineFontSize.new(self,targets,
                                            Utils.convert_japanese_number(nest).to_i,
                                            detect_style_size(style))
-    elsif command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/)
-      _whole, _dir, under = command.match(/(左|下)に「([^」]*)」の(ルビ|注記)/).to_a
+    elsif command.match(PAT_RUBY_DIR)
+      _whole, _dir, under = command.match(PAT_RUBY_DIR).to_a
       if targets.length == 1 and targets[0].is_a?(Aozora2Html::Tag::Ruby)
         tag = targets[0]
         if tag.under_ruby == ""
@@ -1388,23 +1412,23 @@ class Aozora2Html
       else
         rearrange_ruby_tag(targets, "", under)
       end
-    elsif command.match(/「(.+?)」の注記/)
-      rearrange_ruby_tag(targets, /「(.+?)」の注記/.match(command).to_a[1])
-    elsif command.match(/「(.)」の傍記/)
-      rearrange_ruby_tag(targets, multiply( /「(.)」の傍記/.match(command).to_a[1], targets.to_s.length))
+    elsif command.match(PAT_CHUUKI)
+      rearrange_ruby_tag(targets, PAT_CHUUKI.match(command).to_a[1])
+    elsif command.match(PAT_BOUKI)
+      rearrange_ruby_tag(targets, multiply(PAT_BOUKI.match(command).to_a[1], targets.to_s.length))
     else
       ## direction fix! ##
       filter = lambda{|x| x}
-      if command.match(/(右|左|上|下)に(.*)/)
-        _whole, dir, com = command.match(/(右|左|上|下)に(.*)/).to_a
+      if command.match(PAT_DIRECTION)
+        _whole, dir, com = command.match(PAT_DIRECTION).to_a
         # renew command
         command = com
-        if command.match(/点/)
+        if command.match(TEN_MARK)
           case dir
           when LEFT_MARK, UNDER_MARK
             filter = lambda{|x| x + "_after"}
           end
-        elsif command.match(/線/)
+        elsif command.match(SEN_MARK)
           case dir
           when LEFT_MARK, OVER_MARK
             filter = lambda{|x| x.sub("under","over")}
@@ -1455,10 +1479,10 @@ class Aozora2Html
   # ｜が来たときは文字種を無視してruby_bufを守らなきゃいけない
   def apply_ruby
     @ruby_buf.protected = nil
-    ruby, _raw = read_to_nest("》")
+    ruby, _raw = read_to_nest(RUBY_END_MARK)
     if ruby.length == 0
       # escaped ruby character
-      return "《》"
+      return RUBY_BEGIN_MARK+RUBY_END_MARK
     end
     ans = ""
     notes = []
@@ -1493,7 +1517,7 @@ class Aozora2Html
       char = dispatch_aozora_command
     when KU
       assign_kunoji
-    when "《"
+    when RUBY_BEGIN_MARK
       char = apply_ruby
     end
 
