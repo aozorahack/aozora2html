@@ -289,6 +289,29 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
+  def test_ending_check
+    input = StringIO.new("本文\r\n\r\n底本：test\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    message = nil
+    begin
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+    rescue Aozora2Html::Error => e
+      message = e.message.encode("utf-8")
+    ensure
+      $stdout = STDOUT
+      output.seek(0)
+      out_text = output.read
+      assert_equal "本文<br />\r\n<br />\r\n</div>\r\n<div class=\"bibliographical_information\">\r\n<hr />\r\n<br />\r\n", out_text
+    end
+  end
+
   def test_invalid_closing
     input = StringIO.new("［＃ここで太字終わり］\r\n".encode("shift_jis"))
     output = StringIO.new
