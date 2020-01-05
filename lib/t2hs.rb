@@ -396,7 +396,7 @@ class Aozora2Html
       if @buffer.length == 0
         ending_check
       end
-    when "※"
+    when GAIJI_MARK
       char = dispatch_gaiji
     when "［"
       char = dispatch_aozora_command
@@ -551,7 +551,7 @@ class Aozora2Html
         tail.unshift(s.close_tag)
       elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
         # 消してあった※を復活させて
-        @out.print "※"
+        @out.print GAIJI_MARK
       end
       @out.print s.to_s
     end
@@ -700,7 +700,7 @@ class Aozora2Html
   def dispatch_gaiji
     # 「※」の次が「［」でなければ外字ではない
     if @stream.peek_char(0) !=  "［"
-      return "※"
+      return GAIJI_MARK
     end
 
     # 「［」を読み捨てる
@@ -1444,7 +1444,7 @@ class Aozora2Html
     notes = []
     @ruby_buf.each do |token|
       if token.is_a?(Aozora2Html::Tag::UnEmbedGaiji)
-        ans.concat("※")
+        ans.concat(GAIJI_MARK)
         token.escape!
         notes.push(token)
       else
@@ -1467,7 +1467,7 @@ class Aozora2Html
       char = read_accent
     when @endchar
       throw :terminate
-    when "※"
+    when GAIJI_MARK
       char = dispatch_gaiji
     when "［"
       char = dispatch_aozora_command
