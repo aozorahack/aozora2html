@@ -29,6 +29,9 @@ class Aozora2Html
   SIZE_SMALL = "小"
   SIZE_MIDDLE = "中"
   SIZE_LARGE = "大"
+  TEIHON_MARK = "底本："
+  COMMAND_BEGIN = "［"
+  ACCENT_BEGIN = "〔"
   AOZORABUNKO = "青空文庫"
   #PAT_EDITOR = /[校訂|編|編集|編集校訂|校訂編集]$/
   PAT_EDITOR = /(校訂|編|編集)$/
@@ -389,16 +392,16 @@ class Aozora2Html
     char = read_char
     check = true
     case char
-    when "〔"
+    when ACCENT_BEGIN
       check = false
       char = read_accent
-    when "底"
+    when TEIHON_MARK[0]
       if @buffer.length == 0
         ending_check
       end
     when GAIJI_MARK
       char = dispatch_gaiji
-    when "［"
+    when COMMAND_BEGIN
       char = dispatch_aozora_command
     when KU
       assign_kunoji
@@ -431,7 +434,7 @@ class Aozora2Html
   #
   def ending_check
     # `底本：`でフッタ(:tail)に遷移
-    if @stream.peek_char(0) == "本" and @stream.peek_char(1) == "："
+    if @stream.peek_char(0) == TEIHON_MARK[1] and @stream.peek_char(1) == TEIHON_MARK[2]
       @section = :tail
       ensure_close
       @out.print "</div>\r\n<div class=\"bibliographical_information\">\r\n<hr />\r\n<br />\r\n"
@@ -699,7 +702,7 @@ class Aozora2Html
 
   def dispatch_gaiji
     # 「※」の次が「［」でなければ外字ではない
-    if @stream.peek_char(0) !=  "［"
+    if @stream.peek_char(0) !=  COMMAND_BEGIN
       return GAIJI_MARK
     end
 
@@ -723,7 +726,7 @@ class Aozora2Html
   def dispatch_aozora_command
     # 「［」の次が「＃」でなければ注記ではない
     if @stream.peek_char(0) != "＃"
-      return "［"
+      return COMMAND_BEGIN
     end
 
     # 「＃」を読み捨てる
@@ -1462,14 +1465,14 @@ class Aozora2Html
     char = read_char
     check = true
     case char
-    when "〔"
+    when ACCENT_BEGIN
       check = false
       char = read_accent
     when @endchar
       throw :terminate
     when GAIJI_MARK
       char = dispatch_gaiji
-    when "［"
+    when COMMAND_BEGIN
       char = dispatch_aozora_command
     when KU
       assign_kunoji
