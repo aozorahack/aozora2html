@@ -1,6 +1,5 @@
 # -*- coding:utf-8 -*-
 # 青空文庫形式のテキストファイルを html に整形する ruby スクリプト
-require "cgi"
 require "extensions"
 require "aozora2html/error"
 require "jstream"
