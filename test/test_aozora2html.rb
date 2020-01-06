@@ -177,19 +177,19 @@ class Aozora2HtmlTest < Test::Unit::TestCase
 
   def test_convert_japanese_number
     assert_equal "3字下げ",
-                 @parser.convert_japanese_number("三字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("三字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "10字下げ",
-                 @parser.convert_japanese_number("十字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("十字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "12字下げ",
-                 @parser.convert_japanese_number("十二字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("十二字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "20字下げ",
-                 @parser.convert_japanese_number("二十字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("二十字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "20字下げ",
-                 @parser.convert_japanese_number("二〇字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("二〇字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "23字下げ",
-                 @parser.convert_japanese_number("二十三字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("二十三字下げ".encode("shift_jis")).encode("utf-8")
     assert_equal "2字下げ",
-                 @parser.convert_japanese_number("２字下げ".encode("shift_jis")).encode("utf-8")
+                 Aozora2Html::Utils.convert_japanese_number("２字下げ".encode("shift_jis")).encode("utf-8")
 
   end
 
@@ -264,6 +264,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):縦中横中に改行されました。改行をまたぐ要素にはブロック表記を用いてください. \r\n処理を停止します", message
     end
   end
@@ -283,7 +284,31 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):字下げ中に本文が終了しました. \r\n処理を停止します", message
+    end
+  end
+
+  def test_ending_check
+    input = StringIO.new("本文\r\n\r\n底本：test\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    _message = nil
+    begin
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+      parser.parse_body
+    rescue Aozora2Html::Error => e
+      _message = e.message.encode("utf-8")
+    ensure
+      $stdout = STDOUT
+      output.seek(0)
+      out_text = output.read
+      assert_equal "本文<br />\r\n<br />\r\n</div>\r\n<div class=\"bibliographical_information\">\r\n<hr />\r\n<br />\r\n", out_text
     end
   end
 
@@ -299,6 +324,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):太字を閉じようとしましたが、太字中ではありません. \r\n処理を停止します", message
     end
   end
@@ -321,9 +347,32 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     rescue Aozora2Html::Error => e
       message = e.message.encode("utf-8")
     ensure
+      $stdout = STDOUT
       assert_equal "エラー(0行目):太字を終了しようとしましたが、傍線中です. \r\n処理を停止します", message
     end
   end
+
+  def test_command_do
+    input = StringIO.new("［＃ここから太字］\r\nテスト。\r\n［＃ここで太字終わり］\r\n".encode("shift_jis"))
+    output = StringIO.new
+    parser = Aozora2Html.new(input, output)
+    out = StringIO.new
+    $stdout = out
+    _message = nil
+    begin
+      9.times do
+        parser.parse_body
+      end
+    rescue Aozora2Html::Error => e
+      _message = e.message.encode("utf-8")
+    ensure
+      $stdout = STDOUT
+      output.seek(0)
+      out_text = output.read
+      assert_equal "<div class=\"futoji\">\r\nテスト。<br />\r\n</div>\r\n", out_text
+    end
+  end
+
 
   def teardown
   end

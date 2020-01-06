@@ -1,5 +1,5 @@
-# -*- coding:shift_jis -*-
-# Â‹ó•¶ŒÉŒ`®‚ÌƒeƒLƒXƒgƒtƒ@ƒCƒ‹‚ğ html ‚É®Œ`‚·‚é ruby ƒXƒNƒŠƒvƒg
+# -*- coding:utf-8 -*-
+# é’ç©ºæ–‡åº«å½¢å¼ã®ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«ã‚’ html ã«æ•´å½¢ã™ã‚‹ ruby ã‚¹ã‚¯ãƒªãƒ—ãƒˆ
 require "cgi"
 require "extensions"
 require "aozora2html/error"
@@ -18,23 +18,98 @@ $gaiji_dir = "../../../gaiji/"
 
 $css_files = Array["../../aozora.css"]
 
-# •ÏŠ·Ší–{‘Ì
+# å¤‰æ›å™¨æœ¬ä½“
 class Aozora2Html
 
-  # ‘SŠpƒoƒbƒNƒXƒ‰ƒbƒVƒ…‚ªo‚¹‚È‚¢‚©‚ç’¼‘Å‚¿
+  # å…¨è§’ãƒãƒƒã‚¯ã‚¹ãƒ©ãƒƒã‚·ãƒ¥ãŒå‡ºã›ãªã„ã‹ã‚‰ç›´æ‰“ã¡
   KU = ["18e5"].pack("h*").force_encoding("shift_jis")
   NOJI = ["18f5"].pack("h*").force_encoding("shift_jis")
   DAKUTEN = ["18d8"].pack("h*").force_encoding("shift_jis")
-  GAIJI_MARK = "¦"
-  SIZE_SMALL = "¬"
-  SIZE_MIDDLE = "’†"
-  SIZE_LARGE = "‘å"
-  AOZORABUNKO = "Â‹ó•¶ŒÉ"
-  #PAT_EDITOR = /[Z’ù|•Ò|•ÒW|•ÒWZ’ù|Z’ù•ÒW]$/
-  PAT_EDITOR = /(Z’ù|•Ò|•ÒW)$/
-  PAT_HENYAKU = /•Ò–ó$/
-  PAT_TRANSLATOR = /–ó$/
-  RUBY_PREFIX = "b"
+  GAIJI_MARK = "â€»".to_sjis
+  IGETA_MARK = "ï¼ƒ".to_sjis
+  RUBY_BEGIN_MARK = "ã€Š".to_sjis
+  RUBY_END_MARK = "ã€‹".to_sjis
+  PAREN_BEGIN_MARK = "ï¼ˆ".to_sjis
+  PAREN_END_MARK = "ï¼‰".to_sjis
+  SIZE_SMALL = "å°".to_sjis
+  SIZE_MIDDLE = "ä¸­".to_sjis
+  SIZE_LARGE = "å¤§".to_sjis
+  TEIHON_MARK = "åº•æœ¬ï¼š".to_sjis
+  COMMAND_BEGIN = "ï¼»".to_sjis
+  COMMAND_END = "ï¼½".to_sjis
+  ACCENT_BEGIN = "ã€”".to_sjis
+  ACCENT_END = "ã€•".to_sjis
+  AOZORABUNKO = "é’ç©ºæ–‡åº«".to_sjis
+  #PAT_EDITOR = /[æ ¡è¨‚|ç·¨|ç·¨é›†|ç·¨é›†æ ¡è¨‚|æ ¡è¨‚ç·¨é›†]$/
+  PAT_EDITOR = "(æ ¡è¨‚|ç·¨|ç·¨é›†)$".to_sjis
+  PAT_HENYAKU = "ç·¨è¨³$".to_sjis
+  PAT_TRANSLATOR = "è¨³$".to_sjis
+  RUBY_PREFIX = "ï½œ".to_sjis
+  PAT_RUBY = /#{"ã€Š.*?ã€‹".to_sjis}/
+  PAT_DIRECTION = "(å³|å·¦|ä¸Š|ä¸‹)ã«(.*)".to_sjis
+  PAT_REF = "^ã€Œ.+ã€".to_sjis
+  CHUUKI_COMMAND = "æ³¨è¨˜ä»˜ã".to_sjis
+  TCY_COMMAND = "ç¸¦ä¸­æ¨ª".to_sjis
+  KEIGAKOMI_COMMAND = "ç½«å›²ã¿".to_sjis
+  YOKOGUMI_COMMAND = "æ¨ªçµ„ã¿".to_sjis
+  CAPTION_COMMAND = "ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³".to_sjis
+  WARIGAKI_COMMAND = "å‰²æ›¸".to_sjis
+  KAERITEN_COMMAND = "è¿”ã‚Šç‚¹".to_sjis
+  KUNTEN_OKURIGANA_COMMAND = "è¨“ç‚¹é€ã‚Šä»®å".to_sjis
+  MIDASHI_COMMAND = "è¦‹å‡ºã—".to_sjis
+  OMIDASHI_COMMAND = "å¤§è¦‹å‡ºã—".to_sjis
+  NAKAMIDASHI_COMMAND = "ä¸­è¦‹å‡ºã—".to_sjis
+  KOMIDASHI_COMMAND = "å°è¦‹å‡ºã—".to_sjis
+  DOGYO_OMIDASHI_COMMAND = "åŒè¡Œå¤§è¦‹å‡ºã—".to_sjis
+  DOGYO_NAKAMIDASHI_COMMAND = "åŒè¡Œä¸­è¦‹å‡ºã—".to_sjis
+  DOGYO_KOMIDASHI_COMMAND = "åŒè¡Œå°è¦‹å‡ºã—".to_sjis
+  MADO_OMIDASHI_COMMAND = "çª“å¤§è¦‹å‡ºã—".to_sjis
+  MADO_NAKAMIDASHI_COMMAND = "çª“ä¸­è¦‹å‡ºã—".to_sjis
+  MADO_KOMIDASHI_COMMAND = "çª“å°è¦‹å‡ºã—".to_sjis
+  LEFT_MARK = "å·¦".to_sjis
+  UNDER_MARK = "ä¸‹".to_sjis
+  OVER_MARK = "ä¸Š".to_sjis
+  MAIN_MARK = "æœ¬æ–‡".to_sjis
+  END_MARK = "çµ‚ã‚ã‚Š".to_sjis
+  TEN_MARK = "ç‚¹".to_sjis
+  SEN_MARK = "ç·š".to_sjis
+  OPEN_MARK = "ã“ã“ã‹ã‚‰".to_sjis
+  CLOSE_MARK = "ã“ã“ã§".to_sjis
+  MADE_MARK = "ã¾ã§".to_sjis
+  DOGYO_MARK = "åŒè¡Œ".to_sjis
+  MADO_MARK = "çª“".to_sjis
+  JIAGE_COMMAND = "å­—ä¸Šã’".to_sjis
+  JISAGE_COMMAND = "å­—ä¸‹ã’".to_sjis
+  PHOTO_COMMAND = "å†™çœŸ".to_sjis
+  ORIKAESHI_COMMAND = "æŠ˜ã‚Šè¿”ã—ã¦".to_sjis
+  ONELINE_COMMAND = "ã“ã®è¡Œ".to_sjis
+  NON_0213_GAIJI = "é0213å¤–å­—".to_sjis
+  WARICHU_COMMAND = "å‰²ã‚Šæ³¨".to_sjis
+  TENTSUKI_COMMAND = "å¤©ä»˜ã".to_sjis
+  PAT_REST_NOTES = "(å·¦|ä¸‹)ã«ã€Œ(.*)ã€ã®(ãƒ«ãƒ“|æ³¨è¨˜|å‚è¨˜)".to_sjis
+  PAT_KUTEN = /#{"ã€Œâ€»ã€[ã¯|ã®]".to_sjis}/
+  PAT_KUTEN_DUAL = "â€».*â€»".to_sjis
+  PAT_GAIJI = "(?:ï¼ƒ)(.*)(?:ã€)(.*)".to_sjis
+  PAT_KAERITEN = "^([ä¸€äºŒä¸‰å››äº”å…­ä¸ƒå…«ä¹åãƒ¬ä¸Šä¸­ä¸‹ç”²ä¹™ä¸™ä¸å¤©åœ°äºº]+)$".to_sjis
+  PAT_OKURIGANA = "^ï¼ˆ(.+)ï¼‰$".to_sjis
+  PAT_REMOVE_OKURIGANA = /#{"[ï¼ˆï¼‰]".to_sjis}/
+  PAT_CHITSUKI = /#{"(åœ°ä»˜ã|å­—ä¸Šã’)(çµ‚ã‚ã‚Š)*$".to_sjis}/
+  PAT_ORIKAESHI_JISAGE = "æŠ˜ã‚Šè¿”ã—ã¦(\\d*)å­—ä¸‹ã’".to_sjis
+  PAT_ORIKAESHI_JISAGE2 = "(\\d*)å­—ä¸‹ã’ã€æŠ˜ã‚Šè¿”ã—ã¦(\\d*)å­—ä¸‹ã’".to_sjis
+  PAT_JI_LEN = "([0-9]+)å­—".to_sjis
+  PAT_INLINE_RUBY = "ã€Œ(.*)ã€ã®æ³¨è¨˜ä»˜ã".to_sjis
+  PAT_IMAGE = "(.*)ï¼ˆ(fig.+\\.png)(ã€æ¨ª([0-9]+)Ã—ç¸¦([0-9]+))*ï¼‰å…¥ã‚‹".to_sjis
+  PAT_FRONTREF = "ã€Œ([^ã€Œã€]*(?:ã€Œ.+ã€)*[^ã€Œã€]*)ã€[ã«ã¯ã®](ã€Œ.+ã€ã®)*(.+)".to_sjis
+  PAT_RUBY_DIR = "(å·¦|ä¸‹)ã«ã€Œ([^ã€]*)ã€ã®(ãƒ«ãƒ“|æ³¨è¨˜)".to_sjis
+  PAT_CHUUKI = /#{"ã€Œ(.+?)ã€ã®æ³¨è¨˜".to_sjis}/
+  PAT_BOUKI = /#{"ã€Œ(.)ã€ã®å‚è¨˜".to_sjis}/
+  PAT_CHARSIZE = /#{"(.*)æ®µéš(..)ãªæ–‡å­—".to_sjis}/
+
+  DYNAMIC_CONTENTS = ("<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
+                      "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">â—å›³æ›¸ã‚«ãƒ¼ãƒ‰</a>" +
+                      "<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n" +
+                      "<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n" +
+                      "</div>").to_sjis
 
   # KUNOJI = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
@@ -49,24 +124,24 @@ class Aozora2Html
   JIS2UCS = loader.load("../yml/jis2ucs.yml")
 
   INDENT_TYPE = {
-    :jisage => "š‰º‚°",
-    :chitsuki => "’n•t‚«",
-    :midashi => "Œ©o‚µ",
-    :jizume => "š‹l‚ß",
-    :yokogumi => "‰¡‘g‚İ",
-    :keigakomi => "ŒrˆÍ‚İ",
-    :caption => "ƒLƒƒƒvƒVƒ‡ƒ“",
-    :futoji => "‘¾š",
-    :shatai => "Î‘Ì",
-    :dai => "‘å‚«‚È•¶š",
-    :sho => "¬‚³‚È•¶š",
+    :jisage => "å­—ä¸‹ã’".to_sjis,
+    :chitsuki => "åœ°ä»˜ã".to_sjis,
+    :midashi => "è¦‹å‡ºã—".to_sjis,
+    :jizume => "å­—è©°ã‚".to_sjis,
+    :yokogumi => "æ¨ªçµ„ã¿".to_sjis,
+    :keigakomi => "ç½«å›²ã¿".to_sjis,
+    :caption => "ã‚­ãƒ£ãƒ—ã‚·ãƒ§ãƒ³".to_sjis,
+    :futoji => "å¤ªå­—".to_sjis,
+    :shatai => "æ–œä½“".to_sjis,
+    :dai => "å¤§ããªæ–‡å­—".to_sjis,
+    :sho => "å°ã•ãªæ–‡å­—".to_sjis,
   }
 
   DAKUTEN_KATAKANA_TABLE = {
-    "2" => "ƒJ",
-    "3" => "ƒJ",
-    "4" => "ƒ‘J",
-    "5" => "ƒ’J",
+    "2" => "ãƒ¯ã‚›".to_sjis,
+    "3" => "ãƒ°ã‚›".to_sjis,
+    "4" => "ãƒ±ã‚›".to_sjis,
+    "5" => "ãƒ²ã‚›".to_sjis,
   }
 
   def initialize(input, output)
@@ -82,17 +157,17 @@ class Aozora2Html
     end
     @buffer = []
     @ruby_buf = RubyBuffer.new
-    @section = :head  ## Œ»İˆ—’†‚ÌƒZƒNƒVƒ‡ƒ“(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
-    @header = Aozora2Html::Header.new()  ## ƒwƒbƒ_s‚Ì”z—ñ
-    @style_stack = StyleStack.new  ##ƒXƒ^ƒCƒ‹‚ÌƒXƒ^ƒbƒN
-    @chuuki_table = {} ## ÅŒã‚É‚Ç‚Ì’‹L‚ğo‚·‚©‚ğ•Û‚µ‚Ä‚¨‚­
-    @images = []  ## g—p‚µ‚½ŠOš‚Ì‰æ‘œ•Û—p
-    @indent_stack = [] ## Šî–{‚ÍƒVƒ“ƒ{ƒ‹‚¾‚ªA‚Ô‚ç‚³‚°‚Ì‚Æ‚«‚Ídivƒ^ƒO‚Ì•¶š—ñ‚ª“ü‚é
+    @section = :head  ## ç¾åœ¨å‡¦ç†ä¸­ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
+    @header = Aozora2Html::Header.new()  ## ãƒ˜ãƒƒãƒ€è¡Œã®é…åˆ—
+    @style_stack = StyleStack.new  ##ã‚¹ã‚¿ã‚¤ãƒ«ã®ã‚¹ã‚¿ãƒƒã‚¯
+    @chuuki_table = {} ## æœ€å¾Œã«ã©ã®æ³¨è¨˜ã‚’å‡ºã™ã‹ã‚’ä¿æŒã—ã¦ãŠã
+    @images = []  ## ä½¿ç”¨ã—ãŸå¤–å­—ã®ç”»åƒä¿æŒç”¨
+    @indent_stack = [] ## åŸºæœ¬ã¯ã‚·ãƒ³ãƒœãƒ«ã ãŒã€ã¶ã‚‰ã•ã’ã®ã¨ãã¯divã‚¿ã‚°ã®æ–‡å­—åˆ—ãŒå…¥ã‚‹
     @tag_stack = []
-    @midashi_id = 0  ## Œ©o‚µ‚ÌƒJƒEƒ“ƒ^AŒ©o‚µ‚Ìí—Ş‚É‚æ‚Á‚Ä‘•ª‚ªˆÙ‚È‚é
-    @terprip = true  ## ‰üs§Œä—p (terpri‚ÍLisp—R—ˆ?)
-    @endchar = :eof  ## ‰ğÍI—¹•¶šAAccentParser‚âTagParser‚Å‚ÍˆÙ‚È‚é
-    @noprint = nil  ## s––‚ğ“Ç‚İ‚ñ‚¾‚Æ‚«A‰½‚ào—Í‚µ‚È‚¢‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
+    @midashi_id = 0  ## è¦‹å‡ºã—ã®ã‚«ã‚¦ãƒ³ã‚¿ã€è¦‹å‡ºã—ã®ç¨®é¡ã«ã‚ˆã£ã¦å¢—åˆ†ãŒç•°ãªã‚‹
+    @terprip = true  ## æ”¹è¡Œåˆ¶å¾¡ç”¨ (terpriã¯Lispç”±æ¥?)
+    @endchar = :eof  ## è§£æçµ‚äº†æ–‡å­—ã€AccentParserã‚„TagParserã§ã¯ç•°ãªã‚‹
+    @noprint = nil  ## è¡Œæœ«ã‚’èª­ã¿è¾¼ã‚“ã ã¨ãã€ä½•ã‚‚å‡ºåŠ›ã—ãªã„ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°
   end
 
   def line_number
@@ -100,18 +175,18 @@ class Aozora2Html
   end
 
   def block_allowed_context?
-    # inline_tag‚ªŠJ‚¢‚Ä‚¢‚È‚¢‚©ƒ`ƒFƒbƒN‚·‚ê‚Î\•ª
+    # inline_tagãŒé–‹ã„ã¦ã„ãªã„ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚Œã°ååˆ†
     @style_stack.empty?
   end
 
-  # ˆê•¶š“Ç‚İ‚Ş
+  # ä¸€æ–‡å­—èª­ã¿è¾¼ã‚€
   def read_char
     @stream.read_char
   end
 
-  # w’è‚³‚ê‚½I’[•¶š(1•¶š‚ÌString‚©CRLF)‚Ü‚Å“Ç‚İ‚Ş
+  # æŒ‡å®šã•ã‚ŒãŸçµ‚ç«¯æ–‡å­—(1æ–‡å­—ã®Stringã‹CRLF)ã¾ã§èª­ã¿è¾¼ã‚€
   #
-  #  @param [String] endchar I’[•¶š
+  #  @param [String] endchar çµ‚ç«¯æ–‡å­—
   def read_to(endchar)
     buf = ""
     loop do
@@ -129,17 +204,17 @@ class Aozora2Html
   end
 
   def read_accent
-    Aozora2Html::AccentParser.new(@stream, "l", @chuuki_table, @images).process
+    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images).process
   end
 
   def read_to_nest(endchar)
     Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images).process
   end
 
-  # 1s“Ç‚İ‚İ
+  # 1è¡Œèª­ã¿è¾¼ã¿
   #
-  # ‡‚í‚¹‚Ä@buffer‚àƒNƒŠƒA‚·‚é
-  # @return [String] “Ç‚İ‚ñ‚¾•¶š—ñ‚ğ•Ô‚·
+  # åˆã‚ã›ã¦@bufferã‚‚ã‚¯ãƒªã‚¢ã™ã‚‹
+  # @return [String] èª­ã¿è¾¼ã‚“ã æ–‡å­—åˆ—ã‚’è¿”ã™
   #
   def read_line
     tmp = read_to("\r\n")
@@ -147,9 +222,9 @@ class Aozora2Html
     tmp
   end
 
-  # parse‚·‚é
+  # parseã™ã‚‹
   #
-  # I—¹iI’[‚Ü‚Å—ˆ‚½ê‡j‚É‚Íthrow :terminate‚Å’Eo‚·‚é
+  # çµ‚äº†æ™‚ï¼ˆçµ‚ç«¯ã¾ã§æ¥ãŸå ´åˆï¼‰ã«ã¯throw :terminateã§è„±å‡ºã™ã‚‹
   #
   def process
     begin
@@ -176,6 +251,7 @@ class Aozora2Html
 
   def char_type(char)
     begin
+      ## `String#char_type`ã‚‚å®šç¾©ã•ã‚Œã¦ã„ã‚‹ã®ã«æ³¨æ„
       char.char_type
     rescue
       :else
@@ -189,11 +265,7 @@ class Aozora2Html
   end
 
   def dynamic_contents
-    @out.print "<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
-               "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">œ}‘ƒJ[ƒh</a>" +
-               "<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n" +
-               "<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n" +
-               "</div>"
+    @out.print DYNAMIC_CONTENTS
   end
 
   def close
@@ -201,8 +273,8 @@ class Aozora2Html
     @out.close
   end
 
-  # ‹L–@‚ÌƒVƒ“ƒ{ƒ‹–¼‚©‚ç•¶š—ñ‚Ö•ÏŠ·‚·‚é
-  # ƒVƒ“ƒ{ƒ‹‚ªŒ©‚Â‚©‚ç‚È‚¯‚ê‚Î‚»‚Ì‚Ü‚Ü•Ô‚·
+  # è¨˜æ³•ã®ã‚·ãƒ³ãƒœãƒ«åã‹ã‚‰æ–‡å­—åˆ—ã¸å¤‰æ›ã™ã‚‹
+  # ã‚·ãƒ³ãƒœãƒ«ãŒè¦‹ã¤ã‹ã‚‰ãªã‘ã‚Œã°ãã®ã¾ã¾è¿”ã™
   def convert_indent_type(type)
     INDENT_TYPE[type] || type
   end
@@ -235,7 +307,7 @@ class Aozora2Html
     end
   end
 
-  # –{•¶‚ªI‚í‚Á‚Ä‚æ‚¢‚©ƒ`ƒFƒbƒN‚µAI‚í‚Á‚Ä‚¢‚È‚¯‚ê‚Î—áŠO‚ğ‚ ‚°‚é
+  # æœ¬æ–‡ãŒçµ‚ã‚ã£ã¦ã‚ˆã„ã‹ãƒã‚§ãƒƒã‚¯ã—ã€çµ‚ã‚ã£ã¦ã„ãªã‘ã‚Œã°ä¾‹å¤–ã‚’ã‚ã’ã‚‹
   def ensure_close
     if n = @indent_stack.last
       raise Aozora2Html::Error, I18n.t(:terminate_in_style, convert_indent_type(n))
@@ -271,7 +343,7 @@ class Aozora2Html
   end
 
   def judge_chuuki
-    # ’‹L‚ª“ü‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN
+    # æ³¨è¨˜ãŒå…¥ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
     i = 0
     loop do
       case @stream.peek_char(i)
@@ -292,16 +364,16 @@ class Aozora2Html
     end
   end
 
-  # header‚Íˆês‚¸‚Â“Ç‚Ş
+  # headerã¯ä¸€è¡Œãšã¤èª­ã‚€
   def parse_header
     string = read_line
     # refine from Tomita 09/06/14
-    if string == ""  # ‹ós‚ª‚­‚ê‚ÎA‚»‚±‚Åƒwƒbƒ_[I—¹‚Æ‚İ‚È‚·
+    if string == ""  # ç©ºè¡ŒãŒãã‚Œã°ã€ãã“ã§ãƒ˜ãƒƒãƒ€ãƒ¼çµ‚äº†ã¨ã¿ãªã™
       @section = :head_end
       @out.print @header.to_html
     else
       string.gsub!(RUBY_PREFIX,"")
-      string.gsub!(/s.*?t/,"")
+      string.gsub!(PAT_RUBY,"")
       @header.push(string)
     end
   end
@@ -318,13 +390,13 @@ class Aozora2Html
     end
   end
 
-  # g‚¤‚×‚«‚Å‚Í‚È‚¢•¶š‚ª‚ ‚é‚©ƒ`ƒFƒbƒN‚·‚é
+  # ä½¿ã†ã¹ãã§ã¯ãªã„æ–‡å­—ãŒã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
   #
-  # Œx‚ğo—Í‚·‚é‚¾‚¯‚ÅŒ‹‰Ê‚É‚Í‰e‹¿‚ğ—^‚¦‚È‚¢BŒx‚·‚é•¶š‚ÍˆÈ‰º:
+  # è­¦å‘Šã‚’å‡ºåŠ›ã™ã‚‹ã ã‘ã§çµæœã«ã¯å½±éŸ¿ã‚’ä¸ãˆãªã„ã€‚è­¦å‘Šã™ã‚‹æ–‡å­—ã¯ä»¥ä¸‹:
   #
-  # * 1ƒoƒCƒg•¶š
-  # * `”`‚Å‚Í‚È‚­`ò`
-  # * JIS(JIS X 0208)ŠOš
+  # * 1ãƒã‚¤ãƒˆæ–‡å­—
+  # * `ï¼ƒ`ã§ã¯ãªã`â™¯`
+  # * JIS(JIS X 0208)å¤–å­—
   #
   # @return [void]
   #
@@ -380,29 +452,29 @@ class Aozora2Html
     end
   end
 
-  # –{‘Ì‰ğÍ•”
+  # æœ¬ä½“è§£æéƒ¨
   #
-  # 1•¶š‚¸‚Â“Ç‚İ‚İAdispatch‚µ‚Ä@buffer,@ruby_buf‚Ö‚µ‚Ü‚¤
-  # ‰üsƒR[ƒh‚É“–‚½‚Á‚½‚ç—­‚ß‚ñ‚¾‚à‚Ì‚ğgeneral_output‚·‚é
+  # 1æ–‡å­—ãšã¤èª­ã¿è¾¼ã¿ã€dispatchã—ã¦@buffer,@ruby_bufã¸ã—ã¾ã†
+  # æ”¹è¡Œã‚³ãƒ¼ãƒ‰ã«å½“ãŸã£ãŸã‚‰æºœã‚è¾¼ã‚“ã ã‚‚ã®ã‚’general_outputã™ã‚‹
   #
   def parse_body
     char = read_char
     check = true
     case char
-    when "k"
+    when ACCENT_BEGIN
       check = false
       char = read_accent
-    when "’ê"
+    when TEIHON_MARK[0]
       if @buffer.length == 0
         ending_check
       end
-    when "¦"
+    when GAIJI_MARK
       char = dispatch_gaiji
-    when "m"
+    when COMMAND_BEGIN
       char = dispatch_aozora_command
     when KU
       assign_kunoji
-    when "s"
+    when RUBY_BEGIN_MARK
       char = apply_ruby
     end
 
@@ -414,7 +486,7 @@ class Aozora2Html
       @ruby_buf.protected = true
     when @endchar
       # suddenly finished the file
-      puts "Œx(#{line_number}s–Ú):—\Šú‚¹‚Êƒtƒ@ƒCƒ‹I’["
+      puts I18n.t(:warn_unexpected_terminator, line_number)
       throw :terminate
     when nil
       # noop
@@ -426,12 +498,12 @@ class Aozora2Html
     end
   end
 
-  # –{•¶‚ªI—¹‚µ‚½‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN‚·‚é
+  # æœ¬æ–‡ãŒçµ‚äº†ã—ãŸã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯ã™ã‚‹
   #
   #
   def ending_check
-    # `’ê–{F`‚Åƒtƒbƒ^(:tail)‚É‘JˆÚ
-    if @stream.peek_char(0) == "–{" and @stream.peek_char(1) == "F"
+    # `åº•æœ¬ï¼š`ã§ãƒ•ãƒƒã‚¿(:tail)ã«é·ç§»
+    if @stream.peek_char(0) == TEIHON_MARK[1] and @stream.peek_char(1) == TEIHON_MARK[2]
       @section = :tail
       ensure_close
       @out.print "</div>\r\n<div class=\"bibliographical_information\">\r\n<hr />\r\n<br />\r\n"
@@ -481,11 +553,11 @@ class Aozora2Html
     end
   end
 
-  # so—Í‚É@buffer‚ª‹ó‚©‚Ç‚¤‚©’²‚×‚é
+  # è¡Œå‡ºåŠ›æ™‚ã«@bufferãŒç©ºã‹ã©ã†ã‹èª¿ã¹ã‚‹
   #
-  # @buffer‚Ì’†g‚É‚æ‚Á‚Äs––‚Ìo—Í‚ªˆÙ‚È‚é‚½‚ß
+  # @bufferã®ä¸­èº«ã«ã‚ˆã£ã¦è¡Œæœ«ã®å‡ºåŠ›ãŒç•°ãªã‚‹ãŸã‚
   #
-  # @return [true, false, :inline] ‹ó•¶š‚Å‚Í‚È‚¢•¶š—ñ‚ª“ü‚Á‚Ä‚¢‚ê‚ÎfalseA1s’‹L‚È‚ç:inlineA‚»‚êˆÈŠO‚µ‚©“ü‚Á‚Ä‚¢‚È‚¯‚ê‚Îtrue
+  # @return [true, false, :inline] ç©ºæ–‡å­—ã§ã¯ãªã„æ–‡å­—åˆ—ãŒå…¥ã£ã¦ã„ã‚Œã°falseã€1è¡Œæ³¨è¨˜ãªã‚‰:inlineã€ãã‚Œä»¥å¤–ã—ã‹å…¥ã£ã¦ã„ãªã‘ã‚Œã°true
   #
   def buf_is_blank?(buf)
     buf.each do |token|
@@ -498,9 +570,9 @@ class Aozora2Html
     true
   end
 
-  # s––‚Å<br />‚ğo—Í‚·‚é‚×‚«‚©‚Ç‚¤‚©‚Ì”»•Ê—p
+  # è¡Œæœ«ã§<br />ã‚’å‡ºåŠ›ã™ã‚‹ã¹ãã‹ã©ã†ã‹ã®åˆ¤åˆ¥ç”¨
   #
-  # @return [true, false] Multiline‚Ì’‹L‚µ‚©“ü‚Á‚Ä‚¢‚È‚¯‚ê‚ÎfalseAMultiline‚Å‚à‹ó•¶š‚Å‚à‚È‚¢—v‘f‚ªŠÜ‚Ü‚ê‚Ä‚¢‚ê‚Îtrue
+  # @return [true, false] Multilineã®æ³¨è¨˜ã—ã‹å…¥ã£ã¦ã„ãªã‘ã‚Œã°falseã€Multilineã§ã‚‚ç©ºæ–‡å­—ã§ã‚‚ãªã„è¦ç´ ãŒå«ã¾ã‚Œã¦ã„ã‚Œã°true
   #
   def terpri?(buf)
     flag = true
@@ -516,10 +588,10 @@ class Aozora2Html
     flag
   end
 
-  # “Ç‚İ‚ñ‚¾s‚Ìo—Í‚ğs‚¤
+  # èª­ã¿è¾¼ã‚“ã è¡Œã®å‡ºåŠ›ã‚’è¡Œã†
   #
-  # parser‚ª‰üs•¶š‚ğ“Ç‚İ‚ñ‚¾‚çŒÄ‚Î‚ê‚éB
-  # ÅI“I‚É@ruby_buf‚Æ@buffer‚Í‰Šú‰»‚·‚é
+  # parserãŒæ”¹è¡Œæ–‡å­—ã‚’èª­ã¿è¾¼ã‚“ã ã‚‰å‘¼ã°ã‚Œã‚‹ã€‚
+  # æœ€çµ‚çš„ã«@ruby_bufã¨@bufferã¯åˆæœŸåŒ–ã™ã‚‹
   #
   # @return [void]
   #
@@ -527,7 +599,7 @@ class Aozora2Html
     if @style_stack.last
       raise Aozora2Html::Error, I18n.t(:dont_crlf_in_style, @style_stack.last_command)
     end
-    # buffer‚ÉƒCƒ“ƒfƒ“ƒgƒ^ƒO‚¾‚¯‚ª‚ ‚Á‚½‚ç‰üs‚µ‚È‚¢I
+    # bufferã«ã‚¤ãƒ³ãƒ‡ãƒ³ãƒˆã‚¿ã‚°ã ã‘ãŒã‚ã£ãŸã‚‰æ”¹è¡Œã—ãªã„ï¼
     if @noprint
       @noprint = false
       return
@@ -550,15 +622,15 @@ class Aozora2Html
       if s.is_a?(Aozora2Html::Tag::OnelineIndent)
         tail.unshift(s.close_tag)
       elsif s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
-        # Á‚µ‚Ä‚ ‚Á‚½¦‚ğ•œŠˆ‚³‚¹‚Ä
-        @out.print "¦"
+        # æ¶ˆã—ã¦ã‚ã£ãŸâ€»ã‚’å¾©æ´»ã•ã›ã¦
+        @out.print GAIJI_MARK
       end
       @out.print s.to_s
     end
 
-    # ÅŒã‚ÍCRLF‚ğo—Í‚·‚é
+    # æœ€å¾Œã¯CRLFã‚’å‡ºåŠ›ã™ã‚‹
     if @indent_stack.last.is_a?(String)
-      # ‚Ô‚ç‰º‚°indent
+      # ã¶ã‚‰ä¸‹ã’indent
       # tail always active
       @out.print tail.map{|s| s.to_s}.join("")
       if indent_type == :inline
@@ -576,9 +648,9 @@ class Aozora2Html
     end
   end
 
-  # ‘O•ûQÆ‚Ì”­Œ© Ruby,styled‚Ë‚ª‚¯“™X‚Ì‚½‚ßA—v‘f‚Ì”z—ñ‚Å•Ô‚·
+  # å‰æ–¹å‚ç…§ã®ç™ºè¦‹ Ruby,styleé‡ã­ãŒã‘ç­‰ã€…ã®ãŸã‚ã€è¦ç´ ã®é…åˆ—ã§è¿”ã™
   #
-  # ‘O•ûQÆ‚Í`››m”u››v‚É–T“_n`A`’m”u’v‚Éuƒ}ƒ}v‚Ì’‹Ln`‚Æ‚¢‚Á‚½•\‹L
+  # å‰æ–¹å‚ç…§ã¯`â—‹â—‹ï¼»ï¼ƒã€Œâ—‹â—‹ã€ã«å‚ç‚¹ï¼½`ã€`å¹å–‹ï¼»ï¼ƒã€Œå–‹ã€ã«ã€Œãƒãƒã€ã®æ³¨è¨˜ï¼½`ã¨ã„ã£ãŸè¡¨è¨˜
   def search_front_reference(string)
     if string.length == 0
       return false
@@ -594,7 +666,7 @@ class Aozora2Html
         searching_buf.pop
         search_front_reference(string)
       elsif last_string.match(Regexp.new(Regexp.quote(string)+"$"))
-        # Š®‘Sˆê’v
+        # å®Œå…¨ä¸€è‡´
         # start = match.begin(0)
         # tail = match.end(0)
         # last_string[start,tail-start] = ""
@@ -602,7 +674,7 @@ class Aozora2Html
         searching_buf.push(last_string.sub(Regexp.new(Regexp.quote(string)+"$"),""))
         [string]
       elsif string.match(Regexp.new(Regexp.quote(last_string)+"$"))
-        # •”•ªˆê’v
+        # éƒ¨åˆ†ä¸€è‡´
         tmp = searching_buf.pop
         found = search_front_reference(string.sub(Regexp.new(Regexp.quote(last_string)+"$"),""))
         if found
@@ -615,11 +687,11 @@ class Aozora2Html
     elsif last_string.is_a?(Aozora2Html::Tag::ReferenceMentioned)
       inner = last_string.target_string
       if inner == string
-        # Š®‘Sˆê’v
+        # å®Œå…¨ä¸€è‡´
         searching_buf.pop
         [last_string]
       elsif string.match(Regexp.new(Regexp.quote(inner)+"$"))
-        # •”•ªˆê’v
+        # éƒ¨åˆ†ä¸€è‡´
         tmp = searching_buf.pop
         found = search_front_reference(string.sub(Regexp.new(Regexp.quote(inner)+"$"),""))
         if found
@@ -634,10 +706,10 @@ class Aozora2Html
     end
   end
 
-  # ”­Œ©‚µ‚½‘O•ûQÆ‚ğŒ³‚É–ß‚·
+  # ç™ºè¦‹ã—ãŸå‰æ–¹å‚ç…§ã‚’å…ƒã«æˆ»ã™
   #
-  # @ruby_buf‚ª‚ ‚ê‚Î@ruby_buf‚ÉA‚È‚¯‚ê‚Î@buffer‚Épush‚·‚é
-  # ƒoƒbƒtƒ@‚ÌÅŒã‚ÆŠe—v‘f‚ª•¶š—ñ‚È‚çconcat‚µA‚Ç‚¿‚ç‚ª•¶š—ñ‚Å‚È‚¯‚ê‚Îiconcat‚Å‚«‚È‚¢‚Ì‚Åjpush‚·‚é
+  # @ruby_bufãŒã‚ã‚Œã°@ruby_bufã«ã€ãªã‘ã‚Œã°@bufferã«pushã™ã‚‹
+  # ãƒãƒƒãƒ•ã‚¡ã®æœ€å¾Œã¨å„è¦ç´ ãŒæ–‡å­—åˆ—ãªã‚‰concatã—ã€ã©ã¡ã‚‰ãŒæ–‡å­—åˆ—ã§ãªã‘ã‚Œã°ï¼ˆconcatã§ããªã„ã®ã§ï¼‰pushã™ã‚‹
   #
   # @return [void]
   #
@@ -662,32 +734,22 @@ class Aozora2Html
     end
   end
 
-  def convert_japanese_number(command)
-    tmp = command.tr("‚O-‚X", "0-9")
-    tmp.tr!("ˆê“ñOlŒÜ˜Zµ”ª‹ãZ","1234567890")
-    tmp.gsub!(/(\d)\(\d)/){"#{$1}#{$2}"}
-    tmp.gsub!(/(\d)\/){"#{$1}0"}
-    tmp.gsub!(/\(\d)/){"1#{$1}"}
-    tmp.gsub!(/\/,"10")
-    tmp
-  end
-
   def kuten2png(substring)
-    desc = substring.gsub(/u¦v[‚Í|‚Ì]/,"")
+    desc = substring.gsub(PAT_KUTEN,"")
     match = desc.match(/[12]\-\d{1,2}\-\d{1,2}/)
-    if match and !desc.match(/”ñ0213ŠOš/) and !desc.match(/¦.*¦/)
+    if match and !desc.match(NON_0213_GAIJI) and !desc.match(PAT_KUTEN_DUAL)
       @chuuki_table[:newjis] = true
       codes = match[0].split("-")
       folder = sprintf("%1d-%02d", codes[0], codes[1])
       code = sprintf("%1d-%02d-%02d",*codes)
-      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!("”",""))
+      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK,""))
     else
       substring
     end
   end
 
   def escape_gaiji(command)
-    _whole, kanji, line = command.match(/(?:”)(.*)(?:A)(.*)/).to_a
+    _whole, kanji, line = command.match(PAT_GAIJI).to_a
     tmp = @images.assoc(kanji)
     if tmp
       tmp.push(line)
@@ -698,15 +760,15 @@ class Aozora2Html
   end
 
   def dispatch_gaiji
-    # u¦v‚ÌŸ‚ªumv‚Å‚È‚¯‚ê‚ÎŠOš‚Å‚Í‚È‚¢
-    if @stream.peek_char(0) !=  "m"
-      return "¦"
+    # ã€Œâ€»ã€ã®æ¬¡ãŒã€Œï¼»ã€ã§ãªã‘ã‚Œã°å¤–å­—ã§ã¯ãªã„
+    if @stream.peek_char(0) !=  COMMAND_BEGIN
+      return GAIJI_MARK
     end
 
-    # umv‚ğ“Ç‚İÌ‚Ä‚é
+    # ã€Œï¼»ã€ã‚’èª­ã¿æ¨ã¦ã‚‹
     _ = read_char
     # embed?
-    command, _raw = read_to_nest("n")
+    command, _raw = read_to_nest(COMMAND_END)
     try_emb = kuten2png(command)
     if try_emb != command
       try_emb
@@ -719,46 +781,46 @@ class Aozora2Html
     end
   end
 
-  # ’‹L‹L–@‚Ìê‡•ª‚¯
+  # æ³¨è¨˜è¨˜æ³•ã®å ´åˆåˆ†ã‘
   def dispatch_aozora_command
-    # umv‚ÌŸ‚ªu”v‚Å‚È‚¯‚ê‚Î’‹L‚Å‚Í‚È‚¢
-    if @stream.peek_char(0) != "”"
-      return "m"
+    # ã€Œï¼»ã€ã®æ¬¡ãŒã€Œï¼ƒã€ã§ãªã‘ã‚Œã°æ³¨è¨˜ã§ã¯ãªã„
+    if @stream.peek_char(0) != IGETA_MARK
+      return COMMAND_BEGIN
     end
 
-    # u”v‚ğ“Ç‚İÌ‚Ä‚é
+    # ã€Œï¼ƒã€ã‚’èª­ã¿æ¨ã¦ã‚‹
     _ = read_char
-    command,raw = read_to_nest("n")
-    # “K—p‡˜‚Í‚±‚ê‚Å‘åä•v‚©H@Œë”š•|‚¢‚æŒë”š
-    if command.match(/Ü‚è•Ô‚µ‚Ä/)
+    command,raw = read_to_nest(COMMAND_END)
+    # é©ç”¨é †åºã¯ã“ã‚Œã§å¤§ä¸ˆå¤«ã‹ï¼Ÿã€€èª¤çˆ†æ€–ã„ã‚ˆèª¤çˆ†
+    if command.match(ORIKAESHI_COMMAND)
       apply_burasage(command)
 
-    elsif command.match(/^‚±‚±‚©‚ç/)
+    elsif command.start_with?(OPEN_MARK)
       exec_block_start_command(command)
-    elsif command.match(/^‚±‚±‚Å/)
+    elsif command.start_with?(CLOSE_MARK)
       exec_block_end_command(command)
 
-    elsif command.match(/Š„‚è’/)
+    elsif command.match(WARICHU_COMMAND)
       apply_warichu(command)
-    elsif command.match(/š‰º‚°/)
+    elsif command.match(JISAGE_COMMAND)
       apply_jisage(command)
     elsif command.match(/fig(\d)+_(\d)+\.png/)
       exec_img_command(command,raw)
     # avoid to try complex ruby -- escape to notes
-    elsif command.match(/(¶|‰º)‚Éu(.*)v‚Ì(ƒ‹ƒr|’‹L|–T‹L)/)
+    elsif command.match(PAT_REST_NOTES)
       apply_rest_notes(command)
-    elsif command.match(/I‚í‚è$/)
+    elsif command.end_with?(END_MARK)
       exec_inline_end_command(command)
       nil
-    elsif command.match(/^u.+v/)
+    elsif command.match(PAT_REF)
       exec_frontref_command(command)
     elsif command.match(/1-7-8[2345]/)
       apply_dakuten_katakana(command)
-    elsif command.match(/^([ˆê“ñOlŒÜ˜Zµ”ª‹ã\ƒŒã’†‰ºb‰³•¸’š“V’nl]+)$/)
+    elsif command.match(PAT_KAERITEN)
       Aozora2Html::Tag::Kaeriten.new(self, command)
-    elsif command.match(/^i(.+)j$/)
-      Aozora2Html::Tag::Okurigana.new(self, command.gsub!(/[ij]/,""))
-    elsif command.match(/(’n•t‚«|šã‚°)(I‚í‚è)*$/)
+    elsif command.match(PAT_OKURIGANA)
+      Aozora2Html::Tag::Okurigana.new(self, command.gsub!(PAT_REMOVE_OKURIGANA,""))
+    elsif command.match(PAT_CHITSUKI)
       apply_chitsuki(command)
     elsif exec_inline_start_command(command)
       nil
@@ -774,12 +836,12 @@ class Aozora2Html
       general_output
     end
     @noprint = true # always no print
-    command = convert_japanese_number(command)
-    if command.match(/“V•t‚«/)
-      width = command.match(/Ü‚è•Ô‚µ‚Ä(\d*)š‰º‚°/)[1]
+    command = Utils.convert_japanese_number(command)
+    if command.match(TENTSUKI_COMMAND)
+      width = command.match(PAT_ORIKAESHI_JISAGE)[1]
       tag = '<div class="burasage" style="margin-left: ' + width + 'em; text-indent: -' + width  + 'em;">'
     else
-      match = command.match(/(\d*)š‰º‚°AÜ‚è•Ô‚µ‚Ä(\d*)š‰º‚°/)
+      match = command.match(PAT_ORIKAESHI_JISAGE2)
       left, indent = match.to_a[1,2]
       left = left.to_i - indent.to_i
       tag = "<div class=\"burasage\" style=\"margin-left: #{indent}em; text-indent: #{left}em;\">"
@@ -790,21 +852,21 @@ class Aozora2Html
   end
 
   def jisage_width(command)
-    convert_japanese_number(command).match(/(\d*)(?:š‰º‚°)/)[1]
+    Utils.convert_japanese_number(command).match(/(\d*)(?:#{JISAGE_COMMAND})/)[1]
   end
 
   def apply_jisage(command)
-    if command.match(/‚Ü‚Å/) or command.match(/I‚í‚è/)
-      # š‰º‚°I‚í‚è
+    if command.match(MADE_MARK) or command.match(END_MARK)
+      # å­—ä¸‹ã’çµ‚ã‚ã‚Š
       explicit_close(:jisage)
       @indent_stack.pop
       nil
-    elsif command.match(/‚±‚Ìs/)
-      # 1s‚¾‚¯
+    elsif command.match(ONELINE_COMMAND)
+      # 1è¡Œã ã‘
       @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
       nil
     elsif @buffer.length == 0 and @stream.peek_char(0) == "\r\n"
-      # command‚Ì‚İ
+      # commandã®ã¿
       @terprip = false
       implicit_close(:jisage)
       # adhook hack
@@ -818,24 +880,24 @@ class Aozora2Html
   end
 
   def apply_warichu(command)
-    if command.match(/I‚í‚è/)
-      if @stream.peek_char(0) != "j"
-        push_chars('j')
+    if command.match(END_MARK)
+      if @stream.peek_char(0) != PAREN_END_MARK
+        push_chars(PAREN_END_MARK)
       end
       push_chars('</span>')
     else
       check = @ruby_buf.last
       push_chars('<span class="warichu">')
-      unless check.is_a?(String) and check.match(/i$/)
-        push_chars('i')
+      unless check.is_a?(String) and check.end_with?(PAREN_BEGIN_MARK)
+        push_chars(PAREN_BEGIN_MARK)
       end
     end
     nil
   end
 
   def chitsuki_length(command)
-    command = convert_japanese_number(command)
-    if match = command.match(/([0-9]+)š/)
+    command = Utils.convert_japanese_number(command)
+    if match = command.match(PAT_JI_LEN)
       match[1]
     else
       "0"
@@ -843,20 +905,20 @@ class Aozora2Html
   end
 
   def apply_chitsuki(string, multiline = false)
-    if string.match(/‚±‚±‚Å’n•t‚«I‚í‚è/) or
-        string.match(/‚±‚±‚Åšã‚°I‚í‚è/)
+    if string.match(CLOSE_MARK+INDENT_TYPE[:chitsuki]+END_MARK) or
+        string.match(CLOSE_MARK+JIAGE_COMMAND+END_MARK)
       explicit_close(:chitsuki)
       @indent_stack.pop
       nil
     else
       len = chitsuki_length(string)
       if multiline
-        # •¡”sw’è
+        # è¤‡æ•°è¡ŒæŒ‡å®š
         implicit_close(:chitsuki)
         @indent_stack.push(:chitsuki)
         Aozora2Html::Tag::MultilineChitsuki.new(self, len)
       else
-        # 1s‚Ì‚İ
+        # 1è¡Œã®ã¿
         Aozora2Html::Tag::OnelineChitsuki.new(self, len)
       end
     end
@@ -883,10 +945,9 @@ class Aozora2Html
 
   def apply_midashi(command)
     @indent_stack.push(:midashi)
-    case command
-    when /“¯s/
+    if command.match(DOGYO_MARK)
       midashi_type = :dogyo
-    when /‘‹/
+    elsif command.match(MADO_MARK)
       midashi_type = :mado
     else
       midashi_type = :normal
@@ -911,7 +972,7 @@ class Aozora2Html
   end
 
   def apply_jizume(command)
-    w = convert_japanese_number(command).match(/(\d*)(?:š‹l‚ß)/)[1]
+    w = Utils.convert_japanese_number(command).match(/(\d*)(?:#{INDENT_TYPE[:jizume]})/)[1]
     @indent_stack.push(:jizume)
     Aozora2Html::Tag::Jizume.new(self, w)
   end
@@ -922,7 +983,7 @@ class Aozora2Html
   end
 
   def detect_style_size(style)
-    if style.match("¬")
+    if style.match("å°".to_sjis)
       :sho
     else
       :dai
@@ -931,58 +992,58 @@ class Aozora2Html
 
   def exec_inline_start_command(command)
     case command
-    when "’‹L•t‚«"
+    when CHUUKI_COMMAND
       @style_stack.push([command,'</ruby>'])
       push_char('<ruby><rb>')
-    when "c’†‰¡"
+    when TCY_COMMAND
       @style_stack.push([command,'</span>'])
       push_char('<span dir="ltr">')
-    when "ŒrˆÍ‚İ"
+    when KEIGAKOMI_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="keigakomi">')
-    when "‰¡‘g‚İ"
+    when YOKOGUMI_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="yokogumi">')
-    when "ƒLƒƒƒvƒVƒ‡ƒ“"
+    when CAPTION_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="caption">')
-    when "Š„‘"
+    when WARIGAKI_COMMAND
       @style_stack.push([command,'</span>'])
       push_chars('<span class="warigaki">')
-    when "‘åŒ©o‚µ"
+    when OMIDASHI_COMMAND
       @style_stack.push([command,'</a></h3>'])
       @terprip = false
       push_chars("<h3 class=\"o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
-    when "’†Œ©o‚µ"
+    when NAKAMIDASHI_COMMAND
       @style_stack.push([command,'</a></h4>'])
       @terprip = false
       push_chars("<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
-    when "¬Œ©o‚µ"
+    when KOMIDASHI_COMMAND
       @style_stack.push([command,'</a></h5>'])
       @terprip = false
       push_chars("<h5 class=\"ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
-    when "“¯s‘åŒ©o‚µ"
+    when DOGYO_OMIDASHI_COMMAND
       @style_stack.push([command,'</a></h3>'])
       push_chars("<h3 class=\"dogyo-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
-    when "“¯s’†Œ©o‚µ"
+    when DOGYO_NAKAMIDASHI_COMMAND
       @style_stack.push([command,'</a></h4>'])
       push_chars("<h4 class=\"dogyo-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
-    when "“¯s¬Œ©o‚µ"
+    when DOGYO_KOMIDASHI_COMMAND
       @style_stack.push([command,'</a></h5>'])
       push_chars("<h5 class=\"dogyo-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
-    when "‘‹‘åŒ©o‚µ"
+    when MADO_OMIDASHI_COMMAND
       @style_stack.push([command,'</a></h3>'])
       push_chars("<h3 class=\"mado-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
-    when "‘‹’†Œ©o‚µ"
+    when MADO_NAKAMIDASHI_COMMAND
       @style_stack.push([command,'</a></h4>'])
       push_chars("<h4 class=\"mado-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
-    when "‘‹¬Œ©o‚µ"
+    when MADO_KOMIDASHI_COMMAND
       @style_stack.push([command,'</a></h5>'])
       push_chars("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
-    when /(.*)’iŠK(..)‚È•¶š/
+    when PAT_CHARSIZE
       @style_stack.push([command,'</span>'])
-      _whole, nest, style = command.match(/(.*)’iŠK(..)‚È•¶š/).to_a
-      times = convert_japanese_number(nest).to_i
+      _whole, nest, style = command.match(PAT_CHARSIZE).to_a
+      times = Utils.convert_japanese_number(nest).to_i
       daisho = detect_style_size(style)
       html_class = daisho.to_s + times.to_s
       size = Utils.create_font_size(times, daisho)
@@ -991,18 +1052,18 @@ class Aozora2Html
       ## Decoration ##
       key = command
       filter = lambda{|x| x}
-      if command.match(/(‰E|¶|ã|‰º)‚É(.*)/)
-        _whole, dir, com = command.match(/(‰E|¶|ã|‰º)‚É(.*)/).to_a
+      if command.match(PAT_DIRECTION)
+        _whole, dir, com = command.match(PAT_DIRECTION).to_a
         # renew command
         key = com
-        if command.match(/“_/)
+        if command.match(TEN_MARK)
           case dir
-          when "¶", "‰º"
+          when LEFT_MARK, UNDER_MARK
             filter = lambda{|x| x + "_after"}
           end
-        elsif command.match(/ü/)
+        elsif command.match(SEN_MARK)
           case dir
-          when "¶", "ã"
+          when LEFT_MARK, OVER_MARK
             filter = lambda{|x| x.sub("under","over")}
           end
         end
@@ -1015,7 +1076,7 @@ class Aozora2Html
         push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
       else
         if $DEBUG
-          puts "Œx(#{line_number}s–Ú):u#{key}v‚Í–¢‘Î‰‚ÌƒRƒ}ƒ“ƒh‚Ì‚½‚ß–³‹‚µ‚Ü‚·"
+          puts I18n.t(:warn_undefined_command, line_number, key)
         end
         nil
       end
@@ -1023,18 +1084,18 @@ class Aozora2Html
   end
 
   def exec_inline_end_command(command)
-    encount = command.sub("I‚í‚è","")
-    if encount == "–{•¶"
+    encount = command.sub(END_MARK,"")
+    if encount == MAIN_MARK
       # force to finish main_text
       @section = :tail
       ensure_close
       @noprint = true
       @out.print "</div>\r\n<div class=\"after_text\">\r\n<hr />\r\n"
-    elsif encount.match("’‹L•t‚«") and @style_stack.last_command == "’‹L•t‚«"
+    elsif encount.match(CHUUKI_COMMAND) and @style_stack.last_command == CHUUKI_COMMAND
       # special inline ruby
       @style_stack.pop
-      _whole, ruby = encount.match("u(.*)v‚Ì’‹L•t‚«").to_a
-      push_char("</rb><rp>i</rp><rt>#{ruby}</rt><rp>j</rp></ruby>")
+      _whole, ruby = encount.match(PAT_INLINE_RUBY).to_a
+      push_char("</rb><rp>ï¼ˆ</rp><rt>#{ruby}</rt><rp>ï¼‰</rp></ruby>")
     elsif @style_stack.last_command.match(encount)
       push_chars(@style_stack.pop[1])
     else
@@ -1044,54 +1105,54 @@ class Aozora2Html
 
   def exec_block_start_command(command)
     original_command = command.dup
-    command.sub!(/^‚±‚±‚©‚ç/, "")
+    command.sub!(/^#{OPEN_MARK}/, "")
     match = ""
-    if command.match(/š‰º‚°/)
+    if command.match(INDENT_TYPE[:jisage])
       push_block_tag(apply_jisage(command),match)
-    elsif command.match(/(’n•t‚«|šã‚°)$/)
+    elsif command.match(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
       push_block_tag(apply_chitsuki(command,true),match)
     end
 
-    if command.match(/Œ©o‚µ/)
+    if command.match(INDENT_TYPE[:midashi])
       push_block_tag(apply_midashi(command),match)
     end
 
-    if command.match(/š‹l‚ß/)
+    if command.match(INDENT_TYPE[:jizume])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_jizume(command),match)
     end
 
-    if command.match(/‰¡‘g‚İ/)
+    if command.match(INDENT_TYPE[:yokogumi])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_yokogumi(command),match)
     end
 
-    if command.match(/ŒrˆÍ‚İ/)
+    if command.match(INDENT_TYPE[:keigakomi])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_keigakomi(command),match)
     end
 
-    if command.match(/ƒLƒƒƒvƒVƒ‡ƒ“/)
+    if command.match(INDENT_TYPE[:caption])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(apply_caption(command),match)
     end
 
-    if command.match(/‘¾š/)
+    if command.match(INDENT_TYPE[:futoji])
       if match != ""
         @indent_stack.pop
       end
       push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, "futoji"),match)
       @indent_stack.push(:futoji)
     end
-    if command.match(/Î‘Ì/)
+    if command.match(INDENT_TYPE[:shatai])
       if match != ""
         @indent_stack.pop
       end
@@ -1099,14 +1160,14 @@ class Aozora2Html
       @indent_stack.push(:shatai)
     end
 
-    if command.match(/(.*)’iŠK(..)‚È•¶š/)
-      _whole, nest, style = command.match(/(.*)’iŠK(..)‚È•¶š/).to_a
+    if command.match(PAT_CHARSIZE)
+      _whole, nest, style = command.match(PAT_CHARSIZE).to_a
       if match != ""
         @indent_stack.pop
       end
       daisho = detect_style_size(style)
       push_block_tag(Aozora2Html::Tag::FontSize.new(self,
-                                                    convert_japanese_number(nest).to_i,
+                                                    Utils.convert_japanese_number(nest).to_i,
                                                     daisho),
                      match)
       @indent_stack.push(daisho)
@@ -1120,42 +1181,25 @@ class Aozora2Html
     end
   end
 
-  # ƒRƒ}ƒ“ƒh•¶š—ñ‚©‚çƒ‚[ƒh‚ÌƒVƒ“ƒ{ƒ‹‚ğæ‚èo‚·
+  # ã‚³ãƒãƒ³ãƒ‰æ–‡å­—åˆ—ã‹ã‚‰ãƒ¢ãƒ¼ãƒ‰ã®ã‚·ãƒ³ãƒœãƒ«ã‚’å–ã‚Šå‡ºã™
   #
   # @return [Symbol]
   #
   def detect_command_mode(command)
-    case command
-    when /š‰º‚°/
-      :jisage
-    when /(’n•t‚«|šã‚°)I‚í‚è$/
-      :chitsuki
-    when /Œ©o‚µ/
-      :midashi
-    when /š‹l‚ß/
-      :jizume
-    when /‰¡‘g‚İ/
-      :yokogumi
-    when /ŒrˆÍ‚İ/
-      :keigakomi
-    when /ƒLƒƒƒvƒVƒ‡ƒ“/
-      :caption
-    when /‘¾š/
-      :futoji
-    when /Î‘Ì/
-      :shatai
-    when /‘å‚«‚È•¶š/
-      :dai
-    when /¬‚³‚È•¶š/
-      :sho
-    else
-      nil
+    if command.match(INDENT_TYPE[:chitsuki]+END_MARK) || command.match(JIAGE_COMMAND+END_MARK)
+      return :chitsuki
     end
+    INDENT_TYPE.keys.each do |key|
+      if command.match(INDENT_TYPE[key])
+        return key
+      end
+    end
+    return nil
   end
 
   def exec_block_end_command(command)
     original_command = command.dup
-    command.sub!(/^‚±‚±‚Å/, "")
+    command.sub!(/^#{CLOSE_MARK}/, "")
     match = false
     mode = detect_command_mode(command)
     if mode
@@ -1174,10 +1218,10 @@ class Aozora2Html
   end
 
   def exec_img_command(command,raw)
-    match = raw.match(/(.*)i(fig.+\.png)(A‰¡([0-9]+)~c([0-9]+))*j“ü‚é/)
+    match = raw.match(PAT_IMAGE)
     if match
       _whole, alt, src, _wh, width, height = match.to_a
-      css_class = if alt.match(/Ê^/)
+      css_class = if alt.match(PHOTO_COMMAND)
                     "photo"
                   else
                     "illustration"
@@ -1189,7 +1233,7 @@ class Aozora2Html
   end
 
   def exec_frontref_command(command)
-    _whole, reference, spec1, spec2 = command.match(/u([^uv]*(?:u.+v)*[^uv]*)v[‚É‚Í‚Ì](u.+v‚Ì)*(.+)/).to_a
+    _whole, reference, spec1, spec2 = command.match(PAT_FRONTREF).to_a
     if spec1
       spec = spec1 + spec2
     else
@@ -1207,14 +1251,14 @@ class Aozora2Html
     apply_rest_notes(command)
   end
 
-  # –T‹L‚ğ•À‚×‚é—p
+  # å‚è¨˜ã‚’ä¸¦ã¹ã‚‹ç”¨
   #
   def multiply(bouki, times)
     sep = "&nbsp;"
     ([bouki]*times).join(sep)
   end
 
-  # array‚ªƒ‹ƒr‚ğŠÜ‚ñ‚Å‚¢‚ê‚Î‚»‚ÌƒCƒ“ƒfƒbƒNƒX‚ğ•Ô‚·
+  # arrayãŒãƒ«ãƒ“ã‚’å«ã‚“ã§ã„ã‚Œã°ãã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’è¿”ã™
   #
   # @return [Integer, nil]
   #
@@ -1232,7 +1276,7 @@ class Aozora2Html
     end
   end
 
-  # rubyƒ^ƒO‚ÌÄ¶¬(–{‘Ì‚Írearrange_ruby)
+  # rubyã‚¿ã‚°ã®å†ç”Ÿæˆ(æœ¬ä½“ã¯rearrange_ruby)
   #
   # complex ruby wrap up utilities -- don't erase! we will use soon ...
   #
@@ -1241,7 +1285,7 @@ class Aozora2Html
     Aozora2Html::Tag::Ruby.new(self, target, upper, under)
   end
 
-  # rubyƒ^ƒO‚ÌÄŠ„‚è“–‚Ä
+  # rubyã‚¿ã‚°ã®å†å‰²ã‚Šå½“ã¦
   def rearrange_ruby(targets, upper_ruby, under_ruby = "")
     if include_ruby?(targets)
       new_targets = []
@@ -1256,26 +1300,26 @@ class Aozora2Html
                     []
                   end
       if new_upper.length > 1 and new_under.length > 1
-        raise Aozora2Html::Error, "1‚Â‚Ì’PŒê‚É3‚Â‚Ìƒ‹ƒr‚Í‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ"
+        raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
       end
 
       targets.each{|x|
         if x.is_a?(Aozora2Html::Tag::Ruby)
           if x.target.is_a?(Array)
             # inner Aozora2Html::Tag::Ruby is already complex ... give up
-            raise Aozora2Html::Error, "“¯‚¶‰ÓŠ‚É2‚Â‚Ìƒ‹ƒr‚Í‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ"
+            raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
           else
             if x.ruby != ""
               if new_upper.is_a?(Array)
                 new_upper.push(x.ruby)
               else
-                raise Aozora2Html::Error, "“¯‚¶‰ÓŠ‚É2‚Â‚Ìƒ‹ƒr‚Í‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ"
+                raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
             else
               if new_under.is_a?(Array)
                 new_under.push(x.under_ruby)
               else
-                raise Aozora2Html::Error, "“¯‚¶‰ÓŠ‚É2‚Â‚Ìƒ‹ƒr‚Í‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ"
+                raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
             end
             new_targets.push(x.target)
@@ -1292,12 +1336,12 @@ class Aozora2Html
             if new_under.is_a?(Array)
               new_under.concat(un)
             elsif un.to_s.length > 0
-              raise Aozora2Html::Error, "“¯‚¶‰ÓŠ‚É2‚Â‚Ìƒ‹ƒr‚Í‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ"
+              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
             end
             if new_upper.is_a?(Array)
               new_upper.concat(up)
             elsif up.to_s.length > 0
-              raise Aozora2Html::Error, "“¯‚¶‰ÓŠ‚É2‚Â‚Ìƒ‹ƒr‚Í‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ"
+              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
             end
           else
             new_targets.push(x)
@@ -1328,65 +1372,65 @@ class Aozora2Html
     try_kuten = kuten2png(command)
     if try_kuten != command
       try_kuten
-    elsif command.match(/c’†‰¡/)
+    elsif command.match(TCY_COMMAND)
       Aozora2Html::Tag::Dir.new(self, targets)
-    elsif command.match(/‰¡‘g‚İ/)
+    elsif command.match(YOKOGUMI_COMMAND)
       Aozora2Html::Tag::InlineYokogumi.new(self, targets)
-    elsif command.match(/ŒrˆÍ‚İ/)
+    elsif command.match(KEIGAKOMI_COMMAND)
       Aozora2Html::Tag::InlineKeigakomi.new(self, targets)
-    elsif command.match(/ƒLƒƒƒvƒVƒ‡ƒ“/)
+    elsif command.match(CAPTION_COMMAND)
       Aozora2Html::Tag::InlineCaption.new(self, targets)
-    elsif command.match(/•Ô‚è“_/)
+    elsif command.match(KAERITEN_COMMAND)
       Aozora2Html::Tag::Kaeriten.new(self, targets)
-    elsif command.match(/ŒP“_‘—‚è‰¼–¼/)
+    elsif command.match(KUNTEN_OKURIGANA_COMMAND)
       Aozora2Html::Tag::Okurigana.new(self, targets)
-    elsif command.match(/Œ©o‚µ/)
+    elsif command.match(MIDASHI_COMMAND)
       midashi_type = :normal
-      if command.match(/“¯s/)
+      if command.match(DOGYO_MARK)
         midashi_type = :dogyo
-      elsif command.match(/‘‹/)
+      elsif command.match(MADO_MARK)
         midashi_type = :mado
       else
         @terprip = false
       end
       Aozora2Html::Tag::Midashi.new(self, targets, command, midashi_type)
-    elsif command.match(/(.*)’iŠK(..)‚È•¶š/)
-      _whole, nest, style = command.match(/(.*)’iŠK(..)‚È•¶š/).to_a
+    elsif command.match(PAT_CHARSIZE)
+      _whole, nest, style = command.match(PAT_CHARSIZE).to_a
       Aozora2Html::Tag::InlineFontSize.new(self,targets,
-                                           convert_japanese_number(nest).to_i,
+                                           Utils.convert_japanese_number(nest).to_i,
                                            detect_style_size(style))
-    elsif command.match(/(¶|‰º)‚Éu([^v]*)v‚Ì(ƒ‹ƒr|’‹L)/)
-      _whole, _dir, under = command.match(/(¶|‰º)‚Éu([^v]*)v‚Ì(ƒ‹ƒr|’‹L)/).to_a
+    elsif command.match(PAT_RUBY_DIR)
+      _whole, _dir, under = command.match(PAT_RUBY_DIR).to_a
       if targets.length == 1 and targets[0].is_a?(Aozora2Html::Tag::Ruby)
         tag = targets[0]
         if tag.under_ruby == ""
           tag.under_ruby = under
           tag
         else
-          raise Aozora2Html::Error, "1‚Â‚Ì’PŒê‚É3‚Â‚Ìƒ‹ƒr‚Í‚Â‚¯‚ç‚ê‚Ü‚¹‚ñ"
+          raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
         end
       else
         rearrange_ruby_tag(targets, "", under)
       end
-    elsif command.match(/u(.+?)v‚Ì’‹L/)
-      rearrange_ruby_tag(targets, /u(.+?)v‚Ì’‹L/.match(command).to_a[1])
-    elsif command.match(/u(.)v‚Ì–T‹L/)
-      rearrange_ruby_tag(targets, multiply( /u(.)v‚Ì–T‹L/.match(command).to_a[1], targets.to_s.length))
+    elsif command.match(PAT_CHUUKI)
+      rearrange_ruby_tag(targets, PAT_CHUUKI.match(command).to_a[1])
+    elsif command.match(PAT_BOUKI)
+      rearrange_ruby_tag(targets, multiply(PAT_BOUKI.match(command).to_a[1], targets.to_s.length))
     else
       ## direction fix! ##
       filter = lambda{|x| x}
-      if command.match(/(‰E|¶|ã|‰º)‚É(.*)/)
-        _whole, dir, com = command.match(/(‰E|¶|ã|‰º)‚É(.*)/).to_a
+      if command.match(PAT_DIRECTION)
+        _whole, dir, com = command.match(PAT_DIRECTION).to_a
         # renew command
         command = com
-        if command.match(/“_/)
+        if command.match(TEN_MARK)
           case dir
-          when "¶", "‰º"
+          when LEFT_MARK, UNDER_MARK
             filter = lambda{|x| x + "_after"}
           end
-        elsif command.match(/ü/)
+        elsif command.match(SEN_MARK)
           case dir
-          when "¶", "ã"
+          when LEFT_MARK, OVER_MARK
             filter = lambda{|x| x.sub("under","over")}
           end
         end
@@ -1412,9 +1456,9 @@ class Aozora2Html
     end
   end
 
-  # ‚­‚Ìš“_‚Ìˆ—
+  # ãã®å­—ç‚¹ã®å‡¦ç†
   #
-  # ‚­‚Ìš“_‚ÍŒ»ó‚»‚Ì‚Ü‚Üo—Í‚·‚é‚Ì‚Åƒtƒbƒ^‚Ìu•\‹L‚É‚Â‚¢‚Äv‚Åo—Í‚·‚é‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒOˆ—‚¾‚¯s‚¤
+  # ãã®å­—ç‚¹ã¯ç¾çŠ¶ãã®ã¾ã¾å‡ºåŠ›ã™ã‚‹ã®ã§ãƒ•ãƒƒã‚¿ã®ã€Œè¡¨è¨˜ã«ã¤ã„ã¦ã€ã§å‡ºåŠ›ã™ã‚‹ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°å‡¦ç†ã ã‘è¡Œã†
   def assign_kunoji
     second = @stream.peek_char(0)
     case second
@@ -1432,19 +1476,19 @@ class Aozora2Html
     Aozora2Html::Tag::EditorNote.new(self, command)
   end
 
-  # b‚ª—ˆ‚½‚Æ‚«‚Í•¶ší‚ğ–³‹‚µ‚Äruby_buf‚ğç‚ç‚È‚«‚á‚¢‚¯‚È‚¢
+  # ï½œãŒæ¥ãŸã¨ãã¯æ–‡å­—ç¨®ã‚’ç„¡è¦–ã—ã¦ruby_bufã‚’å®ˆã‚‰ãªãã‚ƒã„ã‘ãªã„
   def apply_ruby
     @ruby_buf.protected = nil
-    ruby, _raw = read_to_nest("t")
+    ruby, _raw = read_to_nest(RUBY_END_MARK)
     if ruby.length == 0
       # escaped ruby character
-      return "st"
+      return RUBY_BEGIN_MARK+RUBY_END_MARK
     end
     ans = ""
     notes = []
     @ruby_buf.each do |token|
       if token.is_a?(Aozora2Html::Tag::UnEmbedGaiji)
-        ans.concat("¦")
+        ans.concat(GAIJI_MARK)
         token.escape!
         notes.push(token)
       else
@@ -1457,23 +1501,23 @@ class Aozora2Html
     nil
   end
 
-  # parse_body‚Ìƒtƒbƒ^”Å
+  # parse_bodyã®ãƒ•ãƒƒã‚¿ç‰ˆ
   def parse_tail
     char = read_char
     check = true
     case char
-    when "k"
+    when ACCENT_BEGIN
       check = false
       char = read_accent
     when @endchar
       throw :terminate
-    when "¦"
+    when GAIJI_MARK
       char = dispatch_gaiji
-    when "m"
+    when COMMAND_BEGIN
       char = dispatch_aozora_command
     when KU
       assign_kunoji
-    when "s"
+    when RUBY_BEGIN_MARK
       char = apply_ruby
     end
 
@@ -1493,14 +1537,14 @@ class Aozora2Html
     end
   end
 
-  # general_output‚Ìƒtƒbƒ^”Å
+  # general_outputã®ãƒ•ãƒƒã‚¿ç‰ˆ
   def tail_output
     @ruby_buf.dump_into(@buffer)
     string = @buffer.join
     @ruby_buf.clear
     @buffer = []
     string.gsub!("info@aozora.gr.jp",'<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
-    string.gsub!("Â‹ó•¶ŒÉihttp://www.aozora.gr.jp/j"){"<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>"}
+    string.gsub!("é’ç©ºæ–‡åº«ï¼ˆhttp://www.aozora.gr.jp/ï¼‰".to_sjis){"<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>"}
     if string.match(/(<br \/>$|<\/p>$|<\/h\d>$|<div.*>$|<\/div>$|^<[^>]*>$)/)
       @out.print string, "\r\n"
     else
@@ -1508,57 +1552,58 @@ class Aozora2Html
     end
   end
 
-  # `œ•\‹L‚É‚Â‚¢‚Ä`‚Åg—p‚µ‚½’‹L“™‚ğo—Í‚·‚é
+  # `â—è¡¨è¨˜ã«ã¤ã„ã¦`ã§ä½¿ç”¨ã—ãŸæ³¨è¨˜ç­‰ã‚’å‡ºåŠ›ã™ã‚‹
   def hyoki
     # <br /> times fix
-    @out.print "<br />\r\n</div>\r\n<div class=\"notation_notes\">\r\n<hr />\r\n<br />\r\nœ•\‹L‚É‚Â‚¢‚Ä<br />\r\n<ul>\r\n"
-    @out.print "\t<li>‚±‚Ìƒtƒ@ƒCƒ‹‚Í W3C Š© XHTML1.1 ‚É‚»‚Á‚½Œ`®‚Åì¬‚³‚ê‚Ä‚¢‚Ü‚·B</li>\r\n"
+    @out.print "<br />\r\n</div>\r\n<div class=\"notation_notes\">\r\n<hr />\r\n<br />\r\nâ—è¡¨è¨˜ã«ã¤ã„ã¦<br />\r\n<ul>\r\n".to_sjis
+    @out.print "\t<li>ã“ã®ãƒ•ã‚¡ã‚¤ãƒ«ã¯ W3C å‹§å‘Š XHTML1.1 ã«ãã£ãŸå½¢å¼ã§ä½œæˆã•ã‚Œã¦ã„ã¾ã™ã€‚</li>\r\n".to_sjis
     if @chuuki_table[:chuki]
-      @out.print "\t<li>m”cn‚ÍA“ü—ÍÒ‚É‚æ‚é’‚ğ•\‚·‹L†‚Å‚·B</li>\r\n"
+      @out.print "\t<li>ï¼»ï¼ƒâ€¦ï¼½ã¯ã€å…¥åŠ›è€…ã«ã‚ˆã‚‹æ³¨ã‚’è¡¨ã™è¨˜å·ã§ã™ã€‚</li>\r\n".to_sjis
     end
     if @chuuki_table[:kunoji]
       if @chuuki_table[:dakutenkunoji]
-        @out.print "\t<li>u‚­‚Ìš“_v‚Íu#{KU}#{NOJI}v‚ÅAu‘÷“_•t‚«‚­‚Ìš“_v‚Íu#{KU}#{DAKUTEN}#{NOJI}v‚Å•\‚µ‚Ü‚µ‚½B</li>\r\n"
+        @out.printf("\t<li>ã€Œãã®å­—ç‚¹ã€ã¯ã€Œ%sã€ã§ã€ã€Œæ¿ç‚¹ä»˜ããã®å­—ç‚¹ã€ã¯ã€Œ%sã€ã§è¡¨ã—ã¾ã—ãŸã€‚</li>\r\n".to_sjis, KU+NOJI, KU+DAKUTEN+NOJI)
       else
-        @out.print "\t<li>u‚­‚Ìš“_v‚Íu#{KU}#{NOJI}v‚Å•\‚µ‚Ü‚µ‚½B</li>\r\n"
+        @out.printf("\t<li>ã€Œãã®å­—ç‚¹ã€ã¯ã€Œ%sã€ã§è¡¨ã—ã¾ã—ãŸã€‚</li>\r\n".to_sjis, KU+NOJI)
       end
     elsif @chuuki_table[:dakutenkunoji]
-      @out.print "\t<li>u‘÷“_•t‚«‚­‚Ìš“_v‚Íu#{KU}#{DAKUTEN}#{NOJI}v‚Å•\‚µ‚Ü‚µ‚½B</li>\r\n"
+      @out.printf("\t<li>ã€Œæ¿ç‚¹ä»˜ããã®å­—ç‚¹ã€ã¯ã€Œ%sã€ã§è¡¨ã—ã¾ã—ãŸã€‚</li>\r\n".to_sjis, KU+DAKUTEN+NOJI)
     end
     if @chuuki_table[:newjis] && !Aozora2Html::Tag::EmbedGaiji.use_jisx0213
-      @out.print "\t<li>u‚­‚Ìš“_v‚ğ‚Ì‚¼‚­JIS X 0213‚É‚ ‚é•¶š‚ÍA‰æ‘œ‰»‚µ‚Ä–„‚ß‚İ‚Ü‚µ‚½B</li>\r\n"
+      @out.print "\t<li>ã€Œãã®å­—ç‚¹ã€ã‚’ã®ããJIS X 0213ã«ã‚ã‚‹æ–‡å­—ã¯ã€ç”»åƒåŒ–ã—ã¦åŸ‹ã‚è¾¼ã¿ã¾ã—ãŸã€‚</li>\r\n".to_sjis
     end
     if @chuuki_table[:accent] && !Aozora2Html::Tag::Accent.use_jisx0213
-      @out.print "\t<li>ƒAƒNƒZƒ“ƒg•„†•t‚«ƒ‰ƒeƒ“•¶š‚ÍA‰æ‘œ‰»‚µ‚Ä–„‚ß‚İ‚Ü‚µ‚½B</li>\r\n"
+      @out.print "\t<li>ã‚¢ã‚¯ã‚»ãƒ³ãƒˆç¬¦å·ä»˜ããƒ©ãƒ†ãƒ³æ–‡å­—ã¯ã€ç”»åƒåŒ–ã—ã¦åŸ‹ã‚è¾¼ã¿ã¾ã—ãŸã€‚</li>\r\n".to_sjis
     end
     if @images[0]
-      @out.print "\t<li>‚±‚Ìì•i‚É‚ÍAJIS X 0213‚É‚È‚¢AˆÈ‰º‚Ì•¶š‚ª—p‚¢‚ç‚ê‚Ä‚¢‚Ü‚·Bi”š‚ÍA’ê–{’†‚ÌoŒ»uƒy[ƒW-sv”Bj‚±‚ê‚ç‚Ì•¶š‚Í–{•¶“à‚Å‚Íu¦m”cnv‚ÌŒ`‚Å¦‚µ‚Ü‚µ‚½B</li>\r\n</ul>\r\n<br />\r\n\t\t<table class=\"gaiji_list\">\r\n"
+      @out.print "\t<li>ã“ã®ä½œå“ã«ã¯ã€JIS X 0213ã«ãªã„ã€ä»¥ä¸‹ã®æ–‡å­—ãŒç”¨ã„ã‚‰ã‚Œã¦ã„ã¾ã™ã€‚ï¼ˆæ•°å­—ã¯ã€åº•æœ¬ä¸­ã®å‡ºç¾ã€Œãƒšãƒ¼ã‚¸-è¡Œã€æ•°ã€‚ï¼‰ã“ã‚Œã‚‰ã®æ–‡å­—ã¯æœ¬æ–‡å†…ã§ã¯ã€Œâ€»ï¼»ï¼ƒâ€¦ï¼½ã€ã®å½¢ã§ç¤ºã—ã¾ã—ãŸã€‚</li>\r\n</ul>\r\n<br />\r\n\t\t<table class=\"gaiji_list\">\r\n".to_sjis
       @images.each{|cell|
        k,*v = cell
+        vs = v.join("ã€".to_sjis)
        @out.print "			<tr>
 				<td>
 				#{k}
 				</td>
 				<td>&nbsp;&nbsp;</td>
 				<td>
-#{v.join("A")}				</td>
+#{vs}				</td>
 				<!--
 				<td>
-				@@<img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />
+				    <img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />
 				</td>
 				-->
 			</tr>
-"
+".to_sjis
       }
-      @out.print "\t\t</table>\r\n"
+      @out.print "\t\t</table>\r\n".to_sjis
     else
-      @out.print "</ul>\r\n" # <ul>“à‚É<li>ˆÈŠO‚ÌƒGƒŒƒƒ“ƒg‚ª—ˆ‚é‚Ì‚Í•s³‚È‚Ì‚ÅC³
+      @out.print "</ul>\r\n" # <ul>å†…ã«<li>ä»¥å¤–ã®ã‚¨ãƒ¬ãƒ¡ãƒ³ãƒˆãŒæ¥ã‚‹ã®ã¯ä¸æ­£ãªã®ã§ä¿®æ­£
     end
     @out.print "</div>\r\n"
   end
 end
 
 if $0 == __FILE__
-  # todo: ˆø”ƒ`ƒFƒbƒN‚Æ‚©
+  # todo: å¼•æ•°ãƒã‚§ãƒƒã‚¯ã¨ã‹
   Aozora2Html.new($*[0],$*[1]).process
 end
