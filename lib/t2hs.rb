@@ -1093,7 +1093,7 @@ class Aozora2Html
       # special inline ruby
       @style_stack.pop
       _whole, ruby = encount.match(PAT_INLINE_RUBY).to_a
-      push_char("</rb><rp>（</rp><rt>#{ruby}</rt><rp>）</rp></ruby>")
+      push_char("</rb><rp>（</rp><rt>".to_sjis + ruby + "</rt><rp>）</rp></ruby>".to_sjis)
     elsif @style_stack.last_command.match(encount)
       push_chars(@style_stack.pop[1])
     else

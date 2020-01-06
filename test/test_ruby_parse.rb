@@ -104,6 +104,13 @@ class RubyParseTest < Test::Unit::TestCase
     end
   end
 
+  def test_parse_ruby13
+    src = "［＃注記付き］名※［＃二の字点、1-2-22］［＃「（銘々）」の注記付き終わり］\r\n"
+    parsed = parse_text(src)
+    expected = %Q|<ruby><rb>名<img src="../../../gaiji/1-02/1-02-22.png" alt="※(二の字点、1-2-22)" class="gaiji" /></rb><rp>（</rp><rt>（銘々）</rt><rp>）</rp></ruby><br />\r\n|
+    assert_equal expected, parsed
+  end
+
   def parse_text(input_text)
     input = StringIO.new(input_text.encode("shift_jis"))
     output = StringIO.new
