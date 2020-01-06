@@ -100,7 +100,7 @@ class RubyParseTest < Test::Unit::TestCase
   def test_parse_ruby12
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」に「ママ」の注記］\r\n"
     assert_raise(Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません".encode("shift_jis"))) do
-      parsed = parse_text(src)
+      _parsed = parse_text(src)
     end
   end
 

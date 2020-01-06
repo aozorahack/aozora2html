@@ -295,7 +295,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     parser = Aozora2Html.new(input, output)
     out = StringIO.new
     $stdout = out
-    message = nil
+    _message = nil
     begin
       parser.parse_body
       parser.parse_body
@@ -303,7 +303,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
       parser.parse_body
       parser.parse_body
     rescue Aozora2Html::Error => e
-      message = e.message.encode("utf-8")
+      _message = e.message.encode("utf-8")
     ensure
       $stdout = STDOUT
       output.seek(0)
