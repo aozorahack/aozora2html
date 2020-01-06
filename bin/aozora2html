@@ -61,6 +61,7 @@ Dir.mktmpdir do |dir|
   end
 
   if File.extname(src_file) == ".zip"
+    require "aozora2html/zip"
     tmpfile = File.join(dir, "aozora.txt")
     Aozora2Html::Zip.unzip(src_file, tmpfile)
     Aozora2Html.new(tmpfile, dest_file).process
