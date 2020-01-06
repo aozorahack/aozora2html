@@ -94,11 +94,11 @@ class Aozora2Html
   PAT_OKURIGANA = "^（(.+)）$".to_sjis
   PAT_REMOVE_OKURIGANA = /#{"[（）]".to_sjis}/
   PAT_CHITSUKI = /#{"(地付き|字上げ)(終わり)*$".to_sjis}/
-  PAT_ORIKAESHI_JISAGE = "折り返して(\d*)字下げ".to_sjis
-  PAT_ORIKAESHI_JISAGE2 = "(\d*)字下げ、折り返して(\d*)字下げ".to_sjis
+  PAT_ORIKAESHI_JISAGE = "折り返して(\\d*)字下げ".to_sjis
+  PAT_ORIKAESHI_JISAGE2 = "(\\d*)字下げ、折り返して(\\d*)字下げ".to_sjis
   PAT_JI_LEN = "([0-9]+)字".to_sjis
   PAT_INLINE_RUBY = "「(.*)」の注記付き".to_sjis
-  PAT_IMAGE = "(.*)（(fig.+\.png)(、横([0-9]+)×縦([0-9]+))*）入る".to_sjis
+  PAT_IMAGE = "(.*)（(fig.+\\.png)(、横([0-9]+)×縦([0-9]+))*）入る".to_sjis
   PAT_FRONTREF = "「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)".to_sjis
   PAT_RUBY_DIR = "(左|下)に「([^」]*)」の(ルビ|注記)".to_sjis
   PAT_CHUUKI = /#{"「(.+?)」の注記".to_sjis}/
@@ -983,7 +983,7 @@ class Aozora2Html
   end
 
   def detect_style_size(style)
-    if style.match("小")
+    if style.match("小".to_sjis)
       :sho
     else
       :dai
@@ -1562,12 +1562,12 @@ class Aozora2Html
     end
     if @chuuki_table[:kunoji]
       if @chuuki_table[:dakutenkunoji]
-        @out.print "\t<li>「くの字点」は「#{KU}#{NOJI}」で、「濁点付きくの字点」は「#{KU}#{DAKUTEN}#{NOJI}」で表しました。</li>\r\n".to_sjis
+        @out.printf("\t<li>「くの字点」は「%s」で、「濁点付きくの字点」は「%s」で表しました。</li>\r\n".to_sjis, KU+NOJI, KU+DAKUTEN+NOJI)
       else
-        @out.print "\t<li>「くの字点」は「#{KU}#{NOJI}」で表しました。</li>\r\n".to_sjis
+        @out.printf("\t<li>「くの字点」は「%s」で表しました。</li>\r\n".to_sjis, KU+NOJI)
       end
     elsif @chuuki_table[:dakutenkunoji]
-      @out.print "\t<li>「濁点付きくの字点」は「#{KU}#{DAKUTEN}#{NOJI}」で表しました。</li>\r\n".to_sjis
+      @out.printf("\t<li>「濁点付きくの字点」は「%s」で表しました。</li>\r\n".to_sjis, KU+DAKUTEN+NOJI)
     end
     if @chuuki_table[:newjis] && !Aozora2Html::Tag::EmbedGaiji.use_jisx0213
       @out.print "\t<li>「くの字点」をのぞくJIS X 0213にある文字は、画像化して埋め込みました。</li>\r\n".to_sjis
@@ -1579,16 +1579,17 @@ class Aozora2Html
       @out.print "\t<li>この作品には、JIS X 0213にない、以下の文字が用いられています。（数字は、底本中の出現「ページ-行」数。）これらの文字は本文内では「※［＃…］」の形で示しました。</li>\r\n</ul>\r\n<br />\r\n\t\t<table class=\"gaiji_list\">\r\n".to_sjis
       @images.each{|cell|
        k,*v = cell
+        vs = v.join("、".to_sjis)
        @out.print "			<tr>
 				<td>
 				#{k}
 				</td>
 				<td>&nbsp;&nbsp;</td>
 				<td>
-#{v.join("、")}				</td>
+#{vs}				</td>
 				<!--
 				<td>
-				　　<img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />
+				    <img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />
 				</td>
 				-->
 			</tr>
