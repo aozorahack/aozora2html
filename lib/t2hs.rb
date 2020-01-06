@@ -105,11 +105,11 @@ class Aozora2Html
   PAT_BOUKI = /#{"「(.)」の傍記".to_sjis}/
   PAT_CHARSIZE = /#{"(.*)段階(..)な文字".to_sjis}/
 
-  DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
-                     "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a>" +
-                     "<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n" +
-                     "<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n" +
-                     "</div>".to_sjis
+  DYNAMIC_CONTENTS = ("<div id=\"card\">\r\n<hr />\r\n<br />\r\n" +
+                      "<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a>" +
+                      "<script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n" +
+                      "<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n" +
+                      "</div>").to_sjis
 
   # KUNOJI = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
