@@ -27,5 +27,9 @@ class String
       :else
     end
   end
+
+  def to_sjis
+    self.encode("shift_jis")
+  end
 end
 
