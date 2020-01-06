@@ -21,19 +21,13 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "rubyzip"
+  if RUBY_VERSION < "2.4.0"
+    spec.add_dependency "rubyzip", "~> 1.3"
+  else
+    spec.add_dependency "rubyzip", "~> 2.0"
+  end
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 12.0"
   spec.add_development_dependency "test-unit"
   spec.add_development_dependency "test-unit-rr"
-  if RUBY_VERSION >= "2.0.0"
-    spec.add_development_dependency "rubocop"
-    spec.add_development_dependency "meowcop"
-  end
-  # spec.add_development_dependency "test-unit-notify"
-  # spec.add_development_dependency "terminal-notifier"
-  if RUBY_VERSION > "2.2.0"
-    spec.add_development_dependency "guard"
-    spec.add_development_dependency "guard-test"
-  end
 end
