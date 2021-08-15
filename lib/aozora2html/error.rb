@@ -6,6 +6,7 @@ class Aozora2Html
 
     def initialize(msg)
       @message = msg
+      super
     end
 
     def message(line = 0)

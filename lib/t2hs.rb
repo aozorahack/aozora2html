@@ -822,7 +822,7 @@ class Aozora2Html
       apply_chitsuki(command)
     elsif exec_inline_start_command(command)
       nil
-    else
+    else # rubocop:todo Lint/DuplicateBranch
       apply_rest_notes(command)
     end
   end
@@ -871,7 +871,7 @@ class Aozora2Html
       @noprint = false
       @indent_stack.push(:jisage)
       Aozora2Html::Tag::MultilineJisage.new(self, jisage_width(command))
-    else
+    else # rubocop:todo Lint/DuplicateBranch
       @buffer.unshift(Aozora2Html::Tag::OnelineJisage.new(self, jisage_width(command)))
       nil
     end

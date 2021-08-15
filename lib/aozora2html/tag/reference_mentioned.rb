@@ -6,7 +6,7 @@ class Aozora2Html
       include Aozora2Html::Tag::Inline
       attr_accessor :target
 
-      def initialize(*args)
+      def initialize(*args) # rubocop:todo Lint/MissingSuper
         if defined?(@target) && block_element?(@target)
           syntax_error
         end
@@ -21,7 +21,7 @@ class Aozora2Html
           end
           nil
         elsif elt.is_a?(String)
-          elt.match(/<div/)
+          elt.include?('<div')
         else
           elt.is_a?(Aozora2Html::Tag::Block)
         end

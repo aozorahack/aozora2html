@@ -2,7 +2,7 @@
 require 'aozora2html/ruby_buffer'
 class Aozora2Html
   class TagParser < Aozora2Html
-    def initialize(input, endchar, chuuki, image)
+    def initialize(input, endchar, chuuki, image) # rubocop:todo Lint/MissingSuper
       if not(input.is_a?(Jstream))
         raise ArgumentError, "tag_parser must supply Jstream as input"
       end

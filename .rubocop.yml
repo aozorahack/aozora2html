@@ -33,12 +33,6 @@ Layout/SpaceAroundBlockParameters:
   EnforcedStyleInsidePipes: no_space
   Enabled: true
 
-# EnforcedStyle: space => 42 offenses
-# EnforcedStyle: no_space => 4 offenses
-Layout/SpaceBeforeBlockBraces:
-  EnforcedStyle: no_space
-  Enabled: true
-
 # EnforcedStyle: space => 98 offenses
 # EnforcedStyle: no_space => 0 offense
 Layout/SpaceInsideStringInterpolation:
@@ -51,23 +45,10 @@ Style/BarePercentLiterals:
   EnforcedStyle: percent_q
   Enabled: true
 
-# EnforcedStyle: nested => 2 offenses
-# EnforcedStyle: compact => 81 offenses
-Style/ClassAndModuleChildren:
-  EnforcedStyle: nested
-  Enabled: true
-
 # EnforcedStyle: compact => 24 offenses
 # EnforcedStyle: expanded => 0 offense
 Style/EmptyMethod:
   EnforcedStyle: expanded
-  Enabled: true
-
-# EnforcedStyle: when_needed => 10 offenses
-# EnforcedStyle: always => 57 offenses
-# EnforcedStyle: never => 32 offenses
-Style/Encoding:
-  EnforcedStyle: when_needed
   Enabled: true
 
 # EnforcedStyle: for => 13 offenses
