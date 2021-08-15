@@ -30,4 +30,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 12.0"
   spec.add_development_dependency "test-unit"
   spec.add_development_dependency "test-unit-rr"
+  spec.add_development_dependency "rubocop"
+  spec.add_development_dependency "meowcop"
 end
