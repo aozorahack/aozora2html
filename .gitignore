@@ -3,3 +3,4 @@
 *.bak
 pkg
 /.ruby-version
+/Gemfile.lock
