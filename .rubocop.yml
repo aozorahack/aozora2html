@@ -1,13 +1,17 @@
+require: rubocop-performance
+
 inherit_gem:
   meowcop:
     - config/rubocop.yml
 
 AllCops:
-  TargetRubyVersion: 2.1
+  # Rubocop's supporting Ruby versions is as follows:
+  # > Supported versions: 2.5, 2.6, 2.7, 3.0, 3.1
+  TargetRubyVersion: 2.5
 
 # EnforcedStyle: with_first_parameter => 0 offense
 # EnforcedStyle: with_fixed_indentation => 17 offenses
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   EnforcedStyle: with_first_parameter
   Enabled: true
 
@@ -117,7 +121,7 @@ Layout/SpaceAroundOperators:
 Layout/SpaceInsideBlockBraces:
   Enabled: false
 
-Style/UnneededPercentQ:
+Style/RedundantPercentQ:
   Enabled: false
 
 Style/PercentQLiterals:
@@ -168,7 +172,7 @@ Style/NumericPredicate:
 Style/ZeroLengthPredicate:
   Enabled: false
 
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Enabled: false
 
 Metrics/AbcSize:
@@ -221,7 +225,7 @@ Layout/SpaceBeforeBlockBraces:
   Enabled: false
 
 ### あとで直す
-Lint/StringConversionInInterpolation:
+Lint/RedundantStringCoercion:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false

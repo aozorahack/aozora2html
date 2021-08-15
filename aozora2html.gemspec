@@ -26,10 +26,14 @@ Gem::Specification.new do |spec|
   else
     spec.add_dependency "rubyzip", "~> 2.0"
   end
+
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 12.0"
   spec.add_development_dependency "test-unit"
   spec.add_development_dependency "test-unit-rr"
+
+  # RuboCop related development dependencies
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "meowcop"
+  spec.add_development_dependency "rubocop-performance"
 end
