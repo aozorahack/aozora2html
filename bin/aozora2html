@@ -3,6 +3,7 @@
 require 'aozora2html'
 require 'optparse'
 require "tempfile"
+require 'open-uri'
 
 opt = OptionParser.new("Usage: aozora2html [options] <text file> [<html file>]\n")
 opt.on('--gaiji-dir DIR', 'setting gaiji directory')
@@ -41,12 +42,9 @@ Dir.mktmpdir do |dir|
     dest_file = File.join(dir, "output.html")
   end
   if src_file =~ /\Ahttps?:/
-    require 'open-uri'
     down_file = File.join(dir, File.basename(src_file))
     begin
-      open(down_file, "wb") do |f0|
-        open(src_file){|f1| f0.write(f1.read)}
-      end
+      File.write(down_file, URI.parse(src_file).read)
       src_file = down_file
     rescue
       $stderr.print "file not found: #{src_file}\n"
