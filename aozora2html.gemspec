@@ -21,11 +21,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  if RUBY_VERSION < "2.4.0"
-    spec.add_dependency "rubyzip", "~> 1.3"
-  else
-    spec.add_dependency "rubyzip", "~> 2.0"
-  end
+  # Refer to current CI status at https://github.com/aozorahack/aozora2html/pull/39
+  spec.required_ruby_version = '>= 2.4', '< 3'
+
+  spec.add_dependency "rubyzip", "~> 2.0"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 12.0"

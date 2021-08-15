@@ -11,6 +11,10 @@ AllCops:
 
   NewCops: enable
 
+Gemspec/RequiredRubyVersion:
+  # RuboCop v1.19.0 does not support Ruby v2.4, but it will still work.
+  Enabled: false
+
 # EnforcedStyle: with_first_parameter => 0 offense
 # EnforcedStyle: with_fixed_indentation => 17 offenses
 Layout/ParameterAlignment:
