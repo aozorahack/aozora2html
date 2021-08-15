@@ -81,7 +81,7 @@ Style/MethodDefParentheses:
 
 # EnforcedStyle: snake_case => 0 offense
 # EnforcedStyle: camelCase => 268 offenses
-Style/MethodName:
+Naming/MethodName:
   EnforcedStyle: snake_case
   Enabled: true
 
@@ -100,14 +100,14 @@ Style/SignalException:
 
 # EnforcedStyle: snake_case => 0 offense
 # EnforcedStyle: camelCase => 126 offenses
-Style/VariableName:
+Naming/VariableName:
   EnforcedStyle: snake_case
   Enabled: true
 
 # EnforcedStyle: snake_case => 11 offenses
 # EnforcedStyle: normalcase => 0 offense
 # EnforcedStyle: non_integer => 11 offenses
-Style/VariableNumber:
+Naming/VariableNumber:
   EnforcedStyle: normalcase
   Enabled: true
 
@@ -197,7 +197,7 @@ Metrics/CyclomaticComplexity:
   Enabled: true
   Max: 100
 
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: true
   Max: 500
 
