@@ -378,7 +378,7 @@ class Aozora2Html
 
   def parse_chuuki
     string = read_line
-    if string.match(/^\-+$/)
+    if string.match?(/^\-+$/)
       case @section
       when :chuuki
         @section = :chuuki_in
@@ -802,7 +802,7 @@ class Aozora2Html
       apply_warichu(command)
     elsif command.match(JISAGE_COMMAND)
       apply_jisage(command)
-    elsif command.match(/fig(\d)+_(\d)+\.png/)
+    elsif command.match?(/fig(\d)+_(\d)+\.png/)
       exec_img_command(command,raw)
     # avoid to try complex ruby -- escape to notes
     elsif command.match(PAT_REST_NOTES)
@@ -812,7 +812,7 @@ class Aozora2Html
       nil
     elsif command.match(PAT_REF)
       exec_frontref_command(command)
-    elsif command.match(/1-7-8[2345]/)
+    elsif command.match?(/1-7-8[2345]/)
       apply_dakuten_katakana(command)
     elsif command.match(PAT_KAERITEN)
       Aozora2Html::Tag::Kaeriten.new(self, command)
@@ -850,7 +850,7 @@ class Aozora2Html
   end
 
   def jisage_width(command)
-    Utils.convert_japanese_number(command).match(/(\d*)(?:#{JISAGE_COMMAND})/)[1]
+    Utils.convert_japanese_number(command).match(/(\d*)(?:#{JISAGE_COMMAND})/o)[1]
   end
 
   def apply_jisage(command)
@@ -929,11 +929,11 @@ class Aozora2Html
     end
 
     case size
-    when /#{SIZE_SMALL}/
+    when /#{SIZE_SMALL}/o
       inc = 1
-    when /#{SIZE_MIDDLE}/
+    when /#{SIZE_MIDDLE}/o
       inc = 10
-    when /#{SIZE_LARGE}/
+    when /#{SIZE_LARGE}/o
       inc = 100
     else
       raise Aozora2Html::Error, I18n.t(:undefined_header)
@@ -1103,11 +1103,11 @@ class Aozora2Html
 
   def exec_block_start_command(command)
     original_command = command.dup
-    command.sub!(/^#{OPEN_MARK}/, "")
+    command.sub!(/^#{OPEN_MARK}/o, "")
     match = ""
     if command.match(INDENT_TYPE[:jisage])
       push_block_tag(apply_jisage(command),match)
-    elsif command.match(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
+    elsif command.match?(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
       push_block_tag(apply_chitsuki(command,true),match)
     end
 
@@ -1197,7 +1197,7 @@ class Aozora2Html
 
   def exec_block_end_command(command)
     original_command = command.dup
-    command.sub!(/^#{CLOSE_MARK}/, "")
+    command.sub!(/^#{CLOSE_MARK}/o, "")
     match = false
     mode = detect_command_mode(command)
     if mode
@@ -1543,7 +1543,7 @@ class Aozora2Html
     @buffer = []
     string.gsub!("info@aozora.gr.jp",'<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
     string.gsub!("青空文庫（http://www.aozora.gr.jp/）".to_sjis){"<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>"}
-    if string.match(/(<br \/>$|<\/p>$|<\/h\d>$|<div.*>$|<\/div>$|^<[^>]*>$)/)
+    if string.match?(/(<br \/>$|<\/p>$|<\/h\d>$|<div.*>$|<\/div>$|^<[^>]*>$)/)
       @out.print string, "\r\n"
     else
       @out.print string, "<br />\r\n"

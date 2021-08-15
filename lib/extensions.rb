@@ -21,7 +21,7 @@ class String
       :hankaku
     elsif ch.match(Regexp.new("[亜-熙々※仝〆〇ヶ]".encode("shift_jis")))
       :kanji
-    elsif ch.match(/[\.\;\"\?\!\)]/)
+    elsif ch.match?(/[\.\;\"\?\!\)]/)
       :hankaku_terminate
     else
       :else

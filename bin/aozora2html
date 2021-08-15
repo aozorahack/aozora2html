@@ -41,7 +41,7 @@ Dir.mktmpdir do |dir|
   if dest_file.nil?
     dest_file = File.join(dir, "output.html")
   end
-  if src_file =~ /\Ahttps?:/
+  if /\Ahttps?:/.match?(src_file)
     down_file = File.join(dir, File.basename(src_file))
     begin
       File.write(down_file, URI.parse(src_file).read)
