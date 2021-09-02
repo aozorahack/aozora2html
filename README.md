@@ -5,7 +5,7 @@
 [![Gem Version](https://badge.fury.io/rb/aozora2html.svg)](https://badge.fury.io/rb/aozora2html)
 [![Code Climate](https://codeclimate.com/github/aozorahack/aozora2html/badges/gpa.svg)](https://codeclimate.com/github/aozorahack/aozora2html)
 
-青空文庫の「組版案内」( http://kumihan.aozora.gr.jp/ )で配布されているtxt2html内にあるt2hs.rbを改造するプロジェクトです。
+青空文庫の[「組版案内」](http://kumihan.aozora.gr.jp/)で配布されている `txt2html`内にある`t2hs.rb`を改造するプロジェクトです。
 
 ## 動作環境
 
@@ -15,43 +15,43 @@ Ruby 2.0以上が推奨ですが、1.9でも動くはずです。
 
 RubyGemsとしてインストール可能になっています。
 
-```
-$ gem install aozora2html
+```shell-session
+gem install aozora2html
 ```
 
 ソースからインストールするときは以下のようにします。
 
-```
-$ gem install bundler
-$ rake install
+```shell-session
+gem install bundler
+rake install
 ```
 
 ## 実行
 
 コマンドは`aozora2html`です。以下のように実行します。
 
-```
-$ aozora2html foo.txt foo.html
+```shell-session
+aozora2html foo.txt foo.html
 ```
 
-こうすると、青空文庫記法で書かれたfoo.txtをfoo.htmlに変換します。
+こうすると、青空文庫記法で書かれた`foo.txt`を`foo.html`に変換します。
 
 また、青空文庫サイトで配布している、中にテキストファイルが同梱されているzip形式のファイルも変換できます。
 
-```
-$ aozora2html foo.zip foo.html
+```shell-session
+aozora2html foo.zip foo.html
 ```
 
 第1引数にURLを指定すると、そのURLのファイルをダウンロードして変換します。
 
-```
-$ aozora2html http://example.jp/foo/bar.zip foo.html
+```shell-session
+aozora2html http://example.jp/foo/bar.zip foo.html
 ```
 
 第2引数を省略すると、ファイルではなく標準出力に変換結果を出力します。
 
-```
-$ aozora2html foo.txt
+```shell-session
+aozora2html foo.txt
 ```
 
 コマンドラインオプションとして`--gaiji-dir`と`--use-jisx0213`、`--use-unicode`があります。
@@ -61,17 +61,17 @@ $ aozora2html foo.txt
 
 可能な限り数値実体参照を使って表示するには、以下のようにオプションを指定します。
 
-```
-$ aozora2html --use-jisx0213 --use-unicode foo.txt
+```shell-session
+aozora2html --use-jisx0213 --use-unicode foo.txt
 ```
 
 ## テスト
 
 テストも追加しています。テストは以下のように実行します。
 
-```
-$ bundle install
-$ rake test
+```shell-session
+bundle install
+rake test
 ```
 
 ## 更新履歴
