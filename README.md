@@ -16,14 +16,14 @@ Ruby 2.0以上が推奨ですが、1.9でも動くはずです。
 RubyGemsとしてインストール可能になっています。
 
 ```shell-session
-gem install aozora2html
+$ gem install aozora2html
 ```
 
 ソースからインストールするときは以下のようにします。
 
 ```shell-session
-gem install bundler
-rake install
+$ gem install bundler
+$ rake install
 ```
 
 ## 実行
@@ -31,7 +31,7 @@ rake install
 コマンドは`aozora2html`です。以下のように実行します。
 
 ```shell-session
-aozora2html foo.txt foo.html
+$ aozora2html foo.txt foo.html
 ```
 
 こうすると、青空文庫記法で書かれた`foo.txt`を`foo.html`に変換します。
@@ -39,19 +39,19 @@ aozora2html foo.txt foo.html
 また、青空文庫サイトで配布している、中にテキストファイルが同梱されているzip形式のファイルも変換できます。
 
 ```shell-session
-aozora2html foo.zip foo.html
+$ aozora2html foo.zip foo.html
 ```
 
 第1引数にURLを指定すると、そのURLのファイルをダウンロードして変換します。
 
 ```shell-session
-aozora2html http://example.jp/foo/bar.zip foo.html
+$ aozora2html http://example.jp/foo/bar.zip foo.html
 ```
 
 第2引数を省略すると、ファイルではなく標準出力に変換結果を出力します。
 
 ```shell-session
-aozora2html foo.txt
+$ aozora2html foo.txt
 ```
 
 コマンドラインオプションとして`--gaiji-dir`と`--use-jisx0213`、`--use-unicode`があります。
@@ -62,7 +62,7 @@ aozora2html foo.txt
 可能な限り数値実体参照を使って表示するには、以下のようにオプションを指定します。
 
 ```shell-session
-aozora2html --use-jisx0213 --use-unicode foo.txt
+$ aozora2html --use-jisx0213 --use-unicode foo.txt
 ```
 
 ## テスト
@@ -70,8 +70,8 @@ aozora2html --use-jisx0213 --use-unicode foo.txt
 テストも追加しています。テストは以下のように実行します。
 
 ```shell-session
-bundle install
-rake test
+$ bundle install
+$ rake test
 ```
 
 ## 更新履歴

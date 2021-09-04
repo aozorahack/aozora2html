@@ -13,7 +13,7 @@ JIS X 0213の面区点番号からUnicode(UCS)の数値文字参照に変換す�
 `jis2ucs.rb`を生成するには、コマンドラインで以下のように実行します。
 
 ```shell-session
-ruby mkconv.rb > ../../lib/aozora2html/jis2ucs.rb
+$ ruby mkconv.rb > ../../lib/aozora2html/jis2ucs.rb
 ```
 
 ## License
