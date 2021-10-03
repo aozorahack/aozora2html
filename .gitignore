@@ -1,4 +1,9 @@
-*~
-#*#
+*#
 *.bak
-pkg
+*~
+/*.gem
+/.ruby-version
+/.yardoc/
+/Gemfile.lock
+/doc/
+/pkg/
