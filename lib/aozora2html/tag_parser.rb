@@ -1,6 +1,7 @@
-# 青空記法の入れ子に対応（？）
-require 'aozora2html/ruby_buffer'
+require_relative 'ruby_buffer'
+
 class Aozora2Html
+  # 青空記法の入れ子に対応（？）
   class TagParser < Aozora2Html
     def initialize(input, endchar, chuuki, image)
       if not(input.is_a?(Jstream))

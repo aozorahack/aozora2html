@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 class Aozora2Html
   class I18n
     MSG = {

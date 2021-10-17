@@ -1,5 +1,5 @@
-require "aozora2html/error"
-require "aozora2html/i18n"
+require_relative "aozora2html/error"
+require_relative "aozora2html/i18n"
 
 ##
 # Stream class for reading a file.

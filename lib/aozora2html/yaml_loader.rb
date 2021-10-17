@@ -1,4 +1,5 @@
 require 'yaml'
+
 class Aozora2Html
   class YamlLoader
     def initialize(base_dir)

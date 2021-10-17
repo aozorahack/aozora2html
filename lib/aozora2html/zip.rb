@@ -1,4 +1,5 @@
 require 'zip'
+
 class Aozora2Html
   class Zip
     def self.unzip(zipfilename, textfilename)

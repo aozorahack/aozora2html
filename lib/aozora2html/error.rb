@@ -1,4 +1,4 @@
-require "aozora2html/i18n"
+require_relative "i18n"
 
 # 例外class
 class Aozora2Html
