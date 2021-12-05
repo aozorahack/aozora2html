@@ -24,7 +24,7 @@ class HeaderTest < Test::Unit::TestCase
   def test_build_title
     @header.push('武装せる市街'.encode('shift_jis'))
     @header.push('黒島伝治'.encode('shift_jis'))
-    header_info = @header.build_header_info()
+    header_info = @header.build_header_info
     actual = @header.build_title(header_info).encode('utf-8')
     expected = '<title>黒島伝治 武装せる市街</title>'
     assert_equal(expected, actual)
@@ -35,7 +35,7 @@ class HeaderTest < Test::Unit::TestCase
     @header.push('故ディードリッヒ・ニッカボッカーの遺稿より'.encode('shift_jis'))
     @header.push('ワシントン・アーヴィング　Washington Irving'.encode('shift_jis'))
     @header.push('吉田甲子太郎訳'.encode('shift_jis'))
-    header_info = @header.build_header_info()
+    header_info = @header.build_header_info
     actual = @header.build_title(header_info).encode('utf-8')
     expected = '<title>ワシントン・アーヴィング　Washington Irving 吉田甲子太郎訳 スリーピー・ホローの伝説 故ディードリッヒ・ニッカボッカーの遺稿より</title>'
     assert_equal(expected, actual)

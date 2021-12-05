@@ -12,8 +12,8 @@ class MultilineCaptionTagTest < Test::Unit::TestCase
   def test_multiline_caption_new
     tag = Aozora2Html::Tag::MultilineCaption.new(@parser)
     assert_equal Aozora2Html::Tag::MultilineCaption, tag.class
-    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
-    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Multiline)
+    assert_equal true, tag.is_a?(Aozora2Html::Tag::Block)
+    assert_equal true, tag.is_a?(Aozora2Html::Tag::Multiline)
   end
 
   def test_to_s

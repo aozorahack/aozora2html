@@ -66,7 +66,7 @@ class Aozora2Html
     end
 
     def build_header_info
-      header_info = { :title => @header[0] }
+      header_info = { title: @header[0] }
       case @header.length
       when 2
         process_person(@header[1], header_info)
@@ -110,7 +110,7 @@ class Aozora2Html
     end
 
     def to_html
-      header_info = build_header_info()
+      header_info = build_header_info
 
       # <title> 行を構築
       html_title = build_title(header_info)

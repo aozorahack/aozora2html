@@ -116,17 +116,17 @@ class Aozora2Html
   JIS2UCS = loader.load('../yml/jis2ucs.yml')
 
   INDENT_TYPE = {
-    :jisage => '字下げ'.to_sjis,
-    :chitsuki => '地付き'.to_sjis,
-    :midashi => '見出し'.to_sjis,
-    :jizume => '字詰め'.to_sjis,
-    :yokogumi => '横組み'.to_sjis,
-    :keigakomi => '罫囲み'.to_sjis,
-    :caption => 'キャプション'.to_sjis,
-    :futoji => '太字'.to_sjis,
-    :shatai => '斜体'.to_sjis,
-    :dai => '大きな文字'.to_sjis,
-    :sho => '小さな文字'.to_sjis
+    jisage: '字下げ'.to_sjis,
+    chitsuki: '地付き'.to_sjis,
+    midashi: '見出し'.to_sjis,
+    jizume: '字詰め'.to_sjis,
+    yokogumi: '横組み'.to_sjis,
+    keigakomi: '罫囲み'.to_sjis,
+    caption: 'キャプション'.to_sjis,
+    futoji: '太字'.to_sjis,
+    shatai: '斜体'.to_sjis,
+    dai: '大きな文字'.to_sjis,
+    sho: '小さな文字'.to_sjis
   }.freeze
 
   DAKUTEN_KATAKANA_TABLE = {
@@ -150,7 +150,7 @@ class Aozora2Html
     @buffer = []
     @ruby_buf = RubyBuffer.new
     @section = :head ## 現在処理中のセクション(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
-    @header = Aozora2Html::Header.new() ## ヘッダ行の配列
+    @header = Aozora2Html::Header.new ## ヘッダ行の配列
     @style_stack = StyleStack.new ## スタイルのスタック
     @chuuki_table = {} ## 最後にどの注記を出すかを保持しておく
     @images = [] ## 使用した外字の画像保持用
@@ -185,7 +185,7 @@ class Aozora2Html
       char = @stream.read_char
       break if char == endchar
 
-      if char.kind_of?(Symbol)
+      if char.is_a?(Symbol)
         print endchar
       end
       buf.concat(char)
@@ -217,35 +217,29 @@ class Aozora2Html
   # 終了時（終端まで来た場合）にはthrow :terminateで脱出する
   #
   def process
-    begin
-      catch(:terminate) do
-        loop do
-          begin
-            parse
-          rescue Aozora2Html::Error => e
-            puts e.message(line_number)
-            if e.is_a?(Aozora2Html::Error)
-              exit(2)
-            end
-          end
+    catch(:terminate) do
+      loop do
+        parse
+      rescue Aozora2Html::Error => e
+        puts e.message(line_number)
+        if e.is_a?(Aozora2Html::Error)
+          exit(2)
         end
       end
-      tail_output # final call
-      finalize
-      close
-    rescue StandardError => e
-      puts "ERROR: line: #{line_number}"
-      raise e
     end
+    tail_output # final call
+    finalize
+    close
+  rescue StandardError => e
+    puts "ERROR: line: #{line_number}"
+    raise e
   end
 
   def char_type(char)
-    begin
-      ## `String#char_type`も定義されているのに注意
-      char.char_type
-    rescue StandardError
-      :else
-    end
+    ## `String#char_type`も定義されているのに注意
+    char.char_type
+  rescue StandardError
+    :else
   end
 
   def finalize
@@ -927,7 +921,7 @@ class Aozora2Html
   end
 
   def new_midashi_id(size)
-    if size.kind_of?(Integer)
+    if size.is_a?(Integer)
       @midashi_id += size
       return @midashi_id
     end

@@ -14,7 +14,7 @@ class DakutenKatakanaTagTest < Test::Unit::TestCase
   def test_dakuten_katakana_new
     tag = Aozora2Html::Tag::DakutenKatakana.new(@parser, 1, 'ア'.encode('shift_jis'))
     assert_equal Aozora2Html::Tag::DakutenKatakana, tag.class
-    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Inline)
+    assert_equal true, tag.is_a?(Aozora2Html::Tag::Inline)
   end
 
   def test_to_s
