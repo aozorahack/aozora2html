@@ -431,6 +431,34 @@ Naming/VariableNumber:
     - 'test/test_aozora2html.rb'
 
 # Cop supports --auto-correct.
+Performance/ConstantRegexp:
+  Exclude:
+    - 'lib/t2hs.rb'
+
+# Cop supports --auto-correct.
+Performance/MapCompact:
+  Exclude:
+    - 'lib/aozora2html/header.rb'
+
+# Cop supports --auto-correct.
+Performance/RedundantMatch:
+  Exclude:
+    - 'lib/extensions.rb'
+    - 'lib/t2hs.rb'
+
+# Cop supports --auto-correct.
+Performance/RegexpMatch:
+  Exclude:
+    - 'bin/aozora2html'
+    - 'lib/extensions.rb'
+    - 'lib/t2hs.rb'
+
+# Cop supports --auto-correct.
+Performance/StringInclude:
+  Exclude:
+    - 'lib/aozora2html/tag/reference_mentioned.rb'
+
+# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: always, conditionals
 Style/AndOr:
