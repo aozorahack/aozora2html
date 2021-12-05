@@ -6,17 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, conditionals
-Style/AndOr:
-  Exclude:
-    - 'lib/aozora2html/accent_parser.rb'
-    - 'lib/aozora2html/header.rb'
-    - 'lib/aozora2html/ruby_buffer.rb'
-    - 'lib/aozora2html/tag_parser.rb'
-    - 'lib/t2hs.rb'
-
 # Configuration parameters: AllowedConstants.
 Style/Documentation:
   Exclude:

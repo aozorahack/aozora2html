@@ -65,7 +65,7 @@ class Aozora2Html
         @protected = nil
       end
       top = @ruby_buf[0]
-      if top.is_a?(String) and buffer.last.is_a?(String)
+      if top.is_a?(String) && buffer.last.is_a?(String)
         buffer.last.concat(top)
         buffer.concat(@ruby_buf[1, @ruby_buf.length])
       else

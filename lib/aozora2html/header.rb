@@ -21,9 +21,9 @@ class Aozora2Html
       original = true
       string.each_char do |ch|
         code = ch.unpack1('H*')
-        if (code >= '00' and code <= '7f') or # 1byte
-           (code >= '8140' and code <= '8258') or # 1-1, 3-25
-           (code >= '839f' and code <= '8491') # 6-1, 7-81
+        if ((code >= '00') && (code <= '7f')) || # 1byte
+           ((code >= '8140') && (code <= '8258')) || # 1-1, 3-25
+           ((code >= '839f') && (code <= '8491')) # 6-1, 7-81
         # continue
         else
           original = false

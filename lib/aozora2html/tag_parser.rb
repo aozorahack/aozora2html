@@ -35,7 +35,7 @@ class Aozora2Html
       @ruby_buf.dump_into(@buffer)
       ans = ''
       @buffer.each do |s|
-        if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
+        if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) && !s.escaped?
           # 消してあった※を復活させて
           ans.concat(GAIJI_MARK)
         end

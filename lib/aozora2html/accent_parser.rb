@@ -23,7 +23,7 @@ class Aozora2Html
       unless @encount_accent
         @buffer.unshift('〔'.encode('shift_jis'))
       end
-      if @closed and !@encount_accent
+      if @closed && !@encount_accent
         @buffer.push('〕'.encode('shift_jis'))
       elsif !@closed
         @buffer.push("<br />\r\n")
@@ -77,7 +77,7 @@ class Aozora2Html
       elsif first == RUBY_PREFIX
         @ruby_buf.dump_into(@buffer)
         @ruby_buf.protected = true
-      elsif first != '' and !first.nil?
+      elsif (first != '') && !first.nil?
         illegal_char_check(first, line_number)
         push_chars(first)
       end
