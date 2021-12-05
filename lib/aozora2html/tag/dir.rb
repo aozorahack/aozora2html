@@ -7,7 +7,7 @@ class Aozora2Html
       end
 
       def to_s
-        "<span dir=\"ltr\">#{@target.to_s}</span>"
+        "<span dir=\"ltr\">#{@target}</span>"
       end
     end
   end

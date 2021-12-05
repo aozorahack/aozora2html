@@ -200,7 +200,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
                  @parser.kuten2png('＃二の字点、1-2-22'.encode('shift_jis')).to_s.encode('utf-8')
     assert_equal %q|<img src="../../../gaiji/1-06/1-06-57.png" alt="※(ファイナルシグマ、1-6-57)" class="gaiji" />|,
                  @parser.kuten2png('＃ファイナルシグマ、1-6-57'.encode('shift_jis')).to_s.encode('utf-8')
-    assert_equal %q|＃「口＋世」、151-23|,
+    assert_equal %q(＃「口＋世」、151-23),
                  @parser.kuten2png('＃「口＋世」、151-23'.encode('shift_jis')).to_s.encode('utf-8')
   end
 
@@ -235,9 +235,9 @@ class Aozora2HtmlTest < Test::Unit::TestCase
 
   def test_apply_midashi
     midashi = @parser.apply_midashi('中見出し'.encode('shift_jis'))
-    assert_equal %Q|<h4 class="naka-midashi"><a class="midashi_anchor" id="midashi10">|, midashi.to_s
+    assert_equal %Q(<h4 class="naka-midashi"><a class="midashi_anchor" id="midashi10">), midashi.to_s
     midashi = @parser.apply_midashi('大見出し'.encode('shift_jis'))
-    assert_equal %Q|<h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">|, midashi.to_s
+    assert_equal %Q(<h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">), midashi.to_s
   end
 
   def test_detect_command_mode

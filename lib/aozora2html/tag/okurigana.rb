@@ -7,7 +7,7 @@ class Aozora2Html
       end
 
       def to_s
-        "<sup class=\"okurigana\">#{@string.to_s}</sup>"
+        "<sup class=\"okurigana\">#{@string}</sup>"
       end
     end
   end

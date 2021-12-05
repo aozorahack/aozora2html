@@ -66,35 +66,35 @@ class RubyParseTest < Test::Unit::TestCase
   def test_parse_ruby7
     src = "青空文庫《あおぞらぶんこ》［＃「青空文庫」の左に「aozora bunko」のルビ］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>青空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「青空文庫」の左に「aozora bunko」のルビ］</span><br />\r\n|
+    expected = %Q(<ruby><rb>青空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「青空文庫」の左に「aozora bunko」のルビ］</span><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby8
     src = "大空文庫［＃「大空文庫」に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>大空文庫</rb><rp>（</rp><rt>ママ</rt><rp>）</rp></ruby><br />\r\n|
+    expected = %Q(<ruby><rb>大空文庫</rb><rp>（</rp><rt>ママ</rt><rp>）</rp></ruby><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby9
     src = "大空文庫［＃「大空文庫」の左に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|大空文庫<span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n|
+    expected = %Q(大空文庫<span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby10
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」の左に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n|
+    expected = %Q(<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby11
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」の左に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n|
+    expected = %Q(<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n)
     assert_equal expected, parsed
   end
 

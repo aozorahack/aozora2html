@@ -18,12 +18,12 @@ class MidashiTagTest < Test::Unit::TestCase
 
   def test_to_s
     tag = Aozora2Html::Tag::Midashi.new(@parser, 'テスト見出し'.encode('shift_jis'), '小'.encode('shift_jis'), :normal)
-    assert_equal '<h5 class="ko-midashi"><a class="midashi_anchor" id="midashi2">' + 'テスト見出し'.encode('shift_jis') + '</a></h5>', tag.to_s
+    assert_equal "<h5 class=\"ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi2\">#{'テスト見出し'.encode('shift_jis')}</a></h5>", tag.to_s
   end
 
   def test_to_s_mado
     tag = Aozora2Html::Tag::Midashi.new(@parser, 'テスト見出し'.encode('shift_jis'), '小'.encode('shift_jis'), :mado)
-    assert_equal '<h5 class="mado-ko-midashi"><a class="midashi_anchor" id="midashi2">' + 'テスト見出し'.encode('shift_jis') + '</a></h5>', tag.to_s
+    assert_equal "<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi2\">#{'テスト見出し'.encode('shift_jis')}</a></h5>", tag.to_s
   end
 
   def test_undeined_midashi

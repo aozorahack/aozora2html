@@ -130,14 +130,14 @@ class Aozora2Html
     :futoji => "太字".to_sjis,
     :shatai => "斜体".to_sjis,
     :dai => "大きな文字".to_sjis,
-    :sho => "小さな文字".to_sjis,
+    :sho => "小さな文字".to_sjis
   }
 
   DAKUTEN_KATAKANA_TABLE = {
     "2" => "ワ゛".to_sjis,
     "3" => "ヰ゛".to_sjis,
     "4" => "ヱ゛".to_sjis,
-    "5" => "ヲ゛".to_sjis,
+    "5" => "ヲ゛".to_sjis
   }
 
   def initialize(input, output)
@@ -239,7 +239,7 @@ class Aozora2Html
       tail_output # final call
       finalize
       close
-    rescue => e
+    rescue StandardError => e
       puts "ERROR: line: #{line_number}"
       raise e
     end
@@ -249,7 +249,7 @@ class Aozora2Html
     begin
       ## `String#char_type`も定義されているのに注意
       char.char_type
-    rescue
+    rescue StandardError
       :else
     end
   end
@@ -377,7 +377,7 @@ class Aozora2Html
 
   def parse_chuuki
     string = read_line
-    if string.match(/^\-+$/)
+    if string.match?(/^-+$/)
       case @section
       when :chuuki
         @section = :chuuki_in
@@ -399,17 +399,17 @@ class Aozora2Html
   #
   def illegal_char_check(char, line)
     if char.is_a?(String)
-      code = char.unpack("H*")[0]
+      code = char.unpack1("H*")
       if code == "21" or
          code == "23" or
-         ("a1" <= code and code <= "a5") or
-         ("28" <= code and code <= "29") or
+         (code >= "a1" and code <= "a5") or
+         (code >= "28" and code <= "29") or
          code == "5b" or
          code == "5d" or
          code == "3d" or
          code == "3f" or
          code == "2b" or
-         ("7b" <= code and code <= "7d")
+         (code >= "7b" and code <= "7d")
         puts I18n.t(:warn_onebyte, line, char)
       end
 
@@ -417,33 +417,33 @@ class Aozora2Html
         puts I18n.t(:warn_chuki, line, char)
       end
 
-      if ("81ad" <= code and code <= "81b7") or
-         ("81c0" <=  code and code <= "81c7") or
-         ("81cf" <=  code and code <= "81d9") or
-         ("81e9" <=  code and code <= "81ef") or
-         ("81f8" <=  code and code <= "81fb") or
-         ("8240" <=  code and code <= "824e") or
-         ("8259" <=  code and code <= "825f") or
-         ("827a" <=  code and code <= "8280") or
-         ("829b" <=  code and code <= "829e") or
-         ("82f2" <=  code and code <= "82fc") or
-         ("8397" <=  code and code <= "839e") or
-         ("83b7" <=  code and code <= "83be") or
-         ("83d7" <=  code and code <= "83fc") or
-         ("8461" <=  code and code <= "846f") or
-         ("8492" <=  code and code <= "849e") or
-         ("84bf" <=  code and code <= "84fc") or
-         ("8540" <=  code and code <= "85fc") or
-         ("8640" <=  code and code <= "86fc") or
-         ("8740" <=  code and code <= "87fc") or
-         ("8840" <=  code and code <= "889e") or
-         ("9873" <=  code and code <= "989e") or
-         ("eaa5" <=  code and code <= "eafc") or
-         ("eb40" <=  code and code <= "ebfc") or
-         ("ec40" <=  code and code <= "ecfc") or
-         ("ed40" <=  code and code <= "edfc") or
-         ("ee40" <=  code and code <= "eefc") or
-         ("ef40" <=  code and code <= "effc")
+      if (code >= "81ad" and code <= "81b7") or
+         (code >= "81c0" and code <= "81c7") or
+         (code >= "81cf" and code <= "81d9") or
+         (code >= "81e9" and code <= "81ef") or
+         (code >= "81f8" and code <= "81fb") or
+         (code >= "8240" and code <= "824e") or
+         (code >= "8259" and code <= "825f") or
+         (code >= "827a" and code <= "8280") or
+         (code >= "829b" and code <= "829e") or
+         (code >= "82f2" and code <= "82fc") or
+         (code >= "8397" and code <= "839e") or
+         (code >= "83b7" and code <= "83be") or
+         (code >= "83d7" and code <= "83fc") or
+         (code >= "8461" and code <= "846f") or
+         (code >= "8492" and code <= "849e") or
+         (code >= "84bf" and code <= "84fc") or
+         (code >= "8540" and code <= "85fc") or
+         (code >= "8640" and code <= "86fc") or
+         (code >= "8740" and code <= "87fc") or
+         (code >= "8840" and code <= "889e") or
+         (code >= "9873" and code <= "989e") or
+         (code >= "eaa5" and code <= "eafc") or
+         (code >= "eb40" and code <= "ebfc") or
+         (code >= "ec40" and code <= "ecfc") or
+         (code >= "ed40" and code <= "edfc") or
+         (code >= "ee40" and code <= "eefc") or
+         (code >= "ef40" and code <= "effc")
         puts I18n.t(:warn_jis_gaiji, line, char)
       end
     end
@@ -517,7 +517,7 @@ class Aozora2Html
       end
     elsif obj.is_a?(String)
       if obj.length == 1
-        obj = obj.gsub(/[&\"<>]/, { '&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;' })
+        obj = obj.gsub(/[&"<>]/, { '&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;' })
       end
       obj.each_char do |x|
         push_char(x)
@@ -735,7 +735,7 @@ class Aozora2Html
 
   def kuten2png(substring)
     desc = substring.gsub(PAT_KUTEN, "")
-    match = desc.match(/[12]\-\d{1,2}\-\d{1,2}/)
+    match = desc.match(/[12]-\d{1,2}-\d{1,2}/)
     if match and !desc.match(NON_0213_GAIJI) and !desc.match(PAT_KUTEN_DUAL)
       @chuuki_table[:newjis] = true
       codes = match[0].split("-")
@@ -803,7 +803,7 @@ class Aozora2Html
       apply_warichu(command)
     elsif command.match(JISAGE_COMMAND)
       apply_jisage(command)
-    elsif command.match(/fig(\d)+_(\d)+\.png/)
+    elsif command.match?(/fig(\d)+_(\d)+\.png/)
       exec_img_command(command, raw)
     # avoid to try complex ruby -- escape to notes
     elsif command.match(PAT_REST_NOTES)
@@ -813,7 +813,7 @@ class Aozora2Html
       nil
     elsif command.match(PAT_REF)
       exec_frontref_command(command)
-    elsif command.match(/1-7-8[2345]/)
+    elsif command.match?(/1-7-8[2345]/)
       apply_dakuten_katakana(command)
     elsif command.match(PAT_KAERITEN)
       Aozora2Html::Tag::Kaeriten.new(self, command)
@@ -955,17 +955,17 @@ class Aozora2Html
     Aozora2Html::Tag::MultilineMidashi.new(self, command, midashi_type)
   end
 
-  def apply_yokogumi(command)
+  def apply_yokogumi(_command)
     @indent_stack.push(:yokogumi)
     Aozora2Html::Tag::MultilineYokogumi.new(self)
   end
 
-  def apply_keigakomi(command)
+  def apply_keigakomi(_command)
     @indent_stack.push(:keigakomi)
     Aozora2Html::Tag::Keigakomi.new(self)
   end
 
-  def apply_caption(command)
+  def apply_caption(_command)
     @indent_stack.push(:caption)
     Aozora2Html::Tag::MultilineCaption.new(self)
   end
@@ -1050,7 +1050,7 @@ class Aozora2Html
     else
       ## Decoration ##
       key = command
-      filter = lambda { |x| x }
+      filter = ->(x) { x }
       if command.match(PAT_DIRECTION)
         _whole, dir, com = command.match(PAT_DIRECTION).to_a
         # renew command
@@ -1058,12 +1058,12 @@ class Aozora2Html
         if command.match(TEN_MARK)
           case dir
           when LEFT_MARK, UNDER_MARK
-            filter = lambda { |x| x + "_after" }
+            filter = ->(x) { x + "_after" }
           end
         elsif command.match(SEN_MARK)
           case dir
           when LEFT_MARK, OVER_MARK
-            filter = lambda { |x| x.sub("under", "over") }
+            filter = ->(x) { x.sub("under", "over") }
           end
         end
       end
@@ -1108,7 +1108,7 @@ class Aozora2Html
     match = ""
     if command.match(INDENT_TYPE[:jisage])
       push_block_tag(apply_jisage(command), match)
-    elsif command.match(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
+    elsif command.match?(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
       push_block_tag(apply_chitsuki(command, true), match)
     end
 
@@ -1189,12 +1189,12 @@ class Aozora2Html
       return :chitsuki
     end
 
-    INDENT_TYPE.keys.each do |key|
+    INDENT_TYPE.each_key do |key|
       if command.match(INDENT_TYPE[key])
         return key
       end
     end
-    return nil
+    nil
   end
 
   def exec_block_end_command(command)
@@ -1208,7 +1208,7 @@ class Aozora2Html
     end
 
     if match
-      if !match.is_a?(String)
+      unless match.is_a?(String)
         @terprip = false
       end
       nil
@@ -1289,35 +1289,35 @@ class Aozora2Html
   def rearrange_ruby(targets, upper_ruby, under_ruby = "")
     if include_ruby?(targets)
       new_targets = []
-      new_upper = if upper_ruby != ""
+      new_upper = if upper_ruby == ""
+                    []
+                  else
                     upper_ruby
-                  else
-                    []
                   end
-      new_under = if under_ruby != ""
-                    under_ruby
-                  else
+      new_under = if under_ruby == ""
                     []
+                  else
+                    under_ruby
                   end
       if new_upper.length > 1 and new_under.length > 1
         raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
       end
 
-      targets.each { |x|
+      targets.each do |x|
         if x.is_a?(Aozora2Html::Tag::Ruby)
           if x.target.is_a?(Array)
             # inner Aozora2Html::Tag::Ruby is already complex ... give up
             raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
           else
-            if x.ruby != ""
-              if new_upper.is_a?(Array)
-                new_upper.push(x.ruby)
+            if x.ruby == ""
+              if new_under.is_a?(Array)
+                new_under.push(x.under_ruby)
               else
                 raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
             else
-              if new_under.is_a?(Array)
-                new_under.push(x.under_ruby)
+              if new_upper.is_a?(Array)
+                new_upper.push(x.ruby)
               else
                 raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
@@ -1329,11 +1329,11 @@ class Aozora2Html
             # recursive
             tar, up, un = rearrange_ruby(x.target, "", "")
             # rotation!!
-            tar.each { |y|
+            tar.each do |y|
               tmp = x.dup
               tmp.target = y
               new_targets.push(tmp)
-            }
+            end
             if new_under.is_a?(Array)
               new_under.concat(un)
             elsif un.to_s.length > 0
@@ -1362,7 +1362,7 @@ class Aozora2Html
             new_upper.push("")
           end
         end
-      }
+      end
       [new_targets, new_upper, new_under]
     else
       [targets, upper_ruby, under_ruby]
@@ -1419,7 +1419,7 @@ class Aozora2Html
       rearrange_ruby_tag(targets, multiply(PAT_BOUKI.match(command).to_a[1], targets.to_s.length))
     else
       ## direction fix! ##
-      filter = lambda { |x| x }
+      filter = ->(x) { x }
       if command.match(PAT_DIRECTION)
         _whole, dir, com = command.match(PAT_DIRECTION).to_a
         # renew command
@@ -1427,12 +1427,12 @@ class Aozora2Html
         if command.match(TEN_MARK)
           case dir
           when LEFT_MARK, UNDER_MARK
-            filter = lambda { |x| x + "_after" }
+            filter = ->(x) { x + "_after" }
           end
         elsif command.match(SEN_MARK)
           case dir
           when LEFT_MARK, OVER_MARK
-            filter = lambda { |x| x.sub("under", "over") }
+            filter = ->(x) { x.sub("under", "over") }
           end
         end
       end
@@ -1545,7 +1545,7 @@ class Aozora2Html
     @buffer = []
     string.gsub!("info@aozora.gr.jp", '<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
     string.gsub!("青空文庫（http://www.aozora.gr.jp/）".to_sjis) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" }
-    if string.match(/(<br \/>$|<\/p>$|<\/h\d>$|<div.*>$|<\/div>$|^<[^>]*>$)/)
+    if string.match?(%r{(<br />$|</p>$|</h\d>$|<div.*>$|</div>$|^<[^>]*>$)})
       @out.print string, "\r\n"
     else
       @out.print string, "<br />\r\n"
@@ -1577,7 +1577,7 @@ class Aozora2Html
     end
     if @images[0]
       @out.print "\t<li>この作品には、JIS X 0213にない、以下の文字が用いられています。（数字は、底本中の出現「ページ-行」数。）これらの文字は本文内では「※［＃…］」の形で示しました。</li>\r\n</ul>\r\n<br />\r\n\t\t<table class=\"gaiji_list\">\r\n".to_sjis
-      @images.each { |cell|
+      @images.each do |cell|
         k, *v = cell
         vs = v.join("、".to_sjis)
         @out.print "			<tr>
@@ -1594,7 +1594,7 @@ class Aozora2Html
 				-->
 			</tr>
 ".to_sjis
-      }
+      end
       @out.print "\t\t</table>\r\n".to_sjis
     else
       @out.print "</ul>\r\n" # <ul>内に<li>以外のエレメントが来るのは不正なので修正
@@ -1604,6 +1604,6 @@ class Aozora2Html
 end
 
 if $0 == __FILE__
-  # todo: 引数チェックとか
+  # TODO: 引数チェックとか
   Aozora2Html.new($*[0], $*[1]).process
 end

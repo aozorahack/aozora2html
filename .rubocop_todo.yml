@@ -30,26 +30,6 @@ Lint/MissingSuper:
     - 'lib/aozora2html/tag_parser.rb'
 
 # Cop supports --auto-correct.
-Lint/RedundantStringCoercion:
-  Exclude:
-    - 'lib/aozora2html/tag/dir.rb'
-    - 'lib/aozora2html/tag/inline_caption.rb'
-    - 'lib/aozora2html/tag/inline_keigakomi.rb'
-    - 'lib/aozora2html/tag/inline_yokogumi.rb'
-    - 'lib/aozora2html/tag/kaeriten.rb'
-    - 'lib/aozora2html/tag/okurigana.rb'
-    - 'lib/aozora2html/tag/ruby.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods, IgnoreNotImplementedMethods.
-Lint/UnusedMethodArgument:
-  Exclude:
-    - 'lib/aozora2html/tag/block.rb'
-    - 'lib/aozora2html/tag/inline.rb'
-    - 'lib/aozora2html/tag/reference_mentioned.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
 # Configuration parameters: AllowComments.
 Lint/UselessMethodDefinition:
   Exclude:
@@ -75,18 +55,6 @@ Performance/RedundantMatch:
     - 'lib/t2hs.rb'
 
 # Cop supports --auto-correct.
-Performance/RegexpMatch:
-  Exclude:
-    - 'bin/aozora2html'
-    - 'lib/extensions.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-Performance/StringInclude:
-  Exclude:
-    - 'lib/aozora2html/tag/reference_mentioned.rb'
-
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: always, conditionals
 Style/AndOr:
@@ -101,33 +69,12 @@ Style/AndOr:
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: percent_q, bare_percent
 Style/BarePercentLiterals:
-  Exclude:
-    - 'test/test_aozora2html.rb'
-    - 'test/test_command_parse.rb'
-    - 'test/test_ruby_parse.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ProceduralMethods, FunctionalMethods, IgnoredMethods, AllowBracesOnProceduralOneLiners, BracesRequiredMethods.
-# SupportedStyles: line_count_based, semantic, braces_for_chaining, always_braces
-# ProceduralMethods: benchmark, bm, bmbm, create, each_with_object, measure, new, realtime, tap, with_object
-# FunctionalMethods: let, let!, subject, watch
-# IgnoredMethods: lambda, proc, it
-Style/BlockDelimiters:
-  Exclude:
-    - 'lib/aozora2html/tag/reference_mentioned.rb'
-    - 'lib/t2hs.rb'
+  EnforcedStyle: percent_q
 
 # Cop supports --auto-correct.
 Style/CaseLikeIf:
   Exclude:
     - 'lib/aozora2html/tag/reference_mentioned.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: Keywords, RequireColon.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE
-Style/CommentAnnotation:
-  Exclude:
     - 'lib/t2hs.rb'
 
 # Cop supports --auto-correct.
@@ -279,12 +226,6 @@ Style/GuardClause:
     - 'lib/jstream.rb'
     - 'lib/t2hs.rb'
 
-# Cop supports --auto-correct.
-# Configuration parameters: AllowedReceivers.
-Style/HashEachMethods:
-  Exclude:
-    - 'lib/t2hs.rb'
-
 # Configuration parameters: MinBranchesCount.
 Style/HashLikeCase:
   Exclude:
@@ -298,25 +239,6 @@ Style/HashSyntax:
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
-# SupportedStyles: line_count_dependent, lambda, literal
-Style/Lambda:
-  Exclude:
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: separated, grouped
-Style/MixinGrouping:
-  Exclude:
-    - 'lib/aozora2html/tag/font_size.rb'
-    - 'lib/aozora2html/tag/keigakomi.rb'
-    - 'lib/aozora2html/tag/multiline_caption.rb'
-    - 'lib/aozora2html/tag/multiline_midashi.rb'
-    - 'lib/aozora2html/tag/multiline_style.rb'
-    - 'lib/aozora2html/tag/multiline_yokogumi.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
 # SupportedStyles: literals, strict
 Style/MutableConstant:
   Exclude:
@@ -324,48 +246,11 @@ Style/MutableConstant:
     - 'lib/aozora2html/version.rb'
     - 'lib/t2hs.rb'
 
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: both, prefix, postfix
-Style/NegatedIf:
-  Exclude:
-    - 'bin/aozora2html'
-    - 'lib/aozora2html/accent_parser.rb'
-    - 'lib/aozora2html/tag_parser.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-Style/NegatedIfElseCondition:
-  Exclude:
-    - 'lib/aozora2html/tag/ruby.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: IncludeSemanticChanges.
-Style/NonNilCheck:
-  Exclude:
-    - 'lib/aozora2html/accent_parser.rb'
-
-# Cop supports --auto-correct.
-Style/Not:
-  Exclude:
-    - 'lib/aozora2html/accent_parser.rb'
-    - 'lib/aozora2html/tag_parser.rb'
-
 # Configuration parameters: AllowedMethods.
 # AllowedMethods: respond_to_missing?
 Style/OptionalBooleanParameter:
   Exclude:
     - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: PreferredDelimiters.
-Style/PercentLiteralDelimiters:
-  Exclude:
-    - 'lib/aozora2html/tag/accent.rb'
-    - 'test/test_aozora2html.rb'
-    - 'test/test_command_parse.rb'
-    - 'test/test_ruby_parse.rb'
 
 # Cop supports --auto-correct.
 Style/PerlBackrefs:
@@ -379,44 +264,6 @@ Style/RedundantArgument:
   Exclude:
     - 'lib/aozora2html/header.rb'
     - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-Style/RedundantRegexpEscape:
-  Exclude:
-    - 'lib/extensions.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
-  Exclude:
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-Style/RedundantSelf:
-  Exclude:
-    - 'lib/extensions.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, AllowInnerSlashes.
-# SupportedStyles: slashes, percent_r, mixed
-Style/RegexpLiteral:
-  Exclude:
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: implicit, explicit
-Style/RescueStandardError:
-  Exclude:
-    - 'bin/aozora2html'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: AllowModifier.
-Style/SoleNestedConditional:
-  Exclude:
-    - 'lib/aozora2html/accent_parser.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: RequireEnglish, EnforcedStyle.
@@ -437,9 +284,6 @@ Style/StringConcatenation:
     - 'lib/aozora2html/tag/ruby.rb'
     - 'lib/jstream.rb'
     - 'lib/t2hs.rb'
-    - 'test/test_header.rb'
-    - 'test/test_helper.rb'
-    - 'test/test_midashi_tag.rb'
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, ConsistentQuotesInMultiline.
@@ -486,29 +330,7 @@ Style/SymbolProc:
     - 'lib/t2hs.rb'
 
 # Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleForMultiline.
-# SupportedStylesForMultiline: comma, consistent_comma, no_comma
-Style/TrailingCommaInHashLiteral:
-  Exclude:
-    - 'lib/aozora2html/i18n.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-Style/UnpackFirst:
-  Exclude:
-    - 'lib/aozora2html/header.rb'
-    - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
 # Configuration parameters: MinSize, WordRegex.
 # SupportedStyles: percent, brackets
 Style/WordArray:
   EnforcedStyle: brackets
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: forbid_for_all_comparison_operators, forbid_for_equality_operators_only, require_for_all_comparison_operators, require_for_equality_operators_only
-Style/YodaCondition:
-  Exclude:
-    - 'lib/aozora2html/header.rb'
-    - 'lib/t2hs.rb'

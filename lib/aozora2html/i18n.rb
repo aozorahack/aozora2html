@@ -17,7 +17,7 @@ class Aozora2Html
       :dont_use_double_ruby => "同じ箇所に2つのルビはつけられません",
       :dont_allow_triple_ruby => "1つの単語に3つのルビはつけられません",
       :warn_unexpected_terminator => "警告(%d行目):予期せぬファイル終端",
-      :warn_undefined_command => "警告(%d行目):「%s」は未対応のコマンドのため無視します",
+      :warn_undefined_command => "警告(%d行目):「%s」は未対応のコマンドのため無視します"
     }
 
     def self.t(msg, *args)

@@ -1,7 +1,7 @@
 class Aozora2Html
   class Tag
     module Block
-      def initialize(parser, *args)
+      def initialize(parser, *_args)
         if parser.block_allowed_context?
           nil
         else
