@@ -7,7 +7,7 @@ class Aozora2Html
       end
 
       def to_s
-        "<span class=\"keigakomi\">#{@target.to_s}</span>"
+        "<span class=\"keigakomi\">#{@target}</span>"
       end
     end
   end

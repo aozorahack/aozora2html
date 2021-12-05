@@ -3,7 +3,7 @@ class Aozora2Html
   # accent特殊文字を生かすための再帰呼び出し
   class AccentParser < Aozora2Html
     def initialize(input, endchar, chuuki, image)
-      if not(input.is_a?(Jstream))
+      unless input.is_a?(Jstream)
         raise ArgumentError, "tag_parser must supply Jstream as input"
       end
 
@@ -20,12 +20,12 @@ class Aozora2Html
     # 出力は配列で返す
     def general_output
       @ruby_buf.dump_into(@buffer)
-      if !@encount_accent
+      unless @encount_accent
         @buffer.unshift("〔".encode("shift_jis"))
       end
       if @closed and !@encount_accent
         @buffer.push("〕".encode("shift_jis"))
-      elsif not(@closed)
+      elsif !@closed
         @buffer.push("<br />\r\n")
       end
       @buffer
@@ -33,6 +33,8 @@ class Aozora2Html
 
     def parse
       first = read_char
+
+      # rubocop:disable Style/SoleNestedConditional
       if found = Aozora2Html::ACCENT_TABLE[first]
         if found2 = found[@stream.peek_char(0)]
           if found2.is_a?(Hash)
@@ -51,6 +53,8 @@ class Aozora2Html
           end
         end
       end
+      # rubocop:enable Style/SoleNestedConditional
+
       case first
       when Aozora2Html::GAIJI_MARK
         first = dispatch_gaiji
@@ -72,7 +76,7 @@ class Aozora2Html
       elsif first == RUBY_PREFIX
         @ruby_buf.dump_into(@buffer)
         @ruby_buf.protected = true
-      elsif first != "" and first != nil
+      elsif first != "" and !first.nil?
         illegal_char_check(first, line_number)
         push_chars(first)
       end

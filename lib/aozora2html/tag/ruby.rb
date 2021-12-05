@@ -14,15 +14,15 @@ class Aozora2Html
       end
 
       def gen_rt(string)
-        if string != ""
-          "<rt class=\"real_ruby\">#{string}</rt>"
-        else
+        if string == ""
           "<rt class=\"dummy_ruby\"></rt>"
+        else
+          "<rt class=\"real_ruby\">#{string}</rt>"
         end
       end
 
       def to_s
-        "<ruby><rb>#{@target.to_s}</rb><rp>" + "（".encode("shift_jis") + "</rp><rt>#{@ruby.to_s}</rt><rp>" + "）".encode("shift_jis") + "</rp></ruby>"
+        "<ruby><rb>#{@target}</rb><rp>" + "（".encode("shift_jis") + "</rp><rt>#{@ruby}</rt><rp>" + "）".encode("shift_jis") + "</rp></ruby>"
       end
 
       # complex ruby is waiting for IE support and CSS3 candidate

@@ -1,7 +1,7 @@
 # 1.8 like to_s method to Array
 class Array
   def to_s
-    self.join
+    join
   end
 end
 
@@ -19,7 +19,7 @@ class String
       :hankaku
     elsif ch.match(Regexp.new("[亜-熙々※仝〆〇ヶ]".encode("shift_jis")))
       :kanji
-    elsif ch.match(/[\.\;\"\?\!\)]/)
+    elsif ch.match?(/[.;"?!)]/)
       :hankaku_terminate
     else
       :else
@@ -27,7 +27,7 @@ class String
   end
 
   def to_sjis
-    self.encode("shift_jis")
+    encode("shift_jis")
   end
 end
 

@@ -6,7 +6,7 @@ class Aozora2Html
       include Aozora2Html::Tag::Inline
       attr_accessor :target
 
-      def initialize(*args)
+      def initialize(*_args)
         if defined?(@target) && block_element?(@target)
           syntax_error
         end
@@ -21,7 +21,7 @@ class Aozora2Html
           end
           nil
         elsif elt.is_a?(String)
-          elt.match(/<div/)
+          elt.include?('<div')
         else
           elt.is_a?(Aozora2Html::Tag::Block)
         end
@@ -31,13 +31,13 @@ class Aozora2Html
         if @target.is_a?(Aozora2Html::Tag::ReferenceMentioned)
           @target.target_string
         elsif @target.is_a?(Array)
-          @target.collect { |x|
+          @target.collect do |x|
             if x.is_a?(Aozora2Html::Tag::ReferenceMentioned)
               x.target_string
             else
               x
             end
-          }.to_s
+          end.to_s
         else
           @target
         end

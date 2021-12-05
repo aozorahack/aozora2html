@@ -7,7 +7,7 @@ class Aozora2Html
       end
 
       def to_s
-        "<sub class=\"kaeriten\">#{@string.to_s}</sub>"
+        "<sub class=\"kaeriten\">#{@string}</sub>"
       end
     end
   end
