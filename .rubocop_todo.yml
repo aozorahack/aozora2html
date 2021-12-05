@@ -7,32 +7,6 @@
 # versions of RuboCop, may require this file to be generated again.
 
 # Cop supports --auto-correct.
-# Configuration parameters: TreatCommentsAsGroupSeparators, ConsiderPunctuation, Include.
-# Include: **/*.gemspec
-Gemspec/OrderedDependencies:
-  Exclude:
-    - 'aozora2html.gemspec'
-
-# Cop supports --auto-correct.
-# Configuration parameters: Include.
-# Include: **/*.gemspec
-Gemspec/RequireMFA:
-  Exclude:
-    - 'aozora2html.gemspec'
-
-# Configuration parameters: Include.
-# Include: **/*.gemspec
-Gemspec/RequiredRubyVersion:
-  Exclude:
-    - 'aozora2html.gemspec'
-
-# Configuration parameters: Include.
-# Include: **/*.gemspec
-Gemspec/RubyVersionGlobalsUsage:
-  Exclude:
-    - 'aozora2html.gemspec'
-
-# Cop supports --auto-correct.
 Layout/BlockEndNewline:
   Exclude:
     - 'lib/aozora2html/tag/reference_mentioned.rb'
@@ -53,7 +27,6 @@ Layout/EmptyLineAfterGuardClause:
 # Cop supports --auto-correct.
 Layout/EmptyLineAfterMagicComment:
   Exclude:
-    - 'aozora2html.gemspec'
     - 'lib/aozora2html/accent_parser.rb'
     - 'lib/aozora2html/header.rb'
     - 'lib/aozora2html/i18n.rb'
@@ -594,7 +567,6 @@ Style/EmptyElse:
 # Cop supports --auto-correct.
 Style/Encoding:
   Exclude:
-    - 'aozora2html.gemspec'
     - 'lib/aozora2html/accent_parser.rb'
     - 'lib/aozora2html/header.rb'
     - 'lib/aozora2html/i18n.rb'
@@ -631,11 +603,6 @@ Style/Encoding:
     - 'test/test_tag_parser.rb'
 
 # Cop supports --auto-correct.
-Style/ExpandPathArguments:
-  Exclude:
-    - 'aozora2html.gemspec'
-
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: format, sprintf, percent
 Style/FormatString:
@@ -655,7 +622,6 @@ Style/FrozenStringLiteralComment:
     - 'Gemfile'
     - 'Guardfile'
     - 'Rakefile'
-    - 'aozora2html.gemspec'
     - 'bin/aozora2html'
     - 'lib/aozora2html.rb'
     - 'lib/aozora2html/accent_parser.rb'
@@ -846,7 +812,6 @@ Style/OptionalBooleanParameter:
 # Configuration parameters: PreferredDelimiters.
 Style/PercentLiteralDelimiters:
   Exclude:
-    - 'aozora2html.gemspec'
     - 'lib/aozora2html/tag/accent.rb'
     - 'test/test_aozora2html.rb'
     - 'test/test_command_parse.rb'
@@ -932,7 +897,6 @@ Style/StringConcatenation:
 Style/StringLiterals:
   Exclude:
     - 'Rakefile'
-    - 'aozora2html.gemspec'
     - 'bin/aozora2html'
     - 'lib/aozora2html.rb'
     - 'lib/aozora2html/accent_parser.rb'
