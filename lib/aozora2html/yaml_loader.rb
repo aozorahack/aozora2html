@@ -13,7 +13,7 @@ class Aozora2Html
     def normalize_data(data)
       case data
       when String
-        data.encode("shift_jis")
+        data.encode('shift_jis')
       when Hash
         new_data = {}
         data.each do |k, v|

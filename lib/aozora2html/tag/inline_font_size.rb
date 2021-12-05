@@ -9,7 +9,7 @@ class Aozora2Html
       end
 
       def to_s
-        "<span class=\"#{@class}\" style=\"font-size: #{@style};\">" + @target.to_s + "</span>"
+        "<span class=\"#{@class}\" style=\"font-size: #{@style};\">#{@target}</span>"
       end
     end
   end

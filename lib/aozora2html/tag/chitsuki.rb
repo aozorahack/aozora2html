@@ -7,7 +7,7 @@ class Aozora2Html
       end
 
       def to_s
-        '<div class="chitsuki_' + @length + '" style="text-align:right; margin-right: ' + @length + 'em">'
+        "<div class=\"chitsuki_#{@length}\" style=\"text-align:right; margin-right: #{@length}em\">"
       end
     end
   end

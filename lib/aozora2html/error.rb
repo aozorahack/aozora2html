@@ -1,9 +1,10 @@
-require "aozora2html/i18n"
+require 'aozora2html/i18n'
 
 # 例外class
 class Aozora2Html
   class Error < StandardError
     def initialize(msg)
+      super
       @message = msg
     end
 

@@ -6,21 +6,22 @@ class Aozora2Html
       include Aozora2Html::Tag::Inline
       attr_accessor :target
 
-      def initialize(*_args)
-        if defined?(@target) && block_element?(@target)
-          syntax_error
-        end
+      def initialize(*_args) # rubocop:disable Lint/MissingSuper
+        return unless defined?(@target) && block_element?(@target)
+
+        syntax_error
       end
 
       def block_element?(elt)
-        if elt.is_a?(Array)
+        case elt
+        when Array
           elt.each do |x|
             if block_element?(x)
               return true
             end
           end
           nil
-        elsif elt.is_a?(String)
+        when String
           elt.include?('<div')
         else
           elt.is_a?(Aozora2Html::Tag::Block)
@@ -28,9 +29,10 @@ class Aozora2Html
       end
 
       def target_string
-        if @target.is_a?(Aozora2Html::Tag::ReferenceMentioned)
+        case @target
+        when Aozora2Html::Tag::ReferenceMentioned
           @target.target_string
-        elsif @target.is_a?(Array)
+        when Array
           @target.collect do |x|
             if x.is_a?(Aozora2Html::Tag::ReferenceMentioned)
               x.target_string
