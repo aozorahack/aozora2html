@@ -6,8 +6,8 @@ class Aozora2Html
     # @ruby_buf内の文字のchar_type
     attr_accessor :char_type
 
-    def initialize(item = nil)
-      clear(item)
+    def initialize
+      clear
     end
 
     # バッファの初期化。引数itemがあるときはその1要素のバッファに、
