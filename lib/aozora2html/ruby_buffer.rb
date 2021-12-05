@@ -13,11 +13,11 @@ class Aozora2Html
     # バッファの初期化。引数itemがあるときはその1要素のバッファに、
     # 引数がなければ`""`の1要素のバッファにする。
     def clear(item = nil)
-      if item
-        @ruby_buf = [item]
-      else
-        @ruby_buf = [""]
-      end
+      @ruby_buf = if item
+                    [item]
+                  else
+                    ['']
+                  end
       @protected = nil
       @char_type = nil
     end
@@ -65,7 +65,7 @@ class Aozora2Html
         @protected = nil
       end
       top = @ruby_buf[0]
-      if top.is_a?(String) and buffer.last.is_a?(String)
+      if top.is_a?(String) && buffer.last.is_a?(String)
         buffer.last.concat(top)
         buffer.concat(@ruby_buf[1, @ruby_buf.length])
       else

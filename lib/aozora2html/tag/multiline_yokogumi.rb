@@ -4,12 +4,8 @@ class Aozora2Html
       include Aozora2Html::Tag::Multiline
       include Aozora2Html::Tag::Block
 
-      def initialize(parser)
-        super
-      end
-
       def to_s
-        "<div class=\"yokogumi\">"
+        '<div class="yokogumi">'
       end
     end
   end

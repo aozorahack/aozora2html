@@ -13,17 +13,17 @@ class Aozora2Html
       if found
         "<h2 class=\"#{true_name or attr}\">#{found}</h2>\r\n"
       else
-        ""
+        ''
       end
     end
 
     def header_element_type(string)
       original = true
       string.each_char do |ch|
-        code = ch.unpack1("H*")
-        if (code >= "00" and code <= "7f") or # 1byte
-           (code >= "8140" and code <= "8258") or # 1-1, 3-25
-           (code >= "839f" and code <= "8491") # 6-1, 7-81
+        code = ch.unpack1('H*')
+        if ((code >= '00') && (code <= '7f')) || # 1byte
+           ((code >= '8140') && (code <= '8258')) || # 1-1, 3-25
+           ((code >= '839f') && (code <= '8491')) # 6-1, 7-81
         # continue
         else
           original = false
@@ -60,8 +60,8 @@ class Aozora2Html
     def build_title(header_info)
       buf = [:author, :translator, :editor, :henyaku,
              :title, :original_title,
-             :subtitle, :original_subtitle].map { |item| header_info[item] }.compact
-      buf_str = buf.join(" ")
+             :subtitle, :original_subtitle].filter_map { |item| header_info[item] }
+      buf_str = buf.join(' ')
       "<title>#{buf_str}</title>"
     end
 
@@ -95,7 +95,7 @@ class Aozora2Html
         header_info[:subtitle] = @header[2]
         header_info[:author] = @header[3]
         if process_person(@header[4], header_info) == :author
-          raise Aozora2Html::Error, "parser encounted author twice"
+          raise Aozora2Html::Error, 'parser encounted author twice'
         end
       when 6
         header_info[:original_title] = @header[1]
@@ -103,7 +103,7 @@ class Aozora2Html
         header_info[:original_subtitle] = @header[3]
         header_info[:author] = @header[4]
         if process_person(@header[5], header_info) == :author
-          raise Aozora2Html::Error, "parser encounted author twice"
+          raise Aozora2Html::Error, 'parser encounted author twice'
         end
       end
       header_info
@@ -119,7 +119,7 @@ class Aozora2Html
       out_buf = []
       out_buf.push("<?xml version=\"1.0\" encoding=\"Shift_JIS\"?>\r\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\r\n    \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\r\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"ja\" >\r\n<head>\r\n	<meta http-equiv=\"Content-Type\" content=\"text/html;charset=Shift_JIS\" />\r\n	<meta http-equiv=\"content-style-type\" content=\"text/css\" />\r\n")
       $css_files.each do |css|
-        out_buf.push("\t<link rel=\"stylesheet\" type=\"text/css\" href=\"" + css + "\" />\r\n")
+        out_buf.push("\t<link rel=\"stylesheet\" type=\"text/css\" href=\"#{css}\" />\r\n")
       end
       out_buf.push("\t#{html_title}\r\n	<script type=\"text/javascript\" src=\"../../jquery-1.4.2.min.js\"></script>\r\n  <link rel=\"Schema.DC\" href=\"http://purl.org/dc/elements/1.1/\" />\r\n	<meta name=\"DC.Title\" content=\"#{header_info[:title]}\" />\r\n	<meta name=\"DC.Creator\" content=\"#{header_info[:author]}\" />\r\n	<meta name=\"DC.Publisher\" content=\"#{AOZORABUNKO}\" />\r\n</head>\r\n<body>\r\n<div class=\"metadata\">\r\n")
       out_buf.push("<h1 class=\"title\">#{header_info[:title]}</h1>\r\n" +
@@ -129,9 +129,9 @@ class Aozora2Html
                    out_header_info(header_info, :author) +
                    out_header_info(header_info, :editor) +
                    out_header_info(header_info, :translator) +
-                   out_header_info(header_info, :henyaku, "editor-translator"))
+                   out_header_info(header_info, :henyaku, 'editor-translator'))
       out_buf.push("<br />\r\n<br />\r\n</div>\r\n<div id=\"contents\" style=\"display:none\"></div><div class=\"main_text\">")
-      out_buf.join("")
+      out_buf.join
     end
   end
 end

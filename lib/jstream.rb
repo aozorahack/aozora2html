@@ -1,5 +1,5 @@
-require "aozora2html/error"
-require "aozora2html/i18n"
+require 'aozora2html/error'
+require 'aozora2html/i18n'
 
 ##
 # Stream class for reading a file.
@@ -26,7 +26,7 @@ class Jstream
   end
 
   def inspect
-    "#<jcode-stream input " + @file.inspect + ">"
+    "#<jcode-stream input #{@file.inspect}>"
   end
 
   def read_char
@@ -58,11 +58,10 @@ class Jstream
   private
 
   def store_to_buffer
-    if tmp = @file.readline.chomp!("\r\n")
-      @buffer = tmp.each_char.to_a
-    else
-      raise Aozora2Html::Error, Aozora2Html::I18n.t(:use_crlf)
-    end
+    tmp = @file.readline.chomp!("\r\n")
+    raise Aozora2Html::Error, Aozora2Html::I18n.t(:use_crlf) unless tmp
+
+    @buffer = tmp.each_char.to_a
     @entry = true
   end
 end

@@ -8,7 +8,7 @@ class Aozora2Html
       end
 
       def to_s
-        '<span class="notes">［＃'.encode("shift_jis") + @desc + '］</span>'.encode("shift_jis")
+        '<span class="notes">［＃'.encode('shift_jis') + @desc + '］</span>'.encode('shift_jis')
       end
     end
   end

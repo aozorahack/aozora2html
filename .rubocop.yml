@@ -57,6 +57,12 @@ Style/IfUnlessModifier:
 Style/NumericPredicate:
   Enabled: false
 
+Style/PerlBackrefs:
+  Enabled: false
+
+Style/SpecialGlobalVars:
+  Enabled: false
+
 Style/SymbolArray:
   EnforcedStyle: brackets
 
@@ -69,6 +75,9 @@ Style/ZeroLengthPredicate:
 Layout/LineLength:
   Enabled: true
   Max: 500
+
+Lint/EmptyClass:
+  AllowComments: true
 
 Metrics/AbcSize:
   Enabled: true

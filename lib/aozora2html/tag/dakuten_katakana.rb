@@ -14,7 +14,7 @@ class Aozora2Html
       end
 
       def to_s
-        "<img src=\"#{$gaiji_dir}/1-07/1-07-8#{@n}.png\" alt=\"" + "※(濁点付き片仮名「".encode("shift_jis") + @katakana + "」、1-07-8".encode("shift_jis") + "#{@n})\" class=\"gaiji\" />"
+        "<img src=\"#{$gaiji_dir}/1-07/1-07-8#{@n}.png\" alt=\"" + '※(濁点付き片仮名「'.encode('shift_jis') + @katakana + '」、1-07-8'.encode('shift_jis') + "#{@n})\" class=\"gaiji\" />"
       end
     end
   end

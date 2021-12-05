@@ -2,9 +2,9 @@ require 'aozora2html/ruby_buffer'
 class Aozora2Html
   # accent特殊文字を生かすための再帰呼び出し
   class AccentParser < Aozora2Html
-    def initialize(input, endchar, chuuki, image)
+    def initialize(input, endchar, chuuki, image) # rubocop:disable Lint/MissingSuper
       unless input.is_a?(Jstream)
-        raise ArgumentError, "tag_parser must supply Jstream as input"
+        raise ArgumentError, 'tag_parser must supply Jstream as input'
       end
 
       @stream = input
@@ -21,10 +21,10 @@ class Aozora2Html
     def general_output
       @ruby_buf.dump_into(@buffer)
       unless @encount_accent
-        @buffer.unshift("〔".encode("shift_jis"))
+        @buffer.unshift('〔'.encode('shift_jis'))
       end
-      if @closed and !@encount_accent
-        @buffer.push("〕".encode("shift_jis"))
+      if @closed && !@encount_accent
+        @buffer.push('〕'.encode('shift_jis'))
       elsif !@closed
         @buffer.push("<br />\r\n")
       end
@@ -34,11 +34,13 @@ class Aozora2Html
     def parse
       first = read_char
 
-      # rubocop:disable Style/SoleNestedConditional
-      if found = Aozora2Html::ACCENT_TABLE[first]
-        if found2 = found[@stream.peek_char(0)]
+      found = Aozora2Html::ACCENT_TABLE[first]
+      if found
+        found2 = found[@stream.peek_char(0)]
+        if found2
           if found2.is_a?(Hash)
-            if found3 = found2[@stream.peek_char(1)]
+            found3 = found2[@stream.peek_char(1)]
+            if found3
               first = Aozora2Html::Tag::Accent.new(self, *found3)
               @encount_accent = true
               @chuuki_table[:accent] = true
@@ -53,30 +55,29 @@ class Aozora2Html
           end
         end
       end
-      # rubocop:enable Style/SoleNestedConditional
 
       case first
       when Aozora2Html::GAIJI_MARK
         first = dispatch_gaiji
-      when "［".encode("shift_jis")
+      when '［'.encode('shift_jis')
         first = dispatch_aozora_command
       when Aozora2Html::KU
         assign_kunoji
-      when "《".encode("shift_jis")
+      when '《'.encode('shift_jis')
         first = apply_ruby
       end
       if first == "\r\n"
         if @encount_accent
-          puts "警告(#{line_number}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません".encode("shift_jis")
+          puts "警告(#{line_number}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません".encode('shift_jis')
         end
         throw :terminate
-      elsif first == "〕".encode("shift_jis")
+      elsif first == '〕'.encode('shift_jis')
         @closed = true
         throw :terminate
       elsif first == RUBY_PREFIX
         @ruby_buf.dump_into(@buffer)
         @ruby_buf.protected = true
-      elsif first != "" and !first.nil?
+      elsif (first != '') && !first.nil?
         illegal_char_check(first, line_number)
         push_chars(first)
       end

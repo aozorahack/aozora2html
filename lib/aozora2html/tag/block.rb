@@ -11,7 +11,7 @@ class Aozora2Html
 
       # 必要に基づきmethod overrideする
       def close_tag
-        "</div>"
+        '</div>'
       end
     end
   end

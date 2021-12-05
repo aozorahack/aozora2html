@@ -56,7 +56,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     end
   end
 
-  def test_line_number_2
+  def test_line_number2
     input = StringIO.new("a\r\nb\r\nc\r\n")
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
