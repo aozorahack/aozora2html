@@ -11,9 +11,7 @@ jobs:
         with:
           ruby-version: 3.0.3
       - name: rubocop
-        uses: reviewdog/action-rubocop@v1
+        uses: reviewdog/action-rubocop@v2
         with:
-          rubocop_version: gemfile
           rubocop_extensions: rubocop-performance rubocop-rake
-          github_token: ${{ secrets.github_token }}
           reporter: github-pr-review # Default is github-pr-check
