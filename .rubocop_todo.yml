@@ -66,12 +66,6 @@ Style/AndOr:
     - 'lib/t2hs.rb'
 
 # Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: percent_q, bare_percent
-Style/BarePercentLiterals:
-  EnforcedStyle: percent_q
-
-# Cop supports --auto-correct.
 Style/CaseLikeIf:
   Exclude:
     - 'lib/aozora2html/tag/reference_mentioned.rb'
@@ -133,17 +127,6 @@ Style/Documentation:
     - 'lib/aozora2html/yaml_loader.rb'
     - 'lib/aozora2html/zip.rb'
     - 'lib/extensions.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: format, sprintf, percent
-Style/FormatString:
-  EnforcedStyle: sprintf
-
-# Configuration parameters: MaxUnannotatedPlaceholdersAllowed, IgnoredMethods.
-# SupportedStyles: annotated, template, unannotated
-Style/FormatStringToken:
-  EnforcedStyle: unannotated
 
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
@@ -232,12 +215,6 @@ Style/HashLikeCase:
     - 'lib/aozora2html/utils.rb'
 
 # Cop supports --auto-correct.
-# Configuration parameters: UseHashRocketsWithSymbolValues, PreferHashRocketsForNonAlnumEndingSymbols.
-# SupportedStyles: ruby19, hash_rockets, no_mixed_keys, ruby19_no_mixed_keys
-Style/HashSyntax:
-  EnforcedStyle: hash_rockets
-
-# Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: literals, strict
 Style/MutableConstant:
@@ -317,20 +294,8 @@ Style/StringLiterals:
     - 'lib/t2hs.rb'
 
 # Cop supports --auto-correct.
-# Configuration parameters: MinSize.
-# SupportedStyles: percent, brackets
-Style/SymbolArray:
-  EnforcedStyle: brackets
-
-# Cop supports --auto-correct.
 # Configuration parameters: AllowMethodsWithArguments, IgnoredMethods.
 # IgnoredMethods: respond_to, define_method
 Style/SymbolProc:
   Exclude:
     - 'lib/t2hs.rb'
-
-# Cop supports --auto-correct.
-# Configuration parameters: MinSize, WordRegex.
-# SupportedStyles: percent, brackets
-Style/WordArray:
-  EnforcedStyle: brackets
