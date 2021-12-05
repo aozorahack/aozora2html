@@ -1,7 +1,6 @@
 class Aozora2Html
   class Tag
     class InlineFontSize < Aozora2Html::Tag::ReferenceMentioned
-
       def initialize(parser, target, times, daisho)
         @target = target
         @class = daisho.to_s + times.to_s
@@ -15,4 +14,3 @@ class Aozora2Html
     end
   end
 end
-

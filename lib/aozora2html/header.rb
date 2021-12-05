@@ -1,7 +1,6 @@
-# encoding: utf-8
 class Aozora2Html
   class Header
-    def initialize()
+    def initialize
       @header = []
     end
 
@@ -23,8 +22,8 @@ class Aozora2Html
       string.each_char do |ch|
         code = ch.unpack("H*")[0]
         if ("00" <= code and code <= "7f") or # 1byte
-          ("8140" <= code and code <= "8258") or # 1-1, 3-25
-          ("839f" <= code and code <= "8491") # 6-1, 7-81
+           ("8140" <= code and code <= "8258") or # 1-1, 3-25
+           ("839f" <= code and code <= "8491") # 6-1, 7-81
         # continue
         else
           original = false
@@ -61,13 +60,13 @@ class Aozora2Html
     def build_title(header_info)
       buf = [:author, :translator, :editor, :henyaku,
              :title, :original_title,
-             :subtitle, :original_subtitle].map{|item| header_info[item]}.compact
+             :subtitle, :original_subtitle].map { |item| header_info[item] }.compact
       buf_str = buf.join(" ")
       "<title>#{buf_str}</title>"
     end
 
     def build_header_info
-      header_info = {:title => @header[0]}
+      header_info = { :title => @header[0] }
       case @header.length
       when 2
         process_person(@header[1], header_info)
@@ -134,6 +133,5 @@ class Aozora2Html
       out_buf.push("<br />\r\n<br />\r\n</div>\r\n<div id=\"contents\" style=\"display:none\"></div><div class=\"main_text\">")
       out_buf.join("")
     end
-
   end
 end

@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'aozora2html'
 
@@ -8,9 +9,9 @@ class HeaderTest < Test::Unit::TestCase
   end
 
   def test_header_to_html
-    @header.push("武装せる市街".encode("shift_jis"))
-    @header.push("黒島伝治".encode("shift_jis"))
-    actual = @header.to_html.encode("utf-8")
+    @header.push('武装せる市街'.encode('shift_jis'))
+    @header.push('黒島伝治'.encode('shift_jis'))
+    actual = @header.to_html.encode('utf-8')
     expected =
       "<?xml version=\"1.0\" encoding=\"Shift_JIS\"?>\r\n" +
       "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\"\r\n" +
@@ -34,27 +35,27 @@ class HeaderTest < Test::Unit::TestCase
       "<br />\r\n" +
       "<br />\r\n" +
       "</div>\r\n" +
-      "<div id=\"contents\" style=\"display:none\"></div><div class=\"main_text\">"
+      '<div id="contents" style="display:none"></div><div class="main_text">'
     assert_equal(expected, actual)
   end
 
   def test_build_title
-    @header.push("武装せる市街".encode("shift_jis"))
-    @header.push("黒島伝治".encode("shift_jis"))
+    @header.push('武装せる市街'.encode('shift_jis'))
+    @header.push('黒島伝治'.encode('shift_jis'))
     header_info = @header.build_header_info()
-    actual = @header.build_title(header_info).encode("utf-8")
-    expected = "<title>黒島伝治 武装せる市街</title>"
+    actual = @header.build_title(header_info).encode('utf-8')
+    expected = '<title>黒島伝治 武装せる市街</title>'
     assert_equal(expected, actual)
   end
 
   def test_build_title2
-    @header.push("スリーピー・ホローの伝説".encode("shift_jis"))
-    @header.push("故ディードリッヒ・ニッカボッカーの遺稿より".encode("shift_jis"))
-    @header.push("ワシントン・アーヴィング　Washington Irving".encode("shift_jis"))
-    @header.push("吉田甲子太郎訳".encode("shift_jis"))
+    @header.push('スリーピー・ホローの伝説'.encode('shift_jis'))
+    @header.push('故ディードリッヒ・ニッカボッカーの遺稿より'.encode('shift_jis'))
+    @header.push('ワシントン・アーヴィング　Washington Irving'.encode('shift_jis'))
+    @header.push('吉田甲子太郎訳'.encode('shift_jis'))
     header_info = @header.build_header_info()
-    actual = @header.build_title(header_info).encode("utf-8")
-    expected = "<title>ワシントン・アーヴィング　Washington Irving 吉田甲子太郎訳 スリーピー・ホローの伝説 故ディードリッヒ・ニッカボッカーの遺稿より</title>"
+    actual = @header.build_title(header_info).encode('utf-8')
+    expected = '<title>ワシントン・アーヴィング　Washington Irving 吉田甲子太郎訳 スリーピー・ホローの伝説 故ディードリッヒ・ニッカボッカーの遺稿より</title>'
     assert_equal(expected, actual)
   end
 end

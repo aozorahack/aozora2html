@@ -3,7 +3,6 @@ require "aozora2html/i18n"
 # 例外class
 class Aozora2Html
   class Error < StandardError
-
     def initialize(msg)
       @message = msg
     end
@@ -13,4 +12,3 @@ class Aozora2Html
     end
   end
 end
-

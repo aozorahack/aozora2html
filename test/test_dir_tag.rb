@@ -1,22 +1,23 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'aozora2html'
 
 class DirTagTest < Test::Unit::TestCase
   def setup
     @parser = Object.new
-    stub(@parser).block_allowed_context?{true}
+    stub(@parser).block_allowed_context? { true }
   end
 
   def test_dir_new
-    tag = Aozora2Html::Tag::Dir.new(@parser,"テスト".encode("shift_jis"))
+    tag = Aozora2Html::Tag::Dir.new(@parser, 'テスト'.encode('shift_jis'))
     assert_equal Aozora2Html::Tag::Dir, tag.class
     assert_equal true, tag.kind_of?(Aozora2Html::Tag::Inline)
   end
 
   def test_to_s
-    tag = Aozora2Html::Tag::Dir.new(@parser,"テスト".encode("shift_jis"))
-    assert_equal "<span dir=\"ltr\">テスト</span>", tag.to_s.encode("utf-8")
+    tag = Aozora2Html::Tag::Dir.new(@parser, 'テスト'.encode('shift_jis'))
+    assert_equal '<span dir="ltr">テスト</span>', tag.to_s.encode('utf-8')
   end
 
   def teardown

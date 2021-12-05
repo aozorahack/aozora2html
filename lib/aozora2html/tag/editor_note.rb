@@ -1,4 +1,3 @@
-# encoding: utf-8
 class Aozora2Html
   class Tag
     class EditorNote < Aozora2Html::Tag

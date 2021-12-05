@@ -6,6 +6,7 @@ class Aozora2Html
       if not(input.is_a?(Jstream))
         raise ArgumentError, "tag_parser must supply Jstream as input"
       end
+
       @stream = input
       @buffer = []
       @ruby_buf = RubyBuffer.new
@@ -16,7 +17,8 @@ class Aozora2Html
       @raw = "" # 外字変換前の生テキストを残したいことがあるらしい
     end
 
-    def read_char # method override!
+    # method override!
+    def read_char
       c = @stream.read_char
       @raw.concat(c)
       c
@@ -28,9 +30,10 @@ class Aozora2Html
       ans
     end
 
-    def general_output # 出力は[String,String]返しで！
+    # 出力は[String,String]返しで！
+    def general_output
       @ruby_buf.dump_into(@buffer)
-      ans=""
+      ans = ""
       @buffer.each do |s|
         if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) and !s.escaped?
           # 消してあった※を復活させて
@@ -38,10 +41,10 @@ class Aozora2Html
         end
         ans.concat(s.to_s)
       end
-      [ans,@raw]
+      [ans, @raw]
     end
 
-    def process()
+    def process
       catch(:terminate) do
         loop do
           parse

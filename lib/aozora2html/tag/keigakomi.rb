@@ -1,13 +1,16 @@
-class Aozora2Html::Tag::Keigakomi < Aozora2Html::Tag
-  include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
+class Aozora2Html
+  class Tag
+    class Keigakomi < Aozora2Html::Tag
+      include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
 
-  def initialize(parser, size = 1)
-    @size = size
-    super
-  end
+      def initialize(parser, size = 1)
+        @size = size
+        super
+      end
 
-  def to_s
-    "<div class=\"keigakomi\" style=\"border: solid #{@size}px\">"
+      def to_s
+        "<div class=\"keigakomi\" style=\"border: solid #{@size}px\">"
+      end
+    end
   end
 end
-

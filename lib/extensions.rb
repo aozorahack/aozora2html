@@ -1,4 +1,3 @@
-# encoding: utf-8
 # 1.8 like to_s method to Array
 class Array
   def to_s
@@ -7,7 +6,6 @@ class Array
 end
 
 class String
-
   # used in Aozora2Html#char_type
   def char_type
     ch = self

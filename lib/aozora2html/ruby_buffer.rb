@@ -1,19 +1,18 @@
 class Aozora2Html
   class RubyBuffer
-
     # `｜`が来た時に真にする。ルビの親文字のガード用。
     attr_accessor :protected
 
     # @ruby_buf内の文字のchar_type
     attr_accessor :char_type
 
-    def initialize(item=nil)
+    def initialize(item = nil)
       clear(item)
     end
 
     # バッファの初期化。引数itemがあるときはその1要素のバッファに、
     # 引数がなければ`""`の1要素のバッファにする。
-    def clear(item=nil)
+    def clear(item = nil)
       if item
         @ruby_buf = [item]
       else
@@ -68,14 +67,12 @@ class Aozora2Html
       top = @ruby_buf[0]
       if top.is_a?(String) and buffer.last.is_a?(String)
         buffer.last.concat(top)
-        buffer.concat(@ruby_buf[1,@ruby_buf.length])
+        buffer.concat(@ruby_buf[1, @ruby_buf.length])
       else
         buffer.concat(@ruby_buf)
       end
       clear
       buffer
     end
-
   end
 end
-

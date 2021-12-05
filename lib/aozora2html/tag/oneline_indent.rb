@@ -1,2 +1,6 @@
-module Aozora2Html::Tag::OnelineIndent
+class Aozora2Html
+  class Tag
+    module OnelineIndent
+    end
+  end
 end

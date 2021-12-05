@@ -1,14 +1,12 @@
-# encoding: utf-8
 require 'aozora2html/ruby_buffer'
 class Aozora2Html
-
   # accent特殊文字を生かすための再帰呼び出し
   class AccentParser < Aozora2Html
-
     def initialize(input, endchar, chuuki, image)
       if not(input.is_a?(Jstream))
         raise ArgumentError, "tag_parser must supply Jstream as input"
       end
+
       @stream = input
       @buffer = []
       @ruby_buf = Aozora2Html::RubyBuffer.new
@@ -19,7 +17,8 @@ class Aozora2Html
       @encount_accent = nil
     end
 
-    def general_output # 出力は配列で返す
+    # 出力は配列で返す
+    def general_output
       @ruby_buf.dump_into(@buffer)
       if !@encount_accent
         @buffer.unshift("〔".encode("shift_jis"))
