@@ -5,4 +5,3 @@ class Aozora2Html
     end
   end
 end
-

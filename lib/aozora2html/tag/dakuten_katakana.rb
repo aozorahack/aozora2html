@@ -1,11 +1,10 @@
-# encoding: utf-8
 class Aozora2Html
   class Tag
     class DakutenKatakana < Aozora2Html::Tag
       include Aozora2Html::Tag::Inline
 
-      def initialize(parser, n, katakana)
-        @n = n
+      def initialize(parser, num, katakana)
+        @n = num
         @katakana = katakana
         super
       end
@@ -20,4 +19,3 @@ class Aozora2Html
     end
   end
 end
-

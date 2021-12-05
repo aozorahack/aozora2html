@@ -31,12 +31,13 @@ class Aozora2Html
         if @target.is_a?(Aozora2Html::Tag::ReferenceMentioned)
           @target.target_string
         elsif @target.is_a?(Array)
-          @target.collect{|x|
+          @target.collect { |x|
             if x.is_a?(Aozora2Html::Tag::ReferenceMentioned)
               x.target_string
             else
               x
-            end}.to_s
+            end
+          }.to_s
         else
           @target
         end

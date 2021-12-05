@@ -1,7 +1,6 @@
 class Aozora2Html
   class Tag
     class Dir < Aozora2Html::Tag::ReferenceMentioned
-
       def initialize(parser, target)
         @target = target
         super

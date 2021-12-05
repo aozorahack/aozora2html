@@ -1,7 +1,6 @@
 class Aozora2Html
   class Tag
     class InlineYokogumi < Aozora2Html::Tag::ReferenceMentioned
-
       def initialize(parser, target)
         @target = target
         super
@@ -13,4 +12,3 @@ class Aozora2Html
     end
   end
 end
-

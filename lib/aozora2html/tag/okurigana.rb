@@ -1,7 +1,6 @@
 class Aozora2Html
   class Tag
     class Okurigana < Aozora2Html::Tag::Kunten
-
       def initialize(parser, string)
         @string = string
         super

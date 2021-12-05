@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'aozora2html'
 
@@ -194,16 +195,16 @@ class CommandParseTest < Test::Unit::TestCase
   end
 
   def parse_text(input_text)
-    input = StringIO.new(input_text.encode("shift_jis"))
+    input = StringIO.new(input_text.encode('shift_jis'))
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
-    parser.instance_eval{@section=:tail}
+    parser.instance_eval { @section = :tail }
     catch(:terminate) do
       loop do
         parser.parse
       end
     end
-    output.string.encode("utf-8")
+    output.string.encode('utf-8')
   end
 
   def teardown

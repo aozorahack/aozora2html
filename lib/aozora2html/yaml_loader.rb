@@ -21,7 +21,7 @@ class Aozora2Html
         end
         new_data
       when Array
-        data.map{|item| normalize_data(item)}
+        data.map { |item| normalize_data(item) }
       else
         # noop
         data

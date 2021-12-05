@@ -1,7 +1,5 @@
-# encoding: utf-8
 class Aozora2Html
   module Utils
-
     def create_font_size(times, daisho)
       size = ""
       case times
@@ -80,14 +78,13 @@ class Aozora2Html
 
     def convert_japanese_number(command)
       tmp = command.tr("０-９".encode("shift_jis"), "0-9")
-      tmp.tr!("一二三四五六七八九〇".encode("shift_jis"),"1234567890")
-      tmp.gsub!(/(\d)#{"十".encode("shift_jis")}(\d)/){"#{$1}#{$2}"}
-      tmp.gsub!(/(\d)#{"十".encode("shift_jis")}/){"#{$1}0"}
-      tmp.gsub!(/#{"十".encode("shift_jis")}(\d)/){"1#{$1}"}
-      tmp.gsub!(/#{"十".encode("shift_jis")}/,"10")
+      tmp.tr!("一二三四五六七八九〇".encode("shift_jis"), "1234567890")
+      tmp.gsub!(/(\d)#{"十".encode("shift_jis")}(\d)/) { "#{$1}#{$2}" }
+      tmp.gsub!(/(\d)#{"十".encode("shift_jis")}/) { "#{$1}0" }
+      tmp.gsub!(/#{"十".encode("shift_jis")}(\d)/) { "1#{$1}" }
+      tmp.gsub!(/#{"十".encode("shift_jis")}/, "10")
       tmp
     end
     module_function :convert_japanese_number
   end
 end
-

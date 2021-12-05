@@ -1,4 +1,3 @@
-# encoding: utf-8
 class Aozora2Html
   class I18n
     MSG = {
@@ -7,7 +6,7 @@ class Aozora2Html
       :use_crlf => "改行コードを、「CR+LF」にあらためてください",
       :error_stop => "エラー(%d行目):%s. \r\n処理を停止します",
       :invalid_font_size => "文字サイズの指定が不正です",
-      :unsupported_ruby  => "サポートされていない複雑なルビ付けです",
+      :unsupported_ruby => "サポートされていない複雑なルビ付けです",
       :warn_onebyte => "警告(%d行目):1バイトの「%s」が使われています",
       :warn_chuki => "警告(%d行目):注記記号の誤用の可能性がある、「%s」が使われています",
       :warn_jis_gaiji => "警告(%d行目):JIS外字「%s」が使われています",

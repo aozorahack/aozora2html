@@ -9,7 +9,6 @@ require "aozora2html/i18n"
 # when found line terminator except CR+LF, exit.
 #
 class Jstream
-
   attr_accessor :line
 
   def initialize(file_io)
@@ -57,6 +56,7 @@ class Jstream
   end
 
   private
+
   def store_to_buffer
     if tmp = @file.readline.chomp!("\r\n")
       @buffer = tmp.each_char.to_a
