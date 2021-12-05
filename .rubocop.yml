@@ -8,9 +8,18 @@ AllCops:
   TargetRubyVersion: 2.7
   NewCops: enable
 
+Style/BarePercentLiterals:
+  EnforcedStyle: percent_q
+
 Style/EmptyMethod:
   EnforcedStyle: expanded
   Enabled: true
+
+Style/FormatString:
+  EnforcedStyle: sprintf
+
+Style/FormatStringToken:
+  EnforcedStyle: unannotated
 
 Style/RedundantPercentQ:
   Enabled: false
@@ -20,6 +29,9 @@ Style/PercentQLiterals:
 
 Style/ParallelAssignment:
   Enabled: false
+
+Style/HashSyntax:
+  EnforcedStyle: hash_rockets
 
 Style/IfInsideElse:
   Enabled: false
@@ -44,6 +56,12 @@ Style/IfUnlessModifier:
 
 Style/NumericPredicate:
   Enabled: false
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets
 
 Style/ZeroLengthPredicate:
   Enabled: false
