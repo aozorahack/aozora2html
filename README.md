@@ -1,6 +1,5 @@
 # Aozora2Html
 
-[![Build Status](https://travis-ci.org/aozorahack/aozora2html.svg?branch=master)](https://travis-ci.org/aozorahack/aozora2html)
 [![Build Status](https://github.com/aozorahack/aozora2html/workflows/Test/badge.svg)](https://github.com/aozorahack/aozora2html/actions)
 [![Gem Version](https://badge.fury.io/rb/aozora2html.svg)](https://badge.fury.io/rb/aozora2html)
 [![Code Climate](https://codeclimate.com/github/aozorahack/aozora2html/badges/gpa.svg)](https://codeclimate.com/github/aozorahack/aozora2html)
