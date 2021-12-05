@@ -40,34 +40,31 @@ class Aozora2Html
     module_function :create_midashi_tag
 
     def create_midashi_class(type, tag)
+      normal_midashi_tag = {
+        'h5' => 'ko-midashi',
+        'h4' => 'naka-midashi',
+        'h3' => 'o-midashi'
+      }
+
+      dogyo_midashi_tag = {
+        'h5' => 'dogyo-ko-midashi',
+        'h4' => 'dogyo-naka-midashi',
+        'h3' => 'dogyo-o-midashi'
+      }
+
+      mado_midashi_tag = {
+        'h5' => 'mado-ko-midashi',
+        'h4' => 'mado-naka-midashi',
+        'h3' => 'mado-o-midashi'
+      }
+
       case type
       when :normal
-        case tag
-        when 'h5'
-          'ko-midashi'
-        when 'h4'
-          'naka-midashi'
-        when 'h3'
-          'o-midashi'
-        end
+        normal_midashi_tag[tag]
       when :dogyo
-        case tag
-        when 'h5'
-          'dogyo-ko-midashi'
-        when 'h4'
-          'dogyo-naka-midashi'
-        when 'h3'
-          'dogyo-o-midashi'
-        end
+        dogyo_midashi_tag[tag]
       when :mado
-        case tag
-        when 'h5'
-          'mado-ko-midashi'
-        when 'h4'
-          'mado-naka-midashi'
-        when 'h3'
-          'mado-o-midashi'
-        end
+        mado_midashi_tag[tag]
       else
         raise Aozora2Html::Error, I18n.t(:undefined_header)
       end

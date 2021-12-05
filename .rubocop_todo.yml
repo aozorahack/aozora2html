@@ -127,8 +127,3 @@ Style/GlobalVars:
     - 'lib/t2hs.rb'
     - 'test/test_dakuten_katakana_tag.rb'
     - 'test/test_gaiji_tag.rb'
-
-# Configuration parameters: MinBranchesCount.
-Style/HashLikeCase:
-  Exclude:
-    - 'lib/aozora2html/utils.rb'
