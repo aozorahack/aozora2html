@@ -1,3 +1,10 @@
+<a name="2.0.0"></a>
+## 2.0.0
+
+### Bug Fixes
+
+* Ruby 3.0でエラーになる挙動を修正しました https://github.com/aozorahack/aozora2html/pull/36, https://github.com/aozorahack/aozora2html/pull/41
+
 <a name="0.9.1"></a>
 ## 0.9.1
 
