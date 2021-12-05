@@ -30,25 +30,10 @@ Style/PercentQLiterals:
 Style/ParallelAssignment:
   Enabled: false
 
-Style/HashSyntax:
-  EnforcedStyle: hash_rockets
-
-Style/IfInsideElse:
-  Enabled: false
-
-Style/ClassCheck:
-  Enabled: false
-
-Style/RedundantBegin:
-  Enabled: false
-
 Style/AsciiComments:
   Enabled: false
 
 Style/LineEndConcatenation:
-  Enabled: false
-
-Style/MethodCallWithoutArgsParentheses:
   Enabled: false
 
 Style/IfUnlessModifier:

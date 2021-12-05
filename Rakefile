@@ -5,7 +5,7 @@ require 'bundler/gem_tasks'
 require 'rake/testtask'
 require 'rake/clean'
 
-task :default => [:test]
+task default: [:test]
 
 Rake::TestTask.new('test') do |t|
   t.libs << 'test'

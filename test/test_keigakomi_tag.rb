@@ -12,8 +12,8 @@ class KeigakomiTagTest < Test::Unit::TestCase
   def test_keigakomi_new
     tag = Aozora2Html::Tag::Keigakomi.new(@parser, 2)
     assert_equal Aozora2Html::Tag::Keigakomi, tag.class
-    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Block)
-    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Multiline)
+    assert_equal true, tag.is_a?(Aozora2Html::Tag::Block)
+    assert_equal true, tag.is_a?(Aozora2Html::Tag::Multiline)
   end
 
   def test_to_s

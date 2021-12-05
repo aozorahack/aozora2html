@@ -12,7 +12,7 @@ class InlineYokogumiTagTest < Test::Unit::TestCase
   def test_yokogumi_new
     tag = Aozora2Html::Tag::InlineYokogumi.new(@parser, 'aaa')
     assert_equal Aozora2Html::Tag::InlineYokogumi, tag.class
-    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Inline)
+    assert_equal true, tag.is_a?(Aozora2Html::Tag::Inline)
   end
 
   def test_to_s

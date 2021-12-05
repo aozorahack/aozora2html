@@ -12,7 +12,7 @@ class DecorateTagTest < Test::Unit::TestCase
   def test_decorate_new
     tag = Aozora2Html::Tag::Decorate.new(@parser, 'aa', 1, :dai)
     assert_equal Aozora2Html::Tag::Decorate, tag.class
-    assert_equal true, tag.kind_of?(Aozora2Html::Tag::Inline)
+    assert_equal true, tag.is_a?(Aozora2Html::Tag::Inline)
   end
 
   def test_to_s
