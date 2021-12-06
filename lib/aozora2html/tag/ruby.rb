@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # complex ruby markup
 # if css3 is major supported, please fix ruby position with property "ruby-position"
 # see also: http://www.w3.org/TR/2001/WD-css3-ruby-20010216/

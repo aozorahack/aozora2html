@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # 前方参照でこいつだけは中身をチェックする
 # 子要素を持つAozora2Html::Tag::Inlineは全てこいつのサブクラス
 class Aozora2Html

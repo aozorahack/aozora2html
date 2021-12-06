@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class RubyBuffer
     # `｜`が来た時に真にする。ルビの親文字のガード用。
@@ -16,7 +18,7 @@ class Aozora2Html
       @ruby_buf = if item
                     [item]
                   else
-                    ['']
+                    [+'']
                   end
       @protected = nil
       @char_type = nil

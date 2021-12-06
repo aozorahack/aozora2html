@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # 青空記法の入れ子に対応（？）
 require 'aozora2html/ruby_buffer'
 class Aozora2Html
@@ -14,7 +16,7 @@ class Aozora2Html
       @images = image # globalな環境を記録するアイテムは共有する必要あり
       @endchar = endchar # 改行を越えるべきか否か…
       @section = :tail # 末尾処理と記法内はインデントをしないので等価
-      @raw = '' # 外字変換前の生テキストを残したいことがあるらしい
+      @raw = +'' # 外字変換前の生テキストを残したいことがあるらしい
     end
 
     # method override!
@@ -33,7 +35,7 @@ class Aozora2Html
     # 出力は[String,String]返しで！
     def general_output
       @ruby_buf.dump_into(@buffer)
-      ans = ''
+      ans = +''
       @buffer.each do |s|
         if s.is_a?(Aozora2Html::Tag::UnEmbedGaiji) && !s.escaped?
           # 消してあった※を復活させて

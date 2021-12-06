@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'aozora2html/tag/inline'
 require 'aozora2html/tag/block'
 require 'aozora2html/tag/accent'
