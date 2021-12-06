@@ -11,8 +11,8 @@ class Aozora2HtmlAccentParserTest < Test::Unit::TestCase
     str = "〔e'tiquette〕\r\n".encode('shift_jis')
     strio = StringIO.new(str)
     stream = Jstream.new(strio)
-    parsed = Aozora2Html::AccentParser.new(stream, '〕'.encode('shift_jis'), {}, []).process
-    expected = '〔<img src="../../../gaiji/1-09/1-09-63.png" alt="※(アキュートアクセント付きE小文字)" class="gaiji" />tiquette'
+    parsed = Aozora2Html::AccentParser.new(stream, '〕'.encode('shift_jis'), {}, [], gaiji_dir: 'g_dir/').process
+    expected = '〔<img src="g_dir/1-09/1-09-63.png" alt="※(アキュートアクセント付きE小文字)" class="gaiji" />tiquette'
     assert_equal expected, parsed.to_s.encode('utf-8')
   end
 
@@ -21,7 +21,7 @@ class Aozora2HtmlAccentParserTest < Test::Unit::TestCase
     str = "〔e'tiquette〕\r\n".encode('shift_jis')
     strio = StringIO.new(str)
     stream = Jstream.new(strio)
-    parsed = Aozora2Html::AccentParser.new(stream, '〕'.encode('shift_jis'), {}, []).process
+    parsed = Aozora2Html::AccentParser.new(stream, '〕'.encode('shift_jis'), {}, [], gaiji_dir: 'g_dir/').process
     expected = '〔&#x00E9;tiquette'
     assert_equal expected, parsed.to_s.encode('utf-8')
   end

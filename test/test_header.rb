@@ -5,7 +5,7 @@ require 'aozora2html'
 
 class HeaderTest < Test::Unit::TestCase
   def setup
-    @header = Aozora2Html::Header.new
+    @header = Aozora2Html::Header.new(css_files: Array['../../aozora.css'])
   end
 
   def test_header_to_html
