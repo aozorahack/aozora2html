@@ -1581,7 +1581,7 @@ class Aozora2Html
 #{vs}				</td>
 				<!--
 				<td>
-				    <img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />
+				" + '　　'.to_sjis + "<img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />
 				</td>
 				-->
 			</tr>
