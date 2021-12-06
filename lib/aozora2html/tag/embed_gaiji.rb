@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
     class EmbedGaiji < Aozora2Html::Tag::Gaiji

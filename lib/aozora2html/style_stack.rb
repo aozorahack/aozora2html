@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class StyleStack
     def initialize

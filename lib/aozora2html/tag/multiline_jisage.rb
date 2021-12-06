@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
     class MultilineJisage < Aozora2Html::Tag::Jisage

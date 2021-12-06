@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
     class Kaeriten < Aozora2Html::Tag::Kunten

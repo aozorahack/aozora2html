@@ -1,17 +1,18 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   module Utils
     def create_font_size(times, daisho)
-      size = ''
-      case times
-      when 1
-        size = ''
-      when 2
-        size = 'x-'
-      else
-        raise Aozora2Html::Error, I18n.t(:invalid_font_size) unless times >= 3
+      size = case times
+             when 1
+               +''
+             when 2
+               +'x-'
+             else
+               raise Aozora2Html::Error, I18n.t(:invalid_font_size) unless times >= 3
 
-        size = 'xx-'
-      end
+               +'xx-'
+             end
 
       case daisho
       when :dai

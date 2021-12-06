@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
     class MultilineChitsuki < Aozora2Html::Tag::Chitsuki

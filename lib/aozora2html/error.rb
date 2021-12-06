@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'aozora2html/i18n'
 
 # 例外class

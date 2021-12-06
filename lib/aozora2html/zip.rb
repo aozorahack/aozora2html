@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'zip'
 class Aozora2Html
   class Zip

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 guard :test do
   watch(%r{^test/test_.+\.rb$})
   watch('test/test_helper.rb') { 'test' }

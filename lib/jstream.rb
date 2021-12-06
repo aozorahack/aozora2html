@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'aozora2html/error'
 require 'aozora2html/i18n'
 

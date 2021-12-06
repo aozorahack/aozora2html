@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
     class Midashi < Aozora2Html::Tag::ReferenceMentioned

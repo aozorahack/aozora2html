@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'aozora2html/version'
 require 't2hs'
 

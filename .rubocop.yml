@@ -21,6 +21,10 @@ Style/FormatString:
 Style/FormatStringToken:
   EnforcedStyle: unannotated
 
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'lib/t2hs.rb'
+
 Style/RedundantPercentQ:
   Enabled: false
 
