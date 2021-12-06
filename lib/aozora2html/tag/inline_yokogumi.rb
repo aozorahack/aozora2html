@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # インライン横組み用
     class InlineYokogumi < Aozora2Html::Tag::ReferenceMentioned
       def initialize(parser, target)
         @target = target

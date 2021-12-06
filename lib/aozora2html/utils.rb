@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Aozora2Html
+  # ユーティリティ関数モジュール
   module Utils
     def create_font_size(times, daisho)
       size = case times

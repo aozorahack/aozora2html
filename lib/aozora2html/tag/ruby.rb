@@ -5,6 +5,7 @@
 # see also: http://www.w3.org/TR/2001/WD-css3-ruby-20010216/
 class Aozora2Html
   class Tag
+    # ルビ用
     class Ruby < Aozora2Html::Tag::ReferenceMentioned
       attr_accessor :ruby, :under_ruby
 

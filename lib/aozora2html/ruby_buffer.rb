@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Aozora2Html
+  # ルビ文字列解析用バッファ
   class RubyBuffer
     # `｜`が来た時に真にする。ルビの親文字のガード用。
     attr_accessor :protected

@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 罫囲み用
     class Keigakomi < Aozora2Html::Tag
       include Aozora2Html::Tag::Multiline
       include Aozora2Html::Tag::Block

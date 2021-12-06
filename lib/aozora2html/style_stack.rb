@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Aozora2Html
+  # スタイルの状態管理用スタック
+  #
+  # スタイルの入れ子を扱えるようにスタック構造になっている。
+  # 各要素は`[コマンド文字列, 閉じる際に使うHTML文字列]`という2要素の配列になっている。
   class StyleStack
     def initialize
       @stack = []

@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # インラインフォントサイズ指定用
     class InlineFontSize < Aozora2Html::Tag::ReferenceMentioned
       def initialize(parser, target, times, daisho)
         @target = target

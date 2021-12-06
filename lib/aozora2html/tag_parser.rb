@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-# 青空記法の入れ子に対応（？）
 require 'aozora2html/ruby_buffer'
 class Aozora2Html
+  # 注記記法parser
+  #
+  # 青空記法の入れ子に対応（？）
   class TagParser < Aozora2Html
     def initialize(input, endchar, chuuki, image, gaiji_dir:) # rubocop:disable Lint/MissingSuper
       unless input.is_a?(Jstream)

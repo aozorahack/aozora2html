@@ -2,6 +2,7 @@
 
 require 'yaml'
 class Aozora2Html
+  # YAML Loader class for Shift_JIS
   class YamlLoader
     def initialize(base_dir)
       @base_dir = base_dir

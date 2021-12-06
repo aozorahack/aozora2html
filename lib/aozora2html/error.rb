@@ -2,8 +2,8 @@
 
 require 'aozora2html/i18n'
 
-# 例外class
 class Aozora2Html
+  # 例外class
   class Error < StandardError
     def initialize(msg)
       super

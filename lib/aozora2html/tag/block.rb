@@ -2,6 +2,9 @@
 
 class Aozora2Html
   class Tag
+    # ブロックタグ用module
+    #
+    # 各Tagクラスにてincludeして使う
     module Block
       def initialize(parser, *_args)
         if parser.block_allowed_context?

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Aozora2Html
+  # ヘッダ生成用
   class Header
     def initialize(css_files:)
       @header = []

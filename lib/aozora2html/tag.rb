@@ -38,8 +38,8 @@ require 'aozora2html/tag/dakuten_katakana'
 require 'aozora2html/tag/dir'
 require 'aozora2html/tag/img'
 
-# 変換される青空記法class
 class Aozora2Html
+  # 変換される青空記法class
   class Tag
     # debug用
     def inspect

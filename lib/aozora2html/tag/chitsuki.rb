@@ -2,6 +2,9 @@
 
 class Aozora2Html
   class Tag
+    # 地付き記法
+    #
+    # 直接使わない。実際に使うのはサブクラス
     class Chitsuki < Aozora2Html::Tag::Indent
       def initialize(parser, length)
         @length = length

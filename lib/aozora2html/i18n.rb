@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Aozora2Html
+  # Internationalization(I18n) class
+  #
+  # コード内に日本語メッセージが氾濫しないようにするためのクラス
   class I18n
     MSG = {
       tag_syntax_error: '注記を重ねる際の原則、「狭い範囲を先に、広い範囲を後に」が守られていません。リンク先の指針を参考に、書き方をあらためてください',

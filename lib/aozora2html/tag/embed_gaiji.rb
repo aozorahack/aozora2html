@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 外字注記用
     class EmbedGaiji < Aozora2Html::Tag::Gaiji
       attr_accessor :unicode
 
