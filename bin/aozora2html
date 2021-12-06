@@ -14,13 +14,9 @@ opt.on('--use-unicode', 'use Unicode character')
 opt.version = Aozora2Html::VERSION
 options = opt.getopts
 
-if options['gaiji-dir']
-  $gaiji_dir = options['gaiji-dir']
-end
+gaiji_dir = options['gaiji-dir'] || nil
 
-if options['css-files']
-  $css_files = options['css-files'].split(',')
-end
+css_files = options['css-files']&.split(',')
 
 if options['use-jisx0213']
   Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = true
@@ -63,9 +59,9 @@ Dir.mktmpdir do |dir|
     require 'aozora2html/zip'
     tmpfile = File.join(dir, 'aozora.txt')
     Aozora2Html::Zip.unzip(src_file, tmpfile)
-    Aozora2Html.new(tmpfile, dest_file).process
+    Aozora2Html.new(tmpfile, dest_file, gaiji_dir: gaiji_dir, css_files: css_files).process
   else
-    Aozora2Html.new(src_file, dest_file).process
+    Aozora2Html.new(src_file, dest_file, gaiji_dir: gaiji_dir, css_files: css_files).process
   end
   unless ARGV[1]
     output = File.read(dest_file)

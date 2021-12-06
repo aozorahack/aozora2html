@@ -87,12 +87,12 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_char_type
-    assert_equal :kanji, @parser.char_type(Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-2-3', 'name'))
+    assert_equal :kanji, @parser.char_type(Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-2-3', 'name', gaiji_dir: nil))
     assert_equal :kanji, @parser.char_type(Aozora2Html::Tag::UnEmbedGaiji.new(nil, 'foo'))
-    assert_equal :hankaku, @parser.char_type(Aozora2Html::Tag::Accent.new(nil, 123, 'abc'))
+    assert_equal :hankaku, @parser.char_type(Aozora2Html::Tag::Accent.new(nil, 123, 'abc', gaiji_dir: nil))
     assert_equal :else, @parser.char_type(Aozora2Html::Tag::Okurigana.new(nil, 'abc'))
     assert_equal :else, @parser.char_type(Aozora2Html::Tag::InlineKeigakomi.new(nil, 'abc'))
-    assert_equal :katakana, @parser.char_type(Aozora2Html::Tag::DakutenKatakana.new(nil, 1, 'abc'))
+    assert_equal :katakana, @parser.char_type(Aozora2Html::Tag::DakutenKatakana.new(nil, 1, 'abc', gaiji_dir: nil))
 
     assert_equal :hiragana, @parser.char_type('あ'.encode('shift_jis'))
     assert_equal :hiragana, @parser.char_type('っ'.encode('shift_jis'))

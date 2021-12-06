@@ -11,10 +11,6 @@ require 'aozora2html/ruby_buffer'
 require 'aozora2html/yaml_loader'
 require 'aozora2html/utils'
 
-$gaiji_dir = '../../../gaiji/'
-
-$css_files = Array['../../aozora.css']
-
 # 変換器本体
 class Aozora2Html
   # 全角バックスラッシュが出せないから直打ち
@@ -136,7 +132,7 @@ class Aozora2Html
     '5' => 'ヲ゛'.to_sjis
   }.freeze
 
-  def initialize(input, output)
+  def initialize(input, output, gaiji_dir: nil, css_files: nil)
     @stream = if input.respond_to?(:read) ## readable IO?
                 Jstream.new(input)
               else
@@ -147,10 +143,13 @@ class Aozora2Html
            else
              File.open(output, 'w')
            end
+    @gaiji_dir = gaiji_dir || '../../../gaiji/'
+    @css_files = css_files || Array['../../aozora.css']
+
     @buffer = []
     @ruby_buf = RubyBuffer.new
     @section = :head ## 現在処理中のセクション(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
-    @header = Aozora2Html::Header.new ## ヘッダ行の配列
+    @header = Aozora2Html::Header.new(css_files: @css_files) ## ヘッダ行の配列
     @style_stack = StyleStack.new ## スタイルのスタック
     @chuuki_table = {} ## 最後にどの注記を出すかを保持しておく
     @images = [] ## 使用した外字の画像保持用
@@ -194,11 +193,11 @@ class Aozora2Html
   end
 
   def read_accent
-    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images).process
+    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
   end
 
   def read_to_nest(endchar)
-    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images).process
+    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
   end
 
   # 1行読み込み
@@ -737,7 +736,7 @@ class Aozora2Html
       codes = match[0].split('-')
       folder = sprintf('%1d-%02d', codes[0], codes[1])
       code = sprintf('%1d-%02d-%02d', *codes)
-      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK, ''))
+      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK, ''), gaiji_dir: @gaiji_dir)
     else
       substring
     end
@@ -769,7 +768,7 @@ class Aozora2Html
       try_emb
     elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
       unicode_num = $1
-      Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num)
+      Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num, gaiji_dir: @gaiji_dir)
     else
       # Unemb
       escape_gaiji(command)
@@ -1441,7 +1440,7 @@ class Aozora2Html
     frontref = DAKUTEN_KATAKANA_TABLE[n]
     found = search_front_reference(frontref)
     if found
-      Aozora2Html::Tag::DakutenKatakana.new(self, n, found.join)
+      Aozora2Html::Tag::DakutenKatakana.new(self, n, found.join, gaiji_dir: @gaiji_dir)
     else
       apply_rest_notes(command)
     end

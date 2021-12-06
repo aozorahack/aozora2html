@@ -11,9 +11,10 @@ class Aozora2Html
 
       include Aozora2Html::Tag::Inline
 
-      def initialize(parser, code, name)
+      def initialize(parser, code, name, gaiji_dir:)
         @code = code
         @name = name
+        @gaiji_dir = gaiji_dir
         super
       end
 
@@ -29,7 +30,7 @@ class Aozora2Html
         if Aozora2Html::Tag::Accent.use_jisx0213
           jisx0213_to_unicode(@code.sub(%r{.*/}, '').to_sym)
         else
-          "<img src=\"#{$gaiji_dir}#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
+          "<img src=\"#{@gaiji_dir}#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
         end
       end
     end

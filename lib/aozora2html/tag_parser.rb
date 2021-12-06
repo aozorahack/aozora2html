@@ -4,12 +4,13 @@
 require 'aozora2html/ruby_buffer'
 class Aozora2Html
   class TagParser < Aozora2Html
-    def initialize(input, endchar, chuuki, image) # rubocop:disable Lint/MissingSuper
+    def initialize(input, endchar, chuuki, image, gaiji_dir:) # rubocop:disable Lint/MissingSuper
       unless input.is_a?(Jstream)
         raise ArgumentError, 'tag_parser must supply Jstream as input'
       end
 
       @stream = input
+      @gaiji_dir = gaiji_dir
       @buffer = []
       @ruby_buf = RubyBuffer.new
       @chuuki_table = chuuki

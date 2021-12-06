@@ -24,11 +24,12 @@ class Aozora2Html
         attr_reader :use_unicode
       end
 
-      def initialize(parser, folder, code, name, unicode_num = nil)
+      def initialize(parser, folder, code, name, unicode_num = nil, gaiji_dir:)
         @folder = folder
         @code = code
         @name = name
         @unicode = unicode_num
+        @gaiji_dir = gaiji_dir
         super
       end
 
@@ -42,7 +43,7 @@ class Aozora2Html
         elsif Aozora2Html::Tag::EmbedGaiji.use_unicode && @unicode
           "&#x#{@unicode};"
         else
-          "<img src=\"#{$gaiji_dir}#{@folder}/#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
+          "<img src=\"#{@gaiji_dir}#{@folder}/#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
         end
       end
     end
