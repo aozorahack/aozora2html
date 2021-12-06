@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # ブロックでのスタイル指定用
     class MultilineStyle < Aozora2Html::Tag
       include Aozora2Html::Tag::Multiline
       include Aozora2Html::Tag::Block

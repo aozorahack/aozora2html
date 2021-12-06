@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 非埋め込み外字
     class UnEmbedGaiji < Aozora2Html::Tag::Gaiji
       def initialize(parser, desc)
         @desc = desc

@@ -2,6 +2,7 @@
 
 require 'zip'
 class Aozora2Html
+  # zipファイルからテキストを抽出する
   class Zip
     def self.unzip(zipfilename, textfilename)
       ::Zip::File.open(zipfilename) do |zip_file|

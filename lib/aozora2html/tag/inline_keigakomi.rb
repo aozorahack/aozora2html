@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # インライン罫囲み用
     class InlineKeigakomi < Aozora2Html::Tag::ReferenceMentioned
       def initialize(parser, target)
         @target = target

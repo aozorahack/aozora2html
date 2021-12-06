@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # ブロックでの見出し指定用
     class MultilineMidashi < Aozora2Html::Tag
       include Aozora2Html::Tag::Multiline
       include Aozora2Html::Tag::Block

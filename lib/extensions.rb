@@ -7,6 +7,7 @@ class Array
   end
 end
 
+# String extension
 class String
   # used in Aozora2Html#char_type
   def char_type
@@ -33,6 +34,7 @@ class String
   end
 end
 
+# Kernel extension
 module Kernel
   alias original_kernel_puts puts
 

@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 装飾用
     class Decorate < Aozora2Html::Tag::ReferenceMentioned
       def initialize(parser, target, html_class, html_tag)
         @target = target

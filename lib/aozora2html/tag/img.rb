@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 画像用
     class Img < Aozora2Html::Tag
       include Aozora2Html::Tag::Inline
 

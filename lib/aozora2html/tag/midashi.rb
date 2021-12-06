@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 見出し用
     class Midashi < Aozora2Html::Tag::ReferenceMentioned
       def initialize(parser, target, size, type)
         super

@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 字下げ用
     class Jisage < Aozora2Html::Tag::Indent
       def initialize(parser, width)
         @width = width

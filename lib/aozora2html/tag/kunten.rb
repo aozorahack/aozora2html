@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 訓点用
     class Kunten < Aozora2Html::Tag
       include Aozora2Html::Tag::Inline
 

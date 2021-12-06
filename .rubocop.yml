@@ -1,5 +1,7 @@
 inherit_from: .rubocop_todo.yml
 
+# inherit_from: .rubocop_todo.yml
+
 require:
   - rubocop-performance
   - rubocop-rake
@@ -10,6 +12,10 @@ AllCops:
 
 Style/BarePercentLiterals:
   EnforcedStyle: percent_q
+
+Style/Documentation:
+  Exclude:
+    - 'test/**/*'
 
 Style/EmptyMethod:
   EnforcedStyle: expanded

@@ -2,6 +2,7 @@
 
 class Aozora2Html
   class Tag
+    # 欧文アクセント文字用
     class Accent < Aozora2Html::Tag
       @use_jisx0213 = nil
 

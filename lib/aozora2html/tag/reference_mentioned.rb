@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-# 前方参照でこいつだけは中身をチェックする
-# 子要素を持つAozora2Html::Tag::Inlineは全てこいつのサブクラス
 class Aozora2Html
   class Tag
+    # 参照先用
+    #
+    # 前方参照でこいつだけは中身をチェックする
+    # 子要素を持つAozora2Html::Tag::Inlineは全てこいつのサブクラス
     class ReferenceMentioned < Aozora2Html::Tag
       include Aozora2Html::Tag::Inline
       attr_accessor :target
