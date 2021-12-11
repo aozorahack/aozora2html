@@ -36,62 +36,62 @@ class Aozora2Html
     end
 
     def parse
-      first = read_char
+      loop do
+        first = read_char
 
-      found = Aozora2Html::ACCENT_TABLE[first]
-      if found
-        found2 = found[@stream.peek_char(0)]
-        if found2
-          if found2.is_a?(Hash)
-            found3 = found2[@stream.peek_char(1)]
-            if found3
-              first = Aozora2Html::Tag::Accent.new(self, *found3, gaiji_dir: @gaiji_dir)
+        found = Aozora2Html::ACCENT_TABLE[first]
+        if found
+          found2 = found[@stream.peek_char(0)]
+          if found2
+            if found2.is_a?(Hash)
+              found3 = found2[@stream.peek_char(1)]
+              if found3
+                first = Aozora2Html::Tag::Accent.new(self, *found3, gaiji_dir: @gaiji_dir)
+                @encount_accent = true
+                @chuuki_table[:accent] = true
+                read_char
+                read_char
+              end
+            elsif found2
+              first = Aozora2Html::Tag::Accent.new(self, *found2, gaiji_dir: @gaiji_dir)
               @encount_accent = true
+              read_char
               @chuuki_table[:accent] = true
-              read_char
-              read_char
             end
-          elsif found2
-            first = Aozora2Html::Tag::Accent.new(self, *found2, gaiji_dir: @gaiji_dir)
-            @encount_accent = true
-            read_char
-            @chuuki_table[:accent] = true
           end
         end
-      end
 
-      case first
-      when Aozora2Html::GAIJI_MARK
-        first = dispatch_gaiji
-      when '［'.encode('shift_jis')
-        first = dispatch_aozora_command
-      when Aozora2Html::KU
-        assign_kunoji
-      when '《'.encode('shift_jis')
-        first = apply_ruby
-      end
-      if first == "\r\n"
-        if @encount_accent
-          puts "警告(#{line_number}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません".encode('shift_jis')
+        case first
+        when Aozora2Html::GAIJI_MARK
+          first = dispatch_gaiji
+        when '［'.encode('shift_jis')
+          first = dispatch_aozora_command
+        when Aozora2Html::KU
+          assign_kunoji
+        when '《'.encode('shift_jis')
+          first = apply_ruby
         end
-        throw :terminate
-      elsif first == '〕'.encode('shift_jis')
-        @closed = true
-        throw :terminate
-      elsif first == RUBY_PREFIX
-        @ruby_buf.dump_into(@buffer)
-        @ruby_buf.protected = true
-      elsif (first != '') && !first.nil?
-        Utils.illegal_char_check(first, line_number)
-        push_chars(first)
+        if first == "\r\n"
+          if @encount_accent
+            puts "警告(#{line_number}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません".encode('shift_jis')
+          end
+          throw :terminate
+        elsif first == '〕'.encode('shift_jis')
+          @closed = true
+          throw :terminate
+        elsif first == RUBY_PREFIX
+          @ruby_buf.dump_into(@buffer)
+          @ruby_buf.protected = true
+        elsif (first != '') && !first.nil?
+          Utils.illegal_char_check(first, line_number)
+          push_chars(first)
+        end
       end
     end
 
     def process
       catch(:terminate) do
-        loop do
-          parse
-        end
+        parse
       end
       general_output
     end

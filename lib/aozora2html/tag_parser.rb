@@ -52,9 +52,7 @@ class Aozora2Html
 
     def process
       catch(:terminate) do
-        loop do
-          parse
-        end
+        parse
       end
       general_output
     end
