@@ -29,8 +29,8 @@ class JstreamTest < Test::Unit::TestCase
     assert_equal 'b', stm.read_char.encode('utf-8')
     assert_equal "\r\n", stm.read_char.encode('utf-8')
     assert_equal :eof, stm.read_char
-    assert_equal "\r\n", stm.read_char  # :eof以降は正しい値を保証しない
-    assert_equal :eof, stm.read_char    # 何度もread_charすると:eofが複数回出る
+    # assert_equal "\r\n", stm.read_char  # :eof以降は正しい値を保証しない
+    assert_equal :eof, stm.read_char # 何度もread_charすると:eofが複数回出る
   end
 
   def test_peek_char
@@ -40,9 +40,9 @@ class JstreamTest < Test::Unit::TestCase
     assert_equal 'あ', stm.peek_char(1).encode('utf-8')
     assert_equal '５', stm.peek_char(2).encode('utf-8')
     assert_equal "\r\n", stm.peek_char(3).encode('utf-8')
-    assert_equal "\r\n", stm.peek_char(4).encode('utf-8') # 改行文字以降は正しい値を保証しない
-    assert_equal "\r\n", stm.peek_char(5).encode('utf-8') # 同上
-    assert_equal "\r\n", stm.peek_char(100).encode('utf-8') # 同上
+    # assert_equal "\r\n", stm.peek_char(4).encode('utf-8') # 改行文字以降は正しい値を保証しない
+    # assert_equal "\r\n", stm.peek_char(5).encode('utf-8') # 同上
+    # assert_equal "\r\n", stm.peek_char(100).encode('utf-8') # 同上
     assert_equal 'a', stm.read_char.encode('utf-8')
 
     assert_equal 'あ', stm.peek_char(0).encode('utf-8')
