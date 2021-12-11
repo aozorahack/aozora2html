@@ -1,4 +1,5 @@
-# encoding: utf-8
+# frozen_string_literal: true
+
 require 'test_helper'
 require 'aozora2html'
 
@@ -65,41 +66,41 @@ class RubyParseTest < Test::Unit::TestCase
   def test_parse_ruby7
     src = "青空文庫《あおぞらぶんこ》［＃「青空文庫」の左に「aozora bunko」のルビ］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>青空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「青空文庫」の左に「aozora bunko」のルビ］</span><br />\r\n|
+    expected = %Q(<ruby><rb>青空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「青空文庫」の左に「aozora bunko」のルビ］</span><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby8
     src = "大空文庫［＃「大空文庫」に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>大空文庫</rb><rp>（</rp><rt>ママ</rt><rp>）</rp></ruby><br />\r\n|
+    expected = %Q(<ruby><rb>大空文庫</rb><rp>（</rp><rt>ママ</rt><rp>）</rp></ruby><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby9
     src = "大空文庫［＃「大空文庫」の左に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|大空文庫<span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n|
+    expected = %Q(大空文庫<span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby10
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」の左に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n|
+    expected = %Q(<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby11
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」の左に「ママ」の注記］\r\n"
     parsed = parse_text(src)
-    expected = %Q|<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n|
+    expected = %Q(<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n)
     assert_equal expected, parsed
   end
 
   def test_parse_ruby12
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」に「ママ」の注記］\r\n"
-    assert_raise(Aozora2Html::Error.new("同じ箇所に2つのルビはつけられません".encode("shift_jis"))) do
+    assert_raise(Aozora2Html::Error.new('同じ箇所に2つのルビはつけられません'.encode('shift_jis'))) do
       _parsed = parse_text(src)
     end
   end
@@ -112,19 +113,16 @@ class RubyParseTest < Test::Unit::TestCase
   end
 
   def parse_text(input_text)
-    input = StringIO.new(input_text.encode("shift_jis"))
+    input = StringIO.new(input_text.encode('shift_jis'))
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
-    parser.instance_eval{@section=:tail}
+    parser.instance_eval { @section = :tail }
     catch(:terminate) do
       loop do
         parser.parse
       end
     end
 
-    output.string.encode("utf-8")
+    output.string.encode('utf-8')
   end
-
 end
-
-

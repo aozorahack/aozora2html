@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'aozora2html'
 require 'optparse'
-require "tempfile"
+require 'tempfile'
 require 'open-uri'
 
 opt = OptionParser.new("Usage: aozora2html [options] <text file> [<html file>]\n")
@@ -13,20 +14,16 @@ opt.on('--use-unicode', 'use Unicode character')
 opt.version = Aozora2Html::VERSION
 options = opt.getopts
 
-if options["gaiji-dir"]
-  $gaiji_dir = options["gaiji-dir"]
-end
+gaiji_dir = options['gaiji-dir'] || nil
 
-if options["css-files"]
-  $css_files = options["css-files"].split(",")
-end
+css_files = options['css-files']&.split(',')
 
-if options["use-jisx0213"]
+if options['use-jisx0213']
   Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = true
   Aozora2Html::Tag::Accent.use_jisx0213 = true
 end
 
-if options["use-unicode"]
+if options['use-unicode']
   Aozora2Html::Tag::EmbedGaiji.use_unicode = true
 end
 
@@ -39,34 +36,34 @@ src_file, dest_file = ARGV[0], ARGV[1]
 
 Dir.mktmpdir do |dir|
   if dest_file.nil?
-    dest_file = File.join(dir, "output.html")
+    dest_file = File.join(dir, 'output.html')
   end
-  if src_file =~ /\Ahttps?:/
+  if /\Ahttps?:/.match?(src_file)
     down_file = File.join(dir, File.basename(src_file))
     begin
       File.write(down_file, URI.parse(src_file).read)
       src_file = down_file
-    rescue
+    rescue StandardError
       $stderr.print "file not found: #{src_file}\n"
       $stderr.print "Download Error: #{$!}\n"
       exit 1
     end
   else
-    if !File.exist?(src_file)
+    unless File.exist?(src_file)
       $stderr.print "file not found: #{src_file}\n"
       exit 1
     end
   end
 
-  if File.extname(src_file) == ".zip"
-    require "aozora2html/zip"
-    tmpfile = File.join(dir, "aozora.txt")
+  if File.extname(src_file) == '.zip'
+    require 'aozora2html/zip'
+    tmpfile = File.join(dir, 'aozora.txt')
     Aozora2Html::Zip.unzip(src_file, tmpfile)
-    Aozora2Html.new(tmpfile, dest_file).process
+    Aozora2Html.new(tmpfile, dest_file, gaiji_dir: gaiji_dir, css_files: css_files).process
   else
-    Aozora2Html.new(src_file, dest_file).process
+    Aozora2Html.new(src_file, dest_file, gaiji_dir: gaiji_dir, css_files: css_files).process
   end
-  if !ARGV[1]
+  unless ARGV[1]
     output = File.read(dest_file)
     print output
   end

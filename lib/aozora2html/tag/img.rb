@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
+    # 画像用
     class Img < Aozora2Html::Tag
       include Aozora2Html::Tag::Inline
 
@@ -18,4 +21,3 @@ class Aozora2Html
     end
   end
 end
-

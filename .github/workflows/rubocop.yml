@@ -1,0 +1,19 @@
+name: rubocop
+on: [pull_request]
+jobs:
+  rubocop:
+    name: runner / rubocop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0.3
+          bundler-cache: true
+      - name: Run rubocop
+        run: |
+          gem install bundler --no-document
+          bundle install --retry 3
+          bundle exec rubocop -P

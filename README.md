@@ -1,6 +1,5 @@
 # Aozora2Html
 
-[![Build Status](https://travis-ci.org/aozorahack/aozora2html.svg?branch=master)](https://travis-ci.org/aozorahack/aozora2html)
 [![Build Status](https://github.com/aozorahack/aozora2html/workflows/Test/badge.svg)](https://github.com/aozorahack/aozora2html/actions)
 [![Gem Version](https://badge.fury.io/rb/aozora2html.svg)](https://badge.fury.io/rb/aozora2html)
 [![Code Climate](https://codeclimate.com/github/aozorahack/aozora2html/badges/gpa.svg)](https://codeclimate.com/github/aozorahack/aozora2html)
@@ -9,7 +8,9 @@
 
 ## 動作環境
 
-Ruby 2.0以上が推奨ですが、1.9でも動くはずです。
+Ruby 3.0以上が推奨ですが、2.7.xでも動くはずです。
+
+それ以前のRuby 2.xで利用する場合は、aozora2html-2.0.xをご利用ください。
 
 ## インストール
 

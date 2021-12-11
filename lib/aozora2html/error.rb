@@ -1,10 +1,12 @@
-require_relative "i18n"
+# frozen_string_literal: true
 
-# 例外class
+require_relative 'i18n'
+
 class Aozora2Html
+  # 例外class
   class Error < StandardError
-
     def initialize(msg)
+      super
       @message = msg
     end
 
@@ -13,4 +15,3 @@ class Aozora2Html
     end
   end
 end
-

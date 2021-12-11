@@ -1,32 +1,36 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
+    # 外字注記用
     class EmbedGaiji < Aozora2Html::Tag::Gaiji
       attr_accessor :unicode
 
       @use_jisx0213 = nil
       @use_unicode = nil
 
-      def self.use_jisx0213=(val)
-        @use_jisx0213 = val
+      class << self
+        attr_writer :use_jisx0213
       end
 
-      def self.use_jisx0213
-        @use_jisx0213
+      class << self
+        attr_reader :use_jisx0213
       end
 
-      def self.use_unicode=(val)
-        @use_unicode = val
+      class << self
+        attr_writer :use_unicode
       end
 
-      def self.use_unicode
-        @use_unicode
+      class << self
+        attr_reader :use_unicode
       end
 
-      def initialize(parser, folder, code, name, unicode_num = nil)
+      def initialize(parser, folder, code, name, unicode_num = nil, gaiji_dir:)
         @folder = folder
         @code = code
         @name = name
         @unicode = unicode_num
+        @gaiji_dir = gaiji_dir
         super
       end
 
@@ -38,9 +42,9 @@ class Aozora2Html
         if Aozora2Html::Tag::EmbedGaiji.use_jisx0213 && @code
           jisx0213_to_unicode(@code.to_sym)
         elsif Aozora2Html::Tag::EmbedGaiji.use_unicode && @unicode
-          '&#x'+@unicode+';'
+          "&#x#{@unicode};"
         else
-          "<img src=\"#{$gaiji_dir}#{@folder}/#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
+          "<img src=\"#{@gaiji_dir}#{@folder}/#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
         end
       end
     end

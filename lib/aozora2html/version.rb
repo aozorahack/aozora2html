@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
-  VERSION = "0.9.1"
+  VERSION = '2.0.0'
 end

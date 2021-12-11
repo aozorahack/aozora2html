@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
     class Indent < Aozora2Html::Tag
@@ -5,4 +7,3 @@ class Aozora2Html
     end
   end
 end
-

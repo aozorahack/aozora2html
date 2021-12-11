@@ -1,14 +1,14 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
+    # 複数行キャプション用
     class MultilineCaption < Aozora2Html::Tag
-      include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
-
-      def initialize(parser)
-        super
-      end
+      include Aozora2Html::Tag::Multiline
+      include Aozora2Html::Tag::Block
 
       def to_s
-        "<div class=\"caption\">"
+        '<div class="caption">'
       end
     end
   end

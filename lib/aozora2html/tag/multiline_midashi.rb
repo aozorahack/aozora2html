@@ -1,9 +1,13 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
+    # ブロックでの見出し指定用
     class MultilineMidashi < Aozora2Html::Tag
-      include Aozora2Html::Tag::Block, Aozora2Html::Tag::Multiline
+      include Aozora2Html::Tag::Multiline
+      include Aozora2Html::Tag::Block
 
-      def initialize(parser,size,type)
+      def initialize(parser, size, type)
         super
         @tag = Utils.create_midashi_tag(size)
         @id = parser.new_midashi_id(size)

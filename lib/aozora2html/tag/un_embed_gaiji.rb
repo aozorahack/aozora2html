@@ -1,7 +1,8 @@
-# encoding: utf-8
+# frozen_string_literal: true
 
 class Aozora2Html
   class Tag
+    # 非埋め込み外字
     class UnEmbedGaiji < Aozora2Html::Tag::Gaiji
       def initialize(parser, desc)
         @desc = desc
@@ -10,7 +11,7 @@ class Aozora2Html
       end
 
       def to_s
-        '<span class="notes">［'.encode("shift_jis") + @desc + '］</span>'.encode("shift_jis")
+        '<span class="notes">［'.encode('shift_jis') + @desc + '］</span>'.encode('shift_jis')
       end
 
       def escaped?

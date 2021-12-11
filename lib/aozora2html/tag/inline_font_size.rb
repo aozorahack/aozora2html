@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class Aozora2Html
   class Tag
+    # インラインフォントサイズ指定用
     class InlineFontSize < Aozora2Html::Tag::ReferenceMentioned
-
       def initialize(parser, target, times, daisho)
         @target = target
         @class = daisho.to_s + times.to_s
@@ -10,9 +12,8 @@ class Aozora2Html
       end
 
       def to_s
-        "<span class=\"#{@class}\" style=\"font-size: #{@style};\">" + @target.to_s + "</span>"
+        "<span class=\"#{@class}\" style=\"font-size: #{@style};\">#{@target}</span>"
       end
     end
   end
 end
-
