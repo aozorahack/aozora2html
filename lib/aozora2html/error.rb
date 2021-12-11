@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'aozora2html/i18n'
+require_relative 'i18n'
 
 class Aozora2Html
   # 例外class

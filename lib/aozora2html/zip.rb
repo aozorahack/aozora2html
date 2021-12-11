@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'zip'
+
 class Aozora2Html
   # zipファイルからテキストを抽出する
   class Zip

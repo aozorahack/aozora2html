@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'aozora2html/ruby_buffer'
+require_relative 'ruby_buffer'
+
 class Aozora2Html
   # accent特殊文字を生かすための再帰呼び出し
   class AccentParser < Aozora2Html

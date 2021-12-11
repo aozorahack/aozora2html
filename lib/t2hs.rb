@@ -1,15 +1,16 @@
 # 青空文庫形式のテキストファイルを html に整形する ruby スクリプト
-require 'extensions'
-require 'aozora2html/error'
-require 'jstream'
-require 'aozora2html/tag'
-require 'aozora2html/tag_parser'
-require 'aozora2html/accent_parser'
-require 'aozora2html/style_stack'
-require 'aozora2html/header'
-require 'aozora2html/ruby_buffer'
-require 'aozora2html/yaml_loader'
-require 'aozora2html/utils'
+
+require_relative 'extensions'
+require_relative 'aozora2html/error'
+require_relative 'jstream'
+require_relative 'aozora2html/tag'
+require_relative 'aozora2html/tag_parser'
+require_relative 'aozora2html/accent_parser'
+require_relative 'aozora2html/style_stack'
+require_relative 'aozora2html/header'
+require_relative 'aozora2html/ruby_buffer'
+require_relative 'aozora2html/yaml_loader'
+require_relative 'aozora2html/utils'
 
 # 変換器本体
 class Aozora2Html

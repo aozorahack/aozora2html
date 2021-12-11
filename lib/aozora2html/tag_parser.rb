@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'aozora2html/ruby_buffer'
+require_relative 'ruby_buffer'
+
 class Aozora2Html
   # 注記記法parser
   #

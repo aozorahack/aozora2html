@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'yaml'
+
 class Aozora2Html
   # YAML Loader class for Shift_JIS
   class YamlLoader
