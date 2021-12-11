@@ -117,13 +117,10 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_illegal_char_check
-    input = StringIO.new("abc\r\n")
-    output = StringIO.new
-    parser = Aozora2Html.new(input, output)
     out = StringIO.new
     $stdout = out
     begin
-      parser.illegal_char_check('#', 123)
+      Aozora2Html::Utils.illegal_char_check('#', 123)
       outstr = out.string
       assert_equal "警告(123行目):1バイトの「#」が使われています\n", outstr.encode('utf-8')
     ensure
@@ -132,13 +129,10 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_illegal_char_check_sharp
-    input = StringIO.new("abc\r\n")
-    output = StringIO.new
-    parser = Aozora2Html.new(input, output)
     out = StringIO.new
     $stdout = out
     begin
-      parser.illegal_char_check('♯'.encode('shift_jis'), 123)
+      Aozora2Html::Utils.illegal_char_check('♯'.encode('shift_jis'), 123)
       outstr = out.string
       assert_equal "警告(123行目):注記記号の誤用の可能性がある、「♯」が使われています\n", outstr.encode('utf-8')
     ensure
@@ -147,13 +141,10 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_illegal_char_check_notjis
-    input = StringIO.new("abc\r\n")
-    output = StringIO.new
-    parser = Aozora2Html.new(input, output)
     out = StringIO.new
     $stdout = out
     begin
-      parser.illegal_char_check('①'.encode('cp932').force_encoding('shift_jis'), 123)
+      Aozora2Html::Utils.illegal_char_check('①'.encode('cp932').force_encoding('shift_jis'), 123)
       outstr = out.string
       assert_equal "警告(123行目):JIS外字「①」が使われています\n", outstr.force_encoding('cp932').encode('utf-8')
     ensure
@@ -162,14 +153,11 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_illegal_char_check_ok
-    input = StringIO.new("abc\r\n")
-    output = StringIO.new
-    parser = Aozora2Html.new(input, output)
     out = StringIO.new
     $stdout = out
     begin
-      parser.illegal_char_check('あ'.encode('shift_jis'), 123)
-      outstr = output.string
+      Aozora2Html::Utils.illegal_char_check('あ'.encode('shift_jis'), 123)
+      outstr = out.string
       assert_equal '', outstr
     ensure
       $stdout = STDOUT
