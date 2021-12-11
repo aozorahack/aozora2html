@@ -203,13 +203,10 @@ class Aozora2Html
 
   # 1行読み込み
   #
-  # 合わせて@bufferもクリアする
   # @return [String] 読み込んだ文字列を返す
   #
   def read_line
-    tmp = read_to("\r\n")
-    @buffer = []
-    tmp
+    read_to("\r\n")
   end
 
   # parseする
