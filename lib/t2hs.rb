@@ -1594,8 +1594,3 @@ class Aozora2Html
     @out.print "</div>\r\n"
   end
 end
-
-if $0 == __FILE__
-  # TODO: 引数チェックとか
-  Aozora2Html.new($*[0], $*[1]).process
-end
