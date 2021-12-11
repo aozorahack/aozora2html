@@ -378,68 +378,6 @@ class Aozora2Html
     end
   end
 
-  # 使うべきではない文字があるかチェックする
-  #
-  # 警告を出力するだけで結果には影響を与えない。警告する文字は以下:
-  #
-  # * 1バイト文字
-  # * `＃`ではなく`♯`
-  # * JIS(JIS X 0208)外字
-  #
-  # @return [void]
-  #
-  def illegal_char_check(char, line)
-    return unless char.is_a?(String)
-
-    code = char.unpack1('H*')
-    if (code == '21') ||
-       (code == '23') ||
-       ((code >= 'a1') && (code <= 'a5')) ||
-       ((code >= '28') && (code <= '29')) ||
-       (code == '5b') ||
-       (code == '5d') ||
-       (code == '3d') ||
-       (code == '3f') ||
-       (code == '2b') ||
-       ((code >= '7b') && (code <= '7d'))
-      puts I18n.t(:warn_onebyte, line, char)
-    end
-
-    if code == '81f2'
-      puts I18n.t(:warn_chuki, line, char)
-    end
-
-    if ((code >= '81ad') && (code <= '81b7')) ||
-       ((code >= '81c0') && (code <= '81c7')) ||
-       ((code >= '81cf') && (code <= '81d9')) ||
-       ((code >= '81e9') && (code <= '81ef')) ||
-       ((code >= '81f8') && (code <= '81fb')) ||
-       ((code >= '8240') && (code <= '824e')) ||
-       ((code >= '8259') && (code <= '825f')) ||
-       ((code >= '827a') && (code <= '8280')) ||
-       ((code >= '829b') && (code <= '829e')) ||
-       ((code >= '82f2') && (code <= '82fc')) ||
-       ((code >= '8397') && (code <= '839e')) ||
-       ((code >= '83b7') && (code <= '83be')) ||
-       ((code >= '83d7') && (code <= '83fc')) ||
-       ((code >= '8461') && (code <= '846f')) ||
-       ((code >= '8492') && (code <= '849e')) ||
-       ((code >= '84bf') && (code <= '84fc')) ||
-       ((code >= '8540') && (code <= '85fc')) ||
-       ((code >= '8640') && (code <= '86fc')) ||
-       ((code >= '8740') && (code <= '87fc')) ||
-       ((code >= '8840') && (code <= '889e')) ||
-       ((code >= '9873') && (code <= '989e')) ||
-       ((code >= 'eaa5') && (code <= 'eafc')) ||
-       ((code >= 'eb40') && (code <= 'ebfc')) ||
-       ((code >= 'ec40') && (code <= 'ecfc')) ||
-       ((code >= 'ed40') && (code <= 'edfc')) ||
-       ((code >= 'ee40') && (code <= 'eefc')) ||
-       ((code >= 'ef40') && (code <= 'effc'))
-      puts I18n.t(:warn_jis_gaiji, line, char)
-    end
-  end
-
   # 本体解析部
   #
   # 1文字ずつ読み込み、dispatchして@buffer,@ruby_bufへしまう
@@ -480,7 +418,7 @@ class Aozora2Html
       # noop
     else
       if check
-        illegal_char_check(char, line_number)
+        Utils.illegal_char_check(char, line_number)
       end
       push_chars(char)
     end
@@ -1523,7 +1461,7 @@ class Aozora2Html
       # noop
     else
       if check
-        illegal_char_check(char, line_number)
+        Utils.illegal_char_check(char, line_number)
       end
       push_chars(char)
     end
