@@ -1397,21 +1397,8 @@ class Aozora2Html
       # escaped ruby character
       return RUBY_BEGIN_MARK + RUBY_END_MARK
     end
+    @buffer.concat(@ruby_buf.create_ruby(self, ruby))
 
-    ans = ''
-    notes = []
-    @ruby_buf.each do |token|
-      if token.is_a?(Aozora2Html::Tag::UnEmbedGaiji)
-        ans.concat(GAIJI_MARK)
-        token.escape!
-        notes.push(token)
-      else
-        ans.concat(token.to_s)
-      end
-    end
-    @buffer.push(Aozora2Html::Tag::Ruby.new(self, ans, ruby))
-    @buffer += notes
-    @ruby_buf.clear
     nil
   end
 

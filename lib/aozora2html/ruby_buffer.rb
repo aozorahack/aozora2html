@@ -37,8 +37,24 @@ class Aozora2Html
       @ruby_buf
     end
 
-    def each(&block)
-      @ruby_buf.each(&block)
+    def create_ruby(parser, ruby)
+      ans = +''
+      notes = []
+
+      @ruby_buf.each do |token|
+        if token.is_a?(Aozora2Html::Tag::UnEmbedGaiji)
+          ans.concat(GAIJI_MARK)
+          token.escape!
+          notes.push(token)
+        else
+          ans.concat(token.to_s)
+        end
+      end
+
+      notes.unshift(Aozora2Html::Tag::Ruby.new(parser, ans, ruby))
+      clear
+
+      notes
     end
 
     def last
