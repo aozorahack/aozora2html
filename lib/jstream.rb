@@ -77,7 +77,7 @@ class Jstream
     char = nil
 
     begin
-      pos.times { @file.getc }
+      pos.times { read_char }
 
       char = @file.getc
       if char == CR
