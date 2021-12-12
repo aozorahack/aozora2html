@@ -203,13 +203,10 @@ class Aozora2Html
 
   # 1行読み込み
   #
-  # 合わせて@bufferもクリアする
   # @return [String] 読み込んだ文字列を返す
   #
   def read_line
-    tmp = read_to("\r\n")
-    @buffer = []
-    tmp
+    read_to("\r\n")
   end
 
   # parseする
@@ -218,13 +215,11 @@ class Aozora2Html
   #
   def process
     catch(:terminate) do
-      loop do
-        parse
-      rescue Aozora2Html::Error => e
-        puts e.message(line_number)
-        if e.is_a?(Aozora2Html::Error)
-          exit(2)
-        end
+      parse
+    rescue Aozora2Html::Error => e
+      puts e.message(line_number)
+      if e.is_a?(Aozora2Html::Error)
+        exit(2)
       end
     end
     tail_output # final call
@@ -314,19 +309,21 @@ class Aozora2Html
 
   # main loop
   def parse
-    case @section
-    when :head
-      parse_header
-    when :head_end
-      judge_chuuki
-    when :chuuki, :chuuki_in
-      parse_chuuki
-    when :body
-      parse_body
-    when :tail
-      parse_tail
-    else
-      raise Aozora2Html::Error, 'encount undefined condition'
+    loop do
+      case @section
+      when :head
+        parse_header
+      when :head_end
+        judge_chuuki
+      when :chuuki, :chuuki_in
+        parse_chuuki
+      when :body
+        parse_body
+      when :tail
+        parse_tail
+      else
+        raise Aozora2Html::Error, 'encount undefined condition'
+      end
     end
   end
 
