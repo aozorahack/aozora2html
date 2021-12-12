@@ -34,7 +34,8 @@ class Aozora2Html
 
     def self.t(msg, *args)
       if Aozora2Html::I18n.use_utf8
-        (MSG[msg].encode('shift_jis') % args).force_encoding('cp932').encode('utf-8')
+        args_sjis = args.map { |arg| arg.is_a?(String) ? arg.encode('shift_jis') : arg }
+        (MSG[msg].encode('shift_jis') % args_sjis).force_encoding('cp932').encode('utf-8')
       else
         MSG[msg].encode('shift_jis') % args
       end
