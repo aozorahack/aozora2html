@@ -335,7 +335,7 @@ class Aozora2Html
       when '-'
         i += 1
       when "\r\n"
-        @section = if i == 0 && @stream.peek_char(1) == "\r\n"
+        @section = if i == 0
                      :body
                    else
                      :chuuki
