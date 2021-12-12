@@ -13,14 +13,9 @@ class Aozora2Html
       clear
     end
 
-    # バッファの初期化。引数itemがあるときはその1要素のバッファに、
-    # 引数がなければ`""`の1要素のバッファにする。
-    def clear(item = nil)
-      @ruby_buf = if item
-                    [item]
-                  else
-                    [+'']
-                  end
+    # バッファの初期化。`""`の1要素のバッファにする。
+    def clear
+      @ruby_buf = [+'']
       @protected = nil
       @char_type = nil
     end

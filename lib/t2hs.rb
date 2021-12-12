@@ -465,7 +465,7 @@ class Aozora2Html
       @ruby_buf.push(char)
     else
       @ruby_buf.dump_into(@buffer)
-      @ruby_buf.clear(char)
+      @ruby_buf.push(char)
       @ruby_buf.char_type = ctype
     end
   end
@@ -525,7 +525,6 @@ class Aozora2Html
     end
     @ruby_buf.dump_into(@buffer)
     buf = @buffer
-    @ruby_buf.clear
     @buffer = []
     tail = []
 
@@ -1442,7 +1441,6 @@ class Aozora2Html
   def tail_output
     @ruby_buf.dump_into(@buffer)
     string = @buffer.join
-    @ruby_buf.clear
     @buffer = []
     string.gsub!('info@aozora.gr.jp', '<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
     string.gsub!('青空文庫（http://www.aozora.gr.jp/）'.to_sjis) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" }
