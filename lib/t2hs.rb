@@ -644,7 +644,7 @@ class Aozora2Html
         else
           @buffer.push(elt)
         end
-      else
+      else # rubocop:disable Lint/DuplicateBranch
         @ruby_buf.push(elt)
       end
     end
@@ -1396,6 +1396,7 @@ class Aozora2Html
       # escaped ruby character
       return RUBY_BEGIN_MARK + RUBY_END_MARK
     end
+
     @buffer.concat(@ruby_buf.create_ruby(self, ruby))
 
     nil
