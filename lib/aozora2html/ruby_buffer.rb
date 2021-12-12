@@ -45,20 +45,20 @@ class Aozora2Html
       @ruby_buf.last
     end
 
+    # バッファ末尾にitemを追加する
+    #
+    # itemとバッファの最後尾がどちらもStringであれば連結したStringにし、
+    # そうでなければバッファの末尾に新しい要素として追加する
     def push(item)
-      @ruby_buf.push(item)
+      if last.is_a?(String) && item.is_a?(String)
+        @ruby_buf.last.concat(item)
+      else
+        @ruby_buf.push(item)
+      end
     end
 
     def length
       @ruby_buf.length
-    end
-
-    def last_concat(item)
-      @ruby_buf.last.concat(item)
-    end
-
-    def last_is_string?
-      @ruby_buf.last.is_a?(String)
     end
 
     # buffer management

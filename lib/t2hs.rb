@@ -459,19 +459,10 @@ class Aozora2Html
   def push_char(char)
     ctype = char_type(char)
     if (ctype == :hankaku_terminate) && (@ruby_buf.char_type == :hankaku)
-      if @ruby_buf.last_is_string?
-        @ruby_buf.last_concat(char)
-      else
-        @ruby_buf.push(char)
-      end
+      @ruby_buf.push(char)
       @ruby_buf.char_type = :else
     elsif @ruby_buf.protected || ((ctype != :else) && (ctype == @ruby_buf.char_type))
-      if char.is_a?(String) && @ruby_buf.last_is_string?
-        @ruby_buf.last_concat(char)
-      else
-        @ruby_buf.push(char)
-        @ruby_buf.push('')
-      end
+      @ruby_buf.push(char)
     else
       @ruby_buf.dump_into(@buffer)
       @ruby_buf.clear(char)
@@ -647,11 +638,7 @@ class Aozora2Html
     reference.each do |elt|
       #      if @ruby_buf.protected
       if @ruby_buf.present?
-        if @ruby_buf.last_is_string? && elt.is_a?(String)
-          @ruby_buf.last_concat(elt)
-        else
-          @ruby_buf.push(elt)
-        end
+        @ruby_buf.push(elt)
       elsif @buffer.last.is_a?(String)
         if elt.is_a?(String)
           @buffer.last.concat(elt)
