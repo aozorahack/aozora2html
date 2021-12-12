@@ -5,6 +5,12 @@ class Aozora2Html
   #
   # コード内に日本語メッセージが氾濫しないようにするためのクラス
   class I18n
+    @use_utf8 = nil
+
+    class << self
+      attr_accessor :use_utf8
+    end
+
     MSG = {
       tag_syntax_error: '注記を重ねる際の原則、「狭い範囲を先に、広い範囲を後に」が守られていません。リンク先の指針を参考に、書き方をあらためてください',
       undefined_header: '未定義な見出しです',
@@ -27,7 +33,12 @@ class Aozora2Html
     }.freeze
 
     def self.t(msg, *args)
-      (MSG[msg].encode('shift_jis') % args)
+      if Aozora2Html::I18n.use_utf8
+        args_sjis = args.map { |arg| arg.is_a?(String) ? arg.encode('shift_jis') : arg }
+        (MSG[msg].encode('shift_jis') % args_sjis).force_encoding('cp932').encode('utf-8')
+      else
+        MSG[msg].encode('shift_jis') % args
+      end
     end
   end
 end
