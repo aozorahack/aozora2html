@@ -11,6 +11,7 @@ opt.on('--gaiji-dir DIR', 'setting gaiji directory')
 opt.on('--css-files FILES', 'setting css directory')
 opt.on('--use-jisx0213', 'use JIS X 0213 character')
 opt.on('--use-unicode', 'use Unicode character')
+opt.on('--error-utf8', 'show error messages in UTF-8, not Shift_JIS')
 opt.version = Aozora2Html::VERSION
 options = opt.getopts
 
@@ -25,6 +26,10 @@ end
 
 if options['use-unicode']
   Aozora2Html::Tag::EmbedGaiji.use_unicode = true
+end
+
+if options['error-utf8']
+  Aozora2Html::I18n.use_utf8 = true
 end
 
 if ARGV.size < 1 || ARGV.size > 2
