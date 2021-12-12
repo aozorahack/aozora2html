@@ -73,7 +73,7 @@ class Aozora2Html
         end
         if first == "\r\n"
           if @encount_accent
-            puts "警告(#{line_number}行目):アクセント分解の亀甲括弧の始めと終わりが、行中で揃っていません".encode('shift_jis')
+            puts I18n.t(:warn_invalid_accent_brancket, line_number)
           end
           throw :terminate
         elsif first == '〕'.encode('shift_jis')
