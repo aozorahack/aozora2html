@@ -2,10 +2,10 @@
 
 class Aozora2Html
   class Tag
-    # ブロックタグ用module
+    # ブロックタグ用class
     #
-    # 各Tagクラスにてincludeして使う
-    module Block
+    # 各Tagクラスはこれを継承する
+    class Block
       def initialize(parser, *_args)
         if parser.block_allowed_context?
           nil

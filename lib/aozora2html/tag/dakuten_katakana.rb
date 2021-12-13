@@ -3,9 +3,7 @@
 class Aozora2Html
   class Tag
     # 濁点つきカタカナ用
-    class DakutenKatakana < Aozora2Html::Tag
-      include Aozora2Html::Tag::Inline
-
+    class DakutenKatakana < Aozora2Html::Tag::Inline
       def initialize(parser, num, katakana, gaiji_dir:)
         @n = num
         @katakana = katakana

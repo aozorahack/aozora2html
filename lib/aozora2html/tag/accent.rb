@@ -3,14 +3,12 @@
 class Aozora2Html
   class Tag
     # 欧文アクセント文字用
-    class Accent < Aozora2Html::Tag
+    class Accent < Aozora2Html::Tag::Inline
       @use_jisx0213 = nil
 
       class << self
         attr_accessor :use_jisx0213
       end
-
-      include Aozora2Html::Tag::Inline
 
       def initialize(parser, code, name, gaiji_dir:)
         @code = code

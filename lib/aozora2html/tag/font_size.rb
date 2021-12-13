@@ -3,9 +3,8 @@
 class Aozora2Html
   class Tag
     # フォントサイズ指定用
-    class FontSize < Aozora2Html::Tag
+    class FontSize < Aozora2Html::Tag::Block
       include Aozora2Html::Tag::Multiline
-      include Aozora2Html::Tag::Block
 
       def initialize(parser, times, daisho)
         @class = daisho.to_s + times.to_s

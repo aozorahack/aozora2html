@@ -3,8 +3,7 @@
 class Aozora2Html
   class Tag
     # 編集者による訂正用
-    class EditorNote < Aozora2Html::Tag
-      include Aozora2Html::Tag::Inline
+    class EditorNote < Aozora2Html::Tag::Inline
       def initialize(parser, desc)
         @desc = desc
         super
