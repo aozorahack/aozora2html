@@ -84,7 +84,7 @@ class Aozora2Html
           @ruby_buf.protected = true
         elsif (first != '') && !first.nil?
           Utils.illegal_char_check(first, line_number)
-          push_chars(first)
+          push_chars(escape_special_chars(first))
         end
       end
     end
