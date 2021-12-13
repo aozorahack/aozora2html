@@ -435,9 +435,6 @@ class Aozora2Html
     # rubocop:enable Style/GuardClause
   end
 
-  # Original Aozora2Html#push_chars does not convert "'" into '&#39;'; it's old behaivor
-  # of CGI.escapeHTML().
-  #
   def push_chars(obj)
     case obj
     when Array
@@ -1499,6 +1496,7 @@ class Aozora2Html
     @out.print "</div>\r\n"
   end
 
+  # Original Aozora2Html#push_chars does not convert "'" into '&#39;'; it's old behaivor of CGI.escapeHTML().
   def escape_special_chars(char)
     if char.is_a?(String)
       char.gsub(/[&"<>]/, { '&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;' })
