@@ -417,7 +417,7 @@ class Aozora2Html
       if check
         Utils.illegal_char_check(char, line_number)
       end
-      push_chars(char)
+      push_chars(escape_special_chars(char))
     end
   end
 
@@ -435,9 +435,6 @@ class Aozora2Html
     # rubocop:enable Style/GuardClause
   end
 
-  # Original Aozora2Html#push_chars does not convert "'" into '&#39;'; it's old behaivor
-  # of CGI.escapeHTML().
-  #
   def push_chars(obj)
     case obj
     when Array
@@ -445,9 +442,6 @@ class Aozora2Html
         push_chars(x)
       end
     when String
-      if obj.length == 1
-        obj = obj.gsub(/[&"<>]/, { '&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;' })
-      end
       obj.each_char do |x|
         push_char(x)
       end
@@ -1434,7 +1428,7 @@ class Aozora2Html
       if check
         Utils.illegal_char_check(char, line_number)
       end
-      push_chars(char)
+      push_chars(escape_special_chars(char))
     end
   end
 
@@ -1500,5 +1494,14 @@ class Aozora2Html
       @out.print "</ul>\r\n" # <ul>内に<li>以外のエレメントが来るのは不正なので修正
     end
     @out.print "</div>\r\n"
+  end
+
+  # Original Aozora2Html#push_chars does not convert "'" into '&#39;'; it's old behaivor of CGI.escapeHTML().
+  def escape_special_chars(char)
+    if char.is_a?(String)
+      char.gsub(/[&"<>]/, { '&' => '&amp;', '"' => '&quot;', '<' => '&lt;', '>' => '&gt;' })
+    else
+      char
+    end
   end
 end

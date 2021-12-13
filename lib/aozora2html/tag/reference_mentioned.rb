@@ -19,12 +19,7 @@ class Aozora2Html
       def block_element?(elt)
         case elt
         when Array
-          elt.each do |x|
-            if block_element?(x)
-              return true
-            end
-          end
-          nil
+          elt.any? { |x| block_element?(x) }
         when String
           elt.include?('<div')
         else
