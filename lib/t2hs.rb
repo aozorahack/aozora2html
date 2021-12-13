@@ -459,22 +459,13 @@ class Aozora2Html
   def push_char(char)
     ctype = char_type(char)
     if (ctype == :hankaku_terminate) && (@ruby_buf.char_type == :hankaku)
-      if @ruby_buf.last_is_string?
-        @ruby_buf.last_concat(char)
-      else
-        @ruby_buf.push(char)
-      end
+      @ruby_buf.push(char)
       @ruby_buf.char_type = :else
     elsif @ruby_buf.protected || ((ctype != :else) && (ctype == @ruby_buf.char_type))
-      if char.is_a?(String) && @ruby_buf.last_is_string?
-        @ruby_buf.last_concat(char)
-      else
-        @ruby_buf.push(char)
-        @ruby_buf.push('')
-      end
+      @ruby_buf.push(char)
     else
       @ruby_buf.dump_into(@buffer)
-      @ruby_buf.clear(char)
+      @ruby_buf.push(char)
       @ruby_buf.char_type = ctype
     end
   end
@@ -534,7 +525,6 @@ class Aozora2Html
     end
     @ruby_buf.dump_into(@buffer)
     buf = @buffer
-    @ruby_buf.clear
     @buffer = []
     tail = []
 
@@ -647,18 +637,14 @@ class Aozora2Html
     reference.each do |elt|
       #      if @ruby_buf.protected
       if @ruby_buf.present?
-        if @ruby_buf.last_is_string? && elt.is_a?(String)
-          @ruby_buf.last_concat(elt)
-        else
-          @ruby_buf.push(elt)
-        end
+        @ruby_buf.push(elt)
       elsif @buffer.last.is_a?(String)
         if elt.is_a?(String)
           @buffer.last.concat(elt)
         else
           @buffer.push(elt)
         end
-      else
+      else # rubocop:disable Lint/DuplicateBranch
         @ruby_buf.push(elt)
       end
     end
@@ -1411,20 +1397,8 @@ class Aozora2Html
       return RUBY_BEGIN_MARK + RUBY_END_MARK
     end
 
-    ans = ''
-    notes = []
-    @ruby_buf.each do |token|
-      if token.is_a?(Aozora2Html::Tag::UnEmbedGaiji)
-        ans.concat(GAIJI_MARK)
-        token.escape!
-        notes.push(token)
-      else
-        ans.concat(token.to_s)
-      end
-    end
-    @buffer.push(Aozora2Html::Tag::Ruby.new(self, ans, ruby))
-    @buffer += notes
-    @ruby_buf.clear
+    @buffer.concat(@ruby_buf.create_ruby(self, ruby))
+
     nil
   end
 
@@ -1468,7 +1442,6 @@ class Aozora2Html
   def tail_output
     @ruby_buf.dump_into(@buffer)
     string = @buffer.join
-    @ruby_buf.clear
     @buffer = []
     string.gsub!('info@aozora.gr.jp', '<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
     string.gsub!('青空文庫（http://www.aozora.gr.jp/）'.to_sjis) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" }
