@@ -6,8 +6,11 @@
 class Aozora2Html
   class Tag
     # ルビ用
+    #
+    # 現状、under_rubyは無視しているのに注意
     class Ruby < Aozora2Html::Tag::ReferenceMentioned
       attr_accessor :ruby, :under_ruby
+      attr_reader :target
 
       def initialize(parser, string, ruby, under_ruby = '')
         @target = string
@@ -16,16 +19,8 @@ class Aozora2Html
         super
       end
 
-      def gen_rt(string)
-        if string == ''
-          '<rt class="dummy_ruby"></rt>'
-        else
-          "<rt class=\"real_ruby\">#{string}</rt>"
-        end
-      end
-
       def to_s
-        "<ruby><rb>#{@target}</rb><rp>#{'（'.encode('shift_jis')}</rp><rt>#{@ruby}</rt><rp>#{'）'.encode('shift_jis')}</rp></ruby>"
+        "<ruby><rb>#{@target}</rb><rp>#{PAREN_BEGIN_MARK}</rp><rt>#{@ruby}</rt><rp>#{PAREN_END_MARK}</rp></ruby>"
       end
 
       # rubyタグの再割り当て
@@ -67,7 +62,8 @@ class Aozora2Html
           when Aozora2Html::Tag::ReferenceMentioned
             if x.target.is_a?(Array)
               # recursive
-              tar, up, un = rearrange_ruby(x.target, '', '')
+              ruby2 = rearrange_ruby(parser, x.target, '', '')
+              tar, up, un = ruby2.target, ruby2.ruby, ruby2.under_ruby
               # rotation!!
               tar.each do |y|
                 tmp = x.dup
@@ -126,6 +122,17 @@ class Aozora2Html
         end
       end
 
+      # ----------------------------------------------------
+      #
+      # def gen_rt(string)
+      #   if string == ''
+      #     '<rt class="dummy_ruby"></rt>'
+      #   else
+      #     "<rt class=\"real_ruby\">#{string}</rt>"
+      #   end
+      # end
+      #
+      #
       # complex ruby is waiting for IE support and CSS3 candidate
       #   def to_s
       #     ans = "<ruby class=\"complex_ruby\"><rbc>" # indicator of new version of aozora ruby
