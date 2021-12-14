@@ -63,21 +63,21 @@ class Aozora2Html
             if x.target.is_a?(Array)
               # recursive
               ruby2 = rearrange_ruby(parser, x.target, '', '')
-              tar, up, un = ruby2.target, ruby2.ruby, ruby2.under_ruby
+              target2, upper_ruby2, under_ruby2 = ruby2.target, ruby2.ruby, ruby2.under_ruby
               # rotation!!
-              tar.each do |y|
+              target2.each do |y|
                 tmp = x.dup
                 tmp.target = y
                 new_targets.push(tmp)
               end
               if new_under.is_a?(Array)
-                new_under.concat(un)
-              elsif un.to_s.length > 0
+                new_under.concat(under_ruby2)
+              elsif under_ruby2.to_s.length > 0
                 raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
               if new_upper.is_a?(Array)
-                new_upper.concat(up)
-              elsif up.to_s.length > 0
+                new_upper.concat(upper_ruby2)
+              elsif upper_ruby2.to_s.length > 0
                 raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
               end
             else
