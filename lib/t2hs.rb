@@ -797,10 +797,16 @@ class Aozora2Html
       push_chars('</span>')
     else
       check = @ruby_buf.last
-      push_chars('<span class="warichu">')
-      unless check.is_a?(String) && check.end_with?(PAREN_BEGIN_MARK)
+
+      # NOTE: Do not remove duplicates!
+      # rubocop:disable Style/IdenticalConditionalBranches
+      if check.is_a?(String) && check.end_with?(PAREN_BEGIN_MARK)
+        push_chars('<span class="warichu">')
+      else
+        push_chars('<span class="warichu">')
         push_chars(PAREN_BEGIN_MARK)
       end
+      # rubocop:enable Style/IdenticalConditionalBranches
     end
     nil
   end
