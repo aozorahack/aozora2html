@@ -25,10 +25,10 @@ class Aozora2Html
     def general_output
       @ruby_buf.dump_into(@buffer)
       unless @encount_accent
-        @buffer.unshift('〔'.encode('shift_jis'))
+        @buffer.unshift(ACCENT_BEGIN)
       end
       if @closed && !@encount_accent
-        @buffer.push('〕'.encode('shift_jis'))
+        @buffer.push(ACCENT_END)
       elsif !@closed
         @buffer.push("<br />\r\n")
       end
@@ -64,11 +64,11 @@ class Aozora2Html
         case first
         when Aozora2Html::GAIJI_MARK
           first = dispatch_gaiji
-        when '［'.encode('shift_jis')
+        when COMMAND_BEGIN
           first = dispatch_aozora_command
         when Aozora2Html::KU
           assign_kunoji
-        when '《'.encode('shift_jis')
+        when RUBY_BEGIN_MARK
           first = apply_ruby
         end
         if first == "\r\n"
@@ -76,7 +76,7 @@ class Aozora2Html
             puts I18n.t(:warn_invalid_accent_brancket, line_number)
           end
           throw :terminate
-        elsif first == '〕'.encode('shift_jis')
+        elsif first == ACCENT_END
           @closed = true
           throw :terminate
         elsif first == RUBY_PREFIX
