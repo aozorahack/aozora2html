@@ -119,11 +119,7 @@ class Jstream
   private
 
   def getc
-    char = begin
-      @lines[@line][@col]
-    rescue StandardError
-      nil
-    end
+    char = @lines&.at(@line)&.slice(@col)
     @col += 1
     char
   end
