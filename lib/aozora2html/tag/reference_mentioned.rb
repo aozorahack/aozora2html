@@ -6,8 +6,7 @@ class Aozora2Html
     #
     # 前方参照でこいつだけは中身をチェックする
     # 子要素を持つAozora2Html::Tag::Inlineは全てこいつのサブクラス
-    class ReferenceMentioned < Aozora2Html::Tag
-      include Aozora2Html::Tag::Inline
+    class ReferenceMentioned < Aozora2Html::Tag::Inline
       attr_accessor :target
 
       def initialize(*_args) # rubocop:disable Lint/MissingSuper

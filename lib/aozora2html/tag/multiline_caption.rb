@@ -3,10 +3,8 @@
 class Aozora2Html
   class Tag
     # 複数行キャプション用
-    class MultilineCaption < Aozora2Html::Tag
+    class MultilineCaption < Aozora2Html::Tag::Block
       include Aozora2Html::Tag::Multiline
-      include Aozora2Html::Tag::Block
-
       def to_s
         '<div class="caption">'
       end

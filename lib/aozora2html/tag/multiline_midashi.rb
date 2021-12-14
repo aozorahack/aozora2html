@@ -3,9 +3,8 @@
 class Aozora2Html
   class Tag
     # ブロックでの見出し指定用
-    class MultilineMidashi < Aozora2Html::Tag
+    class MultilineMidashi < Aozora2Html::Tag::Block
       include Aozora2Html::Tag::Multiline
-      include Aozora2Html::Tag::Block
 
       def initialize(parser, size, type)
         super
