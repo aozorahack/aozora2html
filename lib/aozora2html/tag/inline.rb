@@ -9,6 +9,7 @@ class Aozora2Html
     # 全ての末端青空classはどちらかのclassのサブクラスになる必要がある
     class Inline < Aozora2Html::Tag
       def initialize(*_args)
+        super()
         true
       end
     end

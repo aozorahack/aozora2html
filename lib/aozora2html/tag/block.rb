@@ -7,6 +7,7 @@ class Aozora2Html
     # 各Tagクラスはこれを継承する
     class Block < Aozora2Html::Tag
       def initialize(parser, *_args)
+        super()
         if parser.block_allowed_context?
           nil
         else
