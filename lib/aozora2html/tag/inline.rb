@@ -7,9 +7,9 @@ class Aozora2Html
     # 全ての青空記法はHTML elementに変換される
     # したがって、block/inlineの区別がある
     # 全ての末端青空classはどちらかのclassのサブクラスになる必要がある
-    class Inline
+    class Inline < Aozora2Html::Tag
       def initialize(*_args)
-        true
+        super()
       end
     end
   end

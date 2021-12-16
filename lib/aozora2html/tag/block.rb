@@ -5,13 +5,11 @@ class Aozora2Html
     # ブロックタグ用class
     #
     # 各Tagクラスはこれを継承する
-    class Block
+    class Block < Aozora2Html::Tag
       def initialize(parser, *_args)
-        if parser.block_allowed_context?
-          nil
-        else
-          syntax_error
-        end
+        super()
+
+        syntax_error unless parser.block_allowed_context?
       end
 
       # 必要に基づきmethod overrideする
