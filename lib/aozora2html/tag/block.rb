@@ -8,11 +8,8 @@ class Aozora2Html
     class Block < Aozora2Html::Tag
       def initialize(parser, *_args)
         super()
-        if parser.block_allowed_context?
-          nil
-        else
-          syntax_error
-        end
+
+        syntax_error unless parser.block_allowed_context?
       end
 
       # 必要に基づきmethod overrideする

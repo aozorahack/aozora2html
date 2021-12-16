@@ -10,7 +10,6 @@ class Aozora2Html
     class Inline < Aozora2Html::Tag
       def initialize(*_args)
         super()
-        true
       end
     end
   end
