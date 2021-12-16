@@ -3,6 +3,10 @@
 class Aozora2Html
   # ユーティリティ関数モジュール
   module Utils
+    KANJI_NUMS = '一二三四五六七八九〇'.encode('shift_jis')
+    KANJI_TEN = '十'.encode('shift_jis')
+    ZENKAKU_NUMS = '０-９'.encode('shift_jis')
+
     def create_font_size(times, daisho)
       size = case times
              when 1
@@ -74,12 +78,12 @@ class Aozora2Html
     module_function :create_midashi_class
 
     def convert_japanese_number(command)
-      tmp = command.tr('０-９'.encode('shift_jis'), '0-9')
-      tmp.tr!('一二三四五六七八九〇'.encode('shift_jis'), '1234567890')
-      tmp.gsub!(/(\d)#{"十".encode("shift_jis")}(\d)/) { "#{$1}#{$2}" }
-      tmp.gsub!(/(\d)#{"十".encode("shift_jis")}/) { "#{$1}0" }
-      tmp.gsub!(/#{"十".encode("shift_jis")}(\d)/) { "1#{$1}" }
-      tmp.gsub!(/#{"十".encode("shift_jis")}/, '10')
+      tmp = command.tr(ZENKAKU_NUMS, '0-9')
+      tmp.tr!(KANJI_NUMS, '1234567890')
+      tmp.gsub!(/(\d)#{KANJI_TEN}(\d)/o) { "#{$1}#{$2}" }
+      tmp.gsub!(/(\d)#{KANJI_TEN}/o) { "#{$1}0" }
+      tmp.gsub!(/#{KANJI_TEN}(\d)/o) { "1#{$1}" }
+      tmp.gsub!(/#{KANJI_TEN}/o, '10')
       tmp
     end
     module_function :convert_japanese_number

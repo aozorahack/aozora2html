@@ -12,15 +12,15 @@ class String
   # used in Aozora2Html#char_type
   def char_type
     ch = self
-    if ch.match(Regexp.new('[ぁ-んゝゞ]'.encode('shift_jis')))
+    if ch.match(Aozora2Html::REGEX_HIRAGANA)
       :hiragana
-    elsif ch.match(Regexp.new('[ァ-ンーヽヾヴ]'.encode('shift_jis')))
+    elsif ch.match(Aozora2Html::REGEX_KATAKANA)
       :katakana
-    elsif ch.match(Regexp.new('[０-９Ａ-Ｚａ-ｚΑ-Ωα-ωА-Яа-я−＆’，．]'.encode('shift_jis')))
+    elsif ch.match(Aozora2Html::REGEX_ZENKAKU)
       :zenkaku
-    elsif ch.match(Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".encode('shift_jis')))
+    elsif ch.match(Aozora2Html::REGEX_HANKAKU)
       :hankaku
-    elsif ch.match(Regexp.new('[亜-熙々※仝〆〇ヶ]'.encode('shift_jis')))
+    elsif ch.match(Aozora2Html::REGEX_KANJI)
       :kanji
     elsif ch.match?(/[.;"?!)]/)
       :hankaku_terminate
