@@ -4,6 +4,7 @@ class Aozora2Html
   # 本文テキスト用バッファ
   #
   # 要素はString以外も含む
+  # to_sすると文字列化できる
   class TextBuffer < Array
     # 行出力時に@bufferが空かどうか調べる
     #
@@ -11,7 +12,7 @@ class Aozora2Html
     #
     # @return [true, false, :inline] 空文字ではない文字列が入っていればfalse、1行注記なら:inline、それ以外しか入っていなければtrue
     #
-    def is_blank?
+    def blank_type
       each do |token|
         return false if token.is_a?(String) && token != ''
 

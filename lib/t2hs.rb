@@ -493,7 +493,7 @@ class Aozora2Html
     @buffer = TextBuffer.new
     tail = []
 
-    indent_type = buf.is_blank?
+    indent_type = buf.blank_type
     terprip = buf.terpri? && @terprip
     @terprip = true
 
