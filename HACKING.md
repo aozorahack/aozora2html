@@ -21,13 +21,12 @@ aozora2htmlでは、`String#char_type`というメソッドが追加されてい
 RubyBufferも`RubyBuffer#char_type`を持っています。これはRubyBufferの中身次第で変更されます。複数のchar_typeを内部で持つ場合、char_typeは:elseになります。
 
 
-## `Array#to_s`について
+## `Aozora2Html::TextBuffer`について
 
 古いRubyでは、`Array#to_s`はArrayの全要素が文字列だった場合、`join`と同じ挙動でした。
 
-aozora2htmlの前身のt2hs.rbでもこれを利用して文字列化していたため、aozora2htmlでも`Array#to_s`を`join`に変更しています。
-
-将来的にはArrayの代わりにTextBuffer等のクラスを導入する可能性があります。
+現在のRubyでは、同様のことをするには`Array#join`を使わなければならなくなっており、`Array#to_s`をすると`[]`等が出力されます。これは埋め込み文字列に使った場合も同様です。
+そのため、aozora2htmlでは`Array`の代わりに`Aozora2Html::TextBuffer`クラスを導入しています。`Aozora2Html::TextBuffer#to_s`は適切な文字列を返します。
 
 
 ## `Jstream`について
