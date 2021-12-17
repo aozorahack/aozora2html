@@ -82,6 +82,10 @@ $ rake test
 
 主な更新履歴は[CHANGELOG.md](CHANGELOG.md)にあります。
 
+## コードについて
+
+コードに関する技術的なnoteは[HACKING.md](HACKING.md)にあります。
+
 ## License
 
 CC0
