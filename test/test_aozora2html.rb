@@ -193,7 +193,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_terpri?
-    assert_equal true, Aozora2Html::TextBuffer.new().terpri?
+    assert_equal true, Aozora2Html::TextBuffer.new.terpri?
     assert_equal true, Aozora2Html::TextBuffer.new(['']).terpri?
     assert_equal true, Aozora2Html::TextBuffer.new(['a']).terpri?
     tag = Aozora2Html::Tag::MultilineMidashi.new(@parser, '小'.encode('shift_jis'), :normal)
