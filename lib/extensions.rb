@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-# 1.8 like to_s method to Array
-class Array
-  def to_s
-    join
-  end
-end
-
 # String extension
 class String
   # used in Aozora2Html#char_type

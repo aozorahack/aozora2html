@@ -9,6 +9,7 @@ require_relative 'aozora2html/accent_parser'
 require_relative 'aozora2html/style_stack'
 require_relative 'aozora2html/header'
 require_relative 'aozora2html/ruby_buffer'
+require_relative 'aozora2html/text_buffer'
 require_relative 'aozora2html/yaml_loader'
 require_relative 'aozora2html/utils'
 
@@ -153,7 +154,7 @@ class Aozora2Html
     @gaiji_dir = gaiji_dir || '../../../gaiji/'
     @css_files = css_files || Array['../../aozora.css']
 
-    @buffer = []
+    @buffer = TextBuffer.new
     @ruby_buf = RubyBuffer.new
     @section = :head ## 現在処理中のセクション(:head,:head_end,:chuuki,:chuuki_in,:body,:tail)
     @header = Aozora2Html::Header.new(css_files: @css_files) ## ヘッダ行の配列
@@ -470,42 +471,6 @@ class Aozora2Html
     end
   end
 
-  # 行出力時に@bufferが空かどうか調べる
-  #
-  # @bufferの中身によって行末の出力が異なるため
-  #
-  # @return [true, false, :inline] 空文字ではない文字列が入っていればfalse、1行注記なら:inline、それ以外しか入っていなければtrue
-  #
-  def buf_is_blank?(buf)
-    buf.each do |token|
-      return false if token.is_a?(String) && (token != '')
-
-      if token.is_a?(Aozora2Html::Tag::OnelineIndent)
-        return :inline
-      end
-    end
-    true
-  end
-
-  # 行末で<br />を出力するべきかどうかの判別用
-  #
-  # @return [true, false] Multilineの注記しか入っていなければfalse、Multilineでも空文字でもない要素が含まれていればtrue
-  #
-  def terpri?(buf)
-    flag = true
-    buf.each do |x|
-      case x
-      when Aozora2Html::Tag::Multiline
-        flag = false
-      when ''
-        # skip
-      else
-        return true
-      end
-    end
-    flag
-  end
-
   # 読み込んだ行の出力を行う
   #
   # parserが改行文字を読み込んだら呼ばれる。
@@ -525,11 +490,11 @@ class Aozora2Html
     end
     @ruby_buf.dump_into(@buffer)
     buf = @buffer
-    @buffer = []
+    @buffer = TextBuffer.new
     tail = []
 
-    indent_type = buf_is_blank?(buf)
-    terprip = (terpri?(buf) and @terprip)
+    indent_type = buf.blank_type
+    terprip = buf.terpri? && @terprip
     @terprip = true
 
     if @indent_stack.last.is_a?(String) && !indent_type
@@ -569,6 +534,8 @@ class Aozora2Html
   # 前方参照の発見 Ruby,style重ねがけ等々のため、要素の配列で返す
   #
   # 前方参照は`○○［＃「○○」に傍点］`、`吹喋［＃「喋」に「ママ」の注記］`といった表記
+  #
+  # @return [TextBuffer|false]
   def search_front_reference(string)
     if string.length == 0
       return false
@@ -592,13 +559,14 @@ class Aozora2Html
         # last_string[start,tail-start] = ""
         searching_buf.pop
         searching_buf.push(last_string.sub(Regexp.new("#{Regexp.quote(string)}$"), ''))
-        [string]
+        TextBuffer.new([string])
       elsif string.match(Regexp.new("#{Regexp.quote(last_string)}$"))
         # 部分一致
         tmp = searching_buf.pop
         found = search_front_reference(string.sub(Regexp.new("#{Regexp.quote(last_string)}$"), ''))
         if found
-          found + [tmp]
+          found.push(tmp)
+          found
         else
           searching_buf.push(tmp)
           false
@@ -609,13 +577,14 @@ class Aozora2Html
       if inner == string
         # 完全一致
         searching_buf.pop
-        [last_string]
+        TextBuffer.new([last_string])
       elsif string.match(Regexp.new("#{Regexp.quote(inner)}$"))
         # 部分一致
         tmp = searching_buf.pop
         found = search_front_reference(string.sub(Regexp.new("#{Regexp.quote(inner)}$"), ''))
         if found
-          found + [tmp]
+          found.push(tmp)
+          found
         else
           searching_buf.push(tmp)
           false
@@ -1448,7 +1417,7 @@ class Aozora2Html
   def tail_output
     @ruby_buf.dump_into(@buffer)
     string = @buffer.join
-    @buffer = []
+    @buffer = TextBuffer.new
     string.gsub!('info@aozora.gr.jp', '<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
     string.gsub!('青空文庫（http://www.aozora.gr.jp/）'.to_sjis) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" }
     if string.match?(%r{(<br />$|</p>$|</h\d>$|<div.*>$|</div>$|^<[^>]*>$)})

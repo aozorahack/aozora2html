@@ -37,7 +37,7 @@ class Aozora2Html
             else
               x
             end
-          end.to_s
+          end.join
         else
           @target
         end

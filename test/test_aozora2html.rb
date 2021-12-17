@@ -193,16 +193,16 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_terpri?
-    assert_equal true, @parser.terpri?([])
-    assert_equal true, @parser.terpri?([''])
-    assert_equal true, @parser.terpri?(['a'])
+    assert_equal true, Aozora2Html::TextBuffer.new.terpri?
+    assert_equal true, Aozora2Html::TextBuffer.new(['']).terpri?
+    assert_equal true, Aozora2Html::TextBuffer.new(['a']).terpri?
     tag = Aozora2Html::Tag::MultilineMidashi.new(@parser, '小'.encode('shift_jis'), :normal)
-    assert_equal false, @parser.terpri?([tag])
-    assert_equal false, @parser.terpri?([tag, tag])
-    assert_equal false, @parser.terpri?([tag, '', ''])
-    assert_equal false, @parser.terpri?(['', tag, ''])
-    assert_equal true, @parser.terpri?([tag, 'a'])
-    assert_equal true, @parser.terpri?(['a', tag])
+    assert_equal false, Aozora2Html::TextBuffer.new([tag]).terpri?
+    assert_equal false, Aozora2Html::TextBuffer.new([tag, tag]).terpri?
+    assert_equal false, Aozora2Html::TextBuffer.new([tag, '', '']).terpri?
+    assert_equal false, Aozora2Html::TextBuffer.new(['', tag, '']).terpri?
+    assert_equal true, Aozora2Html::TextBuffer.new([tag, 'a']).terpri?
+    assert_equal true, Aozora2Html::TextBuffer.new(['a', tag]).terpri?
   end
 
   def test_new_midashi_id
