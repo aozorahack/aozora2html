@@ -12,7 +12,7 @@ class Aozora2Html
 
       @stream = input
       @gaiji_dir = gaiji_dir
-      @buffer = []
+      @buffer = Aozora2Html::TextBuffer.new
       @ruby_buf = Aozora2Html::RubyBuffer.new
       @chuuki_table = chuuki
       @images = image # globalな環境を記録するアイテムは共有する必要あり
