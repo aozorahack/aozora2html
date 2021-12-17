@@ -621,10 +621,10 @@ class Aozora2Html
 
   def kuten2png(substring)
     desc = substring.gsub(PAT_KUTEN, '')
-    match = desc.match(/[12]-\d{1,2}-\d{1,2}/)
-    if match && !desc.match?(NON_0213_GAIJI) && !desc.match?(PAT_KUTEN_DUAL)
+    matched = desc.match(/[12]-\d{1,2}-\d{1,2}/)
+    if matched && !desc.match?(NON_0213_GAIJI) && !desc.match?(PAT_KUTEN_DUAL)
       @chuuki_table[:newjis] = true
-      codes = match[0].split('-')
+      codes = matched[0].split('-')
       folder = sprintf('%1d-%02d', codes[0], codes[1])
       code = sprintf('%1d-%02d-%02d', *codes)
       Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK, ''), gaiji_dir: @gaiji_dir)
@@ -659,9 +659,9 @@ class Aozora2Html
       return try_emb
     end
 
-    match = command.match(/U\+([0-9A-F]{4,5})/)
-    if match && Aozora2Html::Tag::EmbedGaiji.use_unicode
-      unicode_num = match[1]
+    matched = command.match(/U\+([0-9A-F]{4,5})/)
+    if matched && Aozora2Html::Tag::EmbedGaiji.use_unicode
+      unicode_num = matched[1]
       Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num, gaiji_dir: @gaiji_dir)
     else
       # Unemb
@@ -729,8 +729,8 @@ class Aozora2Html
       width = command.match(PAT_ORIKAESHI_JISAGE)[1]
       tag = "<div class=\"burasage\" style=\"margin-left: #{width}em; text-indent: -#{width}em;\">"
     else
-      match = command.match(PAT_ORIKAESHI_JISAGE2)
-      left, indent = match.to_a[1, 2]
+      matched = command.match(PAT_ORIKAESHI_JISAGE2)
+      left, indent = matched.to_a[1, 2]
       left = left.to_i - indent.to_i
       tag = "<div class=\"burasage\" style=\"margin-left: #{indent}em; text-indent: #{left}em;\">"
     end
@@ -791,9 +791,9 @@ class Aozora2Html
 
   def chitsuki_length(command)
     command = Utils.convert_japanese_number(command)
-    match = command.match(PAT_JI_LEN)
-    if match
-      match[1]
+    matched = command.match(PAT_JI_LEN)
+    if matched
+      matched[1]
     else
       '0'
     end
@@ -1001,77 +1001,77 @@ class Aozora2Html
   def exec_block_start_command(command)
     original_command = command.dup
     command.sub!(/^#{OPEN_MARK}/o, '')
-    match = +''
+    match_buf = +''
     if command.match?(INDENT_TYPE[:jisage])
-      push_block_tag(apply_jisage(command), match)
+      push_block_tag(apply_jisage(command), match_buf)
     elsif command.match?(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
-      push_block_tag(apply_chitsuki(command, true), match)
+      push_block_tag(apply_chitsuki(command, true), match_buf)
     end
 
     if command.match?(INDENT_TYPE[:midashi])
-      push_block_tag(apply_midashi(command), match)
+      push_block_tag(apply_midashi(command), match_buf)
     end
 
     if command.match?(INDENT_TYPE[:jizume])
-      if match != ''
+      if match_buf != ''
         @indent_stack.pop
       end
-      push_block_tag(apply_jizume(command), match)
+      push_block_tag(apply_jizume(command), match_buf)
     end
 
     if command.match?(INDENT_TYPE[:yokogumi])
-      if match != ''
+      if match_buf != ''
         @indent_stack.pop
       end
-      push_block_tag(apply_yokogumi(command), match)
+      push_block_tag(apply_yokogumi(command), match_buf)
     end
 
     if command.match?(INDENT_TYPE[:keigakomi])
-      if match != ''
+      if match_buf != ''
         @indent_stack.pop
       end
-      push_block_tag(apply_keigakomi(command), match)
+      push_block_tag(apply_keigakomi(command), match_buf)
     end
 
     if command.match?(INDENT_TYPE[:caption])
-      if match != ''
+      if match_buf != ''
         @indent_stack.pop
       end
-      push_block_tag(apply_caption(command), match)
+      push_block_tag(apply_caption(command), match_buf)
     end
 
     if command.match?(INDENT_TYPE[:futoji])
-      if match != ''
+      if match_buf != ''
         @indent_stack.pop
       end
-      push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, 'futoji'), match)
+      push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, 'futoji'), match_buf)
       @indent_stack.push(:futoji)
     end
     if command.match?(INDENT_TYPE[:shatai])
-      if match != ''
+      if match_buf != ''
         @indent_stack.pop
       end
-      push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, 'shatai'), match)
+      push_block_tag(Aozora2Html::Tag::MultilineStyle.new(self, 'shatai'), match_buf)
       @indent_stack.push(:shatai)
     end
 
     if command.match?(PAT_CHARSIZE)
       _whole, nest, style = command.match(PAT_CHARSIZE).to_a
-      if match != ''
+      if match_buf != ''
         @indent_stack.pop
       end
       daisho = detect_style_size(style)
       push_block_tag(Aozora2Html::Tag::FontSize.new(self,
                                                     Utils.convert_japanese_number(nest).to_i,
                                                     daisho),
-                     match)
+                     match_buf)
       @indent_stack.push(daisho)
     end
 
-    if match == ''
+    if match_buf == ''
       apply_rest_notes(original_command)
     else
-      @tag_stack.push(match)
+      @tag_stack.push(match_buf)
       nil
     end
   end
@@ -1096,15 +1096,15 @@ class Aozora2Html
   def exec_block_end_command(command)
     original_command = command.dup
     command.sub!(/^#{CLOSE_MARK}/o, '')
-    match = false
+    matched = false
     mode = detect_command_mode(command)
     if mode
       explicit_close(mode)
-      match = @indent_stack.pop
+      matched = @indent_stack.pop
     end
 
-    if match
-      unless match.is_a?(String)
+    if matched
+      unless matched.is_a?(String)
         @terprip = false
       end
       nil
@@ -1114,9 +1114,9 @@ class Aozora2Html
   end
 
   def exec_img_command(command, raw)
-    match = raw.match(PAT_IMAGE)
-    if match
-      _whole, alt, src, _wh, width, height = match.to_a
+    matched = raw.match(PAT_IMAGE)
+    if matched
+      _whole, alt, src, _wh, width, height = matched.to_a
       css_class = if alt.match?(PHOTO_COMMAND)
                     'photo'
                   else
