@@ -2,7 +2,7 @@
 
 # String extension
 class String
-  # used in Aozora2Html#char_type
+  # used in RubyBuffer#char_type
   def char_type
     ch = self
     if ch.match(Aozora2Html::REGEX_HIRAGANA)
