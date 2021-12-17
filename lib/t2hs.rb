@@ -656,9 +656,12 @@ class Aozora2Html
     command, _raw = read_to_nest(COMMAND_END)
     try_emb = kuten2png(command)
     if try_emb != command
-      try_emb
-    elsif command.match(/U\+([0-9A-F]{4,5})/) && Aozora2Html::Tag::EmbedGaiji.use_unicode
-      unicode_num = $1
+      return try_emb
+    end
+
+    match = command.match(/U\+([0-9A-F]{4,5})/)
+    if match && Aozora2Html::Tag::EmbedGaiji.use_unicode
+      unicode_num = match[1]
       Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num, gaiji_dir: @gaiji_dir)
     else
       # Unemb
