@@ -1138,110 +1138,12 @@ class Aozora2Html
     ([bouki] * times).join(sep)
   end
 
-  # arrayがルビを含んでいればそのインデックスを返す
-  #
-  # @return [Integer, nil]
-  #
-  def include_ruby?(array)
-    array.index do |elt|
-      case elt
-      when Aozora2Html::Tag::Ruby
-        true
-      when Aozora2Html::Tag::ReferenceMentioned
-        if elt.target.is_a?(Array)
-          include_ruby?(elt.target)
-        else
-          elt.target.is_a?(Aozora2Html::Tag::Ruby)
-        end
-      end
-    end
-  end
-
   # rubyタグの再生成(本体はrearrange_ruby)
   #
   # complex ruby wrap up utilities -- don't erase! we will use soon ...
   #
-  def rearrange_ruby_tag(targets, upper_ruby, under_ruby = '')
-    target, upper, under = rearrange_ruby(targets, upper_ruby, under_ruby)
-    Aozora2Html::Tag::Ruby.new(self, target, upper, under)
-  end
-
-  # rubyタグの再割り当て
-  def rearrange_ruby(targets, upper_ruby, under_ruby = '')
-    if include_ruby?(targets)
-      new_targets = []
-      new_upper = if upper_ruby == ''
-                    []
-                  else
-                    upper_ruby
-                  end
-      new_under = if under_ruby == ''
-                    []
-                  else
-                    under_ruby
-                  end
-      if (new_upper.length > 1) && (new_under.length > 1)
-        raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
-      end
-
-      targets.each do |x|
-        case x
-        when Aozora2Html::Tag::Ruby
-          raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby) if x.target.is_a?(Array)
-
-          if x.ruby == ''
-            raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby) unless new_under.is_a?(Array)
-
-            new_under.push(x.under_ruby)
-          else
-            raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby) unless new_upper.is_a?(Array)
-
-            new_upper.push(x.ruby)
-          end
-          new_targets.push(x.target)
-        when Aozora2Html::Tag::ReferenceMentioned
-          if x.target.is_a?(Array)
-            # recursive
-            tar, up, un = rearrange_ruby(x.target, '', '')
-            # rotation!!
-            tar.each do |y|
-              tmp = x.dup
-              tmp.target = y
-              new_targets.push(tmp)
-            end
-            if new_under.is_a?(Array)
-              new_under.concat(un)
-            elsif un.to_s.length > 0
-              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
-            end
-            if new_upper.is_a?(Array)
-              new_upper.concat(up)
-            elsif up.to_s.length > 0
-              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
-            end
-          else
-            new_targets.push(x)
-            if new_under.is_a?(Array)
-              new_under.push('')
-            end
-            if new_upper.is_a?(Array)
-              new_upper.push('')
-            end
-          end
-        else
-          new_targets.push(x)
-          if new_under.is_a?(Array)
-            new_under.push('')
-          end
-          if new_upper.is_a?(Array)
-            new_upper.push('')
-          end
-        end
-      end
-      [new_targets, new_upper, new_under]
-    else
-      [targets, upper_ruby, under_ruby]
-    end
+  def rearrange_ruby_tag(targets, upper_ruby, under_ruby)
+    Aozora2Html::Tag::Ruby.rearrange_ruby(self, targets, upper_ruby, under_ruby)
   end
 
   def exec_style(targets, command)
@@ -1287,9 +1189,9 @@ class Aozora2Html
         rearrange_ruby_tag(targets, '', under)
       end
     elsif command.match?(PAT_CHUUKI)
-      rearrange_ruby_tag(targets, PAT_CHUUKI.match(command).to_a[1])
+      rearrange_ruby_tag(targets, PAT_CHUUKI.match(command).to_a[1], '')
     elsif command.match?(PAT_BOUKI)
-      rearrange_ruby_tag(targets, multiply(PAT_BOUKI.match(command).to_a[1], targets.to_s.length))
+      rearrange_ruby_tag(targets, multiply(PAT_BOUKI.match(command).to_a[1], targets.to_s.length), '')
     else
       ## direction fix! ##
       filter = ->(x) { x }

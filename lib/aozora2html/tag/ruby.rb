@@ -6,8 +6,11 @@
 class Aozora2Html
   class Tag
     # ルビ用
+    #
+    # 現状、under_rubyは無視しているのに注意
     class Ruby < Aozora2Html::Tag::ReferenceMentioned
       attr_accessor :ruby, :under_ruby
+      attr_reader :target
 
       def initialize(parser, string, ruby, under_ruby = '')
         @target = string
@@ -16,18 +19,120 @@ class Aozora2Html
         super
       end
 
-      def gen_rt(string)
-        if string == ''
-          '<rt class="dummy_ruby"></rt>'
-        else
-          "<rt class=\"real_ruby\">#{string}</rt>"
+      def to_s
+        "<ruby><rb>#{@target}</rb><rp>#{PAREN_BEGIN_MARK}</rp><rt>#{@ruby}</rt><rp>#{PAREN_END_MARK}</rp></ruby>"
+      end
+
+      # rubyタグの再割り当て
+      def self.rearrange_ruby(parser, targets, upper_ruby, under_ruby)
+        unless include_ruby?(targets)
+          return Aozora2Html::Tag::Ruby.new(parser, targets, upper_ruby, under_ruby)
+        end
+
+        new_targets = []
+        new_upper = if upper_ruby == ''
+                      []
+                    else
+                      upper_ruby
+                    end
+        new_under = if under_ruby == ''
+                      []
+                    else
+                      under_ruby
+                    end
+        if (new_upper.length > 1) && (new_under.length > 1)
+          raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
+        end
+
+        targets.each do |x|
+          case x
+          when Aozora2Html::Tag::Ruby
+            raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby) if x.target.is_a?(Array)
+
+            if x.ruby == ''
+              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby) unless new_under.is_a?(Array)
+
+              new_under.push(x.under_ruby)
+            else
+              raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby) unless new_upper.is_a?(Array)
+
+              new_upper.push(x.ruby)
+            end
+            new_targets.push(x.target)
+          when Aozora2Html::Tag::ReferenceMentioned
+            if x.target.is_a?(Array)
+              # recursive
+              ruby2 = rearrange_ruby(parser, x.target, '', '')
+              target2, upper_ruby2, under_ruby2 = ruby2.target, ruby2.ruby, ruby2.under_ruby
+              # rotation!!
+              target2.each do |y|
+                tmp = x.dup
+                tmp.target = y
+                new_targets.push(tmp)
+              end
+              if new_under.is_a?(Array)
+                new_under.concat(under_ruby2)
+              elsif under_ruby2.to_s.length > 0
+                raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
+              end
+              if new_upper.is_a?(Array)
+                new_upper.concat(upper_ruby2)
+              elsif upper_ruby2.to_s.length > 0
+                raise Aozora2Html::Error, I18n.t(:dont_use_double_ruby)
+              end
+            else
+              new_targets.push(x)
+              if new_under.is_a?(Array)
+                new_under.push('')
+              end
+              if new_upper.is_a?(Array)
+                new_upper.push('')
+              end
+            end
+          else
+            new_targets.push(x)
+            if new_under.is_a?(Array)
+              new_under.push('')
+            end
+            if new_upper.is_a?(Array)
+              new_upper.push('')
+            end
+          end
+        end
+
+        Aozora2Html::Tag::Ruby.new(parser, new_targets, new_upper, new_under)
+      end
+
+      # arrayがルビを含んでいればそのインデックスを返す
+      #
+      # @return [Integer, nil]
+      #
+      def self.include_ruby?(array)
+        array.index do |elt|
+          case elt
+          when Aozora2Html::Tag::Ruby
+            true
+          when Aozora2Html::Tag::ReferenceMentioned
+            if elt.target.is_a?(Array)
+              include_ruby?(elt.target)
+            else
+              elt.target.is_a?(Aozora2Html::Tag::Ruby)
+            end
+          end
         end
       end
 
-      def to_s
-        "<ruby><rb>#{@target}</rb><rp>#{'（'.encode('shift_jis')}</rp><rt>#{@ruby}</rt><rp>#{'）'.encode('shift_jis')}</rp></ruby>"
-      end
-
+      # ----------------------------------------------------
+      #
+      # def gen_rt(string)
+      #   if string == ''
+      #     '<rt class="dummy_ruby"></rt>'
+      #   else
+      #     "<rt class=\"real_ruby\">#{string}</rt>"
+      #   end
+      # end
+      #
+      #
       # complex ruby is waiting for IE support and CSS3 candidate
       #   def to_s
       #     ans = "<ruby class=\"complex_ruby\"><rbc>" # indicator of new version of aozora ruby
