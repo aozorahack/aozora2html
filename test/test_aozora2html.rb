@@ -87,24 +87,24 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_char_type
-    assert_equal :kanji, @parser.char_type(Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-2-3', 'name', gaiji_dir: nil))
-    assert_equal :kanji, @parser.char_type(Aozora2Html::Tag::UnEmbedGaiji.new(nil, 'foo'))
-    assert_equal :hankaku, @parser.char_type(Aozora2Html::Tag::Accent.new(nil, 123, 'abc', gaiji_dir: nil))
-    assert_equal :else, @parser.char_type(Aozora2Html::Tag::Okurigana.new(nil, 'abc'))
-    assert_equal :else, @parser.char_type(Aozora2Html::Tag::InlineKeigakomi.new(nil, 'abc'))
-    assert_equal :katakana, @parser.char_type(Aozora2Html::Tag::DakutenKatakana.new(nil, 1, 'abc', gaiji_dir: nil))
+    assert_equal :kanji, Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-2-3', 'name', gaiji_dir: nil).char_type
+    assert_equal :kanji, Aozora2Html::Tag::UnEmbedGaiji.new(nil, 'foo').char_type
+    assert_equal :hankaku, Aozora2Html::Tag::Accent.new(nil, 123, 'abc', gaiji_dir: nil).char_type
+    assert_equal :else, Aozora2Html::Tag::Okurigana.new(nil, 'abc').char_type
+    assert_equal :else, Aozora2Html::Tag::InlineKeigakomi.new(nil, 'abc').char_type
+    assert_equal :katakana, Aozora2Html::Tag::DakutenKatakana.new(nil, 1, 'abc', gaiji_dir: nil).char_type
 
-    assert_equal :hiragana, @parser.char_type('あ'.encode('shift_jis'))
-    assert_equal :hiragana, @parser.char_type('っ'.encode('shift_jis'))
-    assert_equal :katakana, @parser.char_type('ヴ'.encode('shift_jis'))
-    assert_equal :katakana, @parser.char_type('ー'.encode('shift_jis'))
-    assert_equal :zenkaku, @parser.char_type('Ａ'.encode('shift_jis'))
-    assert_equal :zenkaku, @parser.char_type('ｗ'.encode('shift_jis'))
-    assert_equal :hankaku, @parser.char_type('z'.encode('shift_jis'))
-    assert_equal :kanji, @parser.char_type('漢'.encode('shift_jis'))
-    assert_equal :hankaku_terminate, @parser.char_type('!'.encode('shift_jis'))
-    assert_equal :else, @parser.char_type('？'.encode('shift_jis'))
-    assert_equal :else, @parser.char_type('Å'.encode('shift_jis'))
+    assert_equal :hiragana, 'あ'.encode('shift_jis').char_type
+    assert_equal :hiragana, 'っ'.encode('shift_jis').char_type
+    assert_equal :katakana, 'ヴ'.encode('shift_jis').char_type
+    assert_equal :katakana, 'ー'.encode('shift_jis').char_type
+    assert_equal :zenkaku, 'Ａ'.encode('shift_jis').char_type
+    assert_equal :zenkaku, 'ｗ'.encode('shift_jis').char_type
+    assert_equal :hankaku, 'z'.encode('shift_jis').char_type
+    assert_equal :kanji, '漢'.encode('shift_jis').char_type
+    assert_equal :hankaku_terminate, '!'.encode('shift_jis').char_type
+    assert_equal :else, '？'.encode('shift_jis').char_type
+    assert_equal :else, 'Å'.encode('shift_jis').char_type
   end
 
   def test_read_char

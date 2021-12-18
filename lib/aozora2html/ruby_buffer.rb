@@ -6,9 +6,6 @@ class Aozora2Html
     # `｜`が来た時に真にする。ルビの親文字のガード用。
     attr_accessor :protected
 
-    # @ruby_buf内の文字のchar_type
-    attr_accessor :char_type
-
     def initialize
       clear
     end
@@ -87,6 +84,29 @@ class Aozora2Html
       end
       clear
       buffer
+    end
+
+    def push_char(char, buffer)
+      ctype = char_type(char)
+      if (ctype == :hankaku_terminate) && (@char_type == :hankaku)
+        push(char)
+        @char_type = :else
+      elsif @protected || ((ctype != :else) && (ctype == @char_type))
+        push(char)
+      else
+        dump_into(buffer)
+        push(char)
+        @char_type = ctype
+      end
+    end
+
+    private
+
+    def char_type(char)
+      ## `String#char_type`も定義されているのに注意
+      char.char_type
+    rescue StandardError
+      :else
     end
   end
 end

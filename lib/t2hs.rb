@@ -237,13 +237,6 @@ class Aozora2Html
     raise e
   end
 
-  def char_type(char)
-    ## `String#char_type`も定義されているのに注意
-    char.char_type
-  rescue StandardError
-    :else
-  end
-
   def finalize
     hyoki
     dynamic_contents
@@ -458,17 +451,7 @@ class Aozora2Html
   end
 
   def push_char(char)
-    ctype = char_type(char)
-    if (ctype == :hankaku_terminate) && (@ruby_buf.char_type == :hankaku)
-      @ruby_buf.push(char)
-      @ruby_buf.char_type = :else
-    elsif @ruby_buf.protected || ((ctype != :else) && (ctype == @ruby_buf.char_type))
-      @ruby_buf.push(char)
-    else
-      @ruby_buf.dump_into(@buffer)
-      @ruby_buf.push(char)
-      @ruby_buf.char_type = ctype
-    end
+    @ruby_buf.push_char(char, @buffer)
   end
 
   # 読み込んだ行の出力を行う
