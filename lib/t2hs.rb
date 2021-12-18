@@ -753,19 +753,19 @@ class Aozora2Html
   def apply_warichu(command)
     if command.match?(END_MARK)
       if @stream.peek_char(0) != PAREN_END_MARK
-        push_chars(PAREN_END_MARK)
+        push_char(PAREN_END_MARK)
       end
-      push_chars('</span>')
+      push_char('</span>')
     else
       check = @ruby_buf.last
 
       # NOTE: Do not remove duplicates!
       # rubocop:disable Style/IdenticalConditionalBranches
       if check.is_a?(String) && check.end_with?(PAREN_BEGIN_MARK)
-        push_chars('<span class="warichu">')
+        push_char('<span class="warichu">')
       else
-        push_chars('<span class="warichu">')
-        push_chars(PAREN_BEGIN_MARK)
+        push_char('<span class="warichu">')
+        push_char(PAREN_BEGIN_MARK)
       end
       # rubocop:enable Style/IdenticalConditionalBranches
     end
@@ -856,7 +856,7 @@ class Aozora2Html
   end
 
   def push_block_tag(tag, closing)
-    push_chars(tag)
+    push_char(tag)
     closing.concat(tag.close_tag)
   end
 
@@ -878,46 +878,46 @@ class Aozora2Html
       push_char('<span dir="ltr">')
     when KEIGAKOMI_COMMAND
       @style_stack.push([command, '</span>'])
-      push_chars('<span class="keigakomi">')
+      push_char('<span class="keigakomi">')
     when YOKOGUMI_COMMAND
       @style_stack.push([command, '</span>'])
-      push_chars('<span class="yokogumi">')
+      push_char('<span class="yokogumi">')
     when CAPTION_COMMAND
       @style_stack.push([command, '</span>'])
-      push_chars('<span class="caption">')
+      push_char('<span class="caption">')
     when WARIGAKI_COMMAND
       @style_stack.push([command, '</span>'])
-      push_chars('<span class="warigaki">')
+      push_char('<span class="warigaki">')
     when OMIDASHI_COMMAND
       @style_stack.push([command, '</a></h3>'])
       @terprip = false
-      push_chars("<h3 class=\"o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
+      push_char("<h3 class=\"o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
     when NAKAMIDASHI_COMMAND
       @style_stack.push([command, '</a></h4>'])
       @terprip = false
-      push_chars("<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
+      push_char("<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
     when KOMIDASHI_COMMAND
       @style_stack.push([command, '</a></h5>'])
       @terprip = false
-      push_chars("<h5 class=\"ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+      push_char("<h5 class=\"ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
     when DOGYO_OMIDASHI_COMMAND
       @style_stack.push([command, '</a></h3>'])
-      push_chars("<h3 class=\"dogyo-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
+      push_char("<h3 class=\"dogyo-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
     when DOGYO_NAKAMIDASHI_COMMAND
       @style_stack.push([command, '</a></h4>'])
-      push_chars("<h4 class=\"dogyo-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
+      push_char("<h4 class=\"dogyo-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
     when DOGYO_KOMIDASHI_COMMAND
       @style_stack.push([command, '</a></h5>'])
-      push_chars("<h5 class=\"dogyo-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+      push_char("<h5 class=\"dogyo-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
     when MADO_OMIDASHI_COMMAND
       @style_stack.push([command, '</a></h3>'])
-      push_chars("<h3 class=\"mado-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
+      push_char("<h3 class=\"mado-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
     when MADO_NAKAMIDASHI_COMMAND
       @style_stack.push([command, '</a></h4>'])
-      push_chars("<h4 class=\"mado-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
+      push_char("<h4 class=\"mado-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
     when MADO_KOMIDASHI_COMMAND
       @style_stack.push([command, '</a></h5>'])
-      push_chars("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+      push_char("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
     when PAT_CHARSIZE
       @style_stack.push([command, '</span>'])
       _whole, nest, style = command.match(PAT_CHARSIZE).to_a
@@ -925,7 +925,7 @@ class Aozora2Html
       daisho = detect_style_size(style)
       html_class = daisho.to_s + times.to_s
       size = Utils.create_font_size(times, daisho)
-      push_chars("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
+      push_char("<span class=\"#{html_class}\" style=\"font-size: #{size};\">")
     else
       ## Decoration ##
       key = command
@@ -951,7 +951,7 @@ class Aozora2Html
       # found = [class, tag]
       if found
         @style_stack.push([command, "</#{found[1]}>"])
-        push_chars("<#{found[1]} class=\"#{filter.call(found[0])}\">")
+        push_char("<#{found[1]} class=\"#{filter.call(found[0])}\">")
       else
         if $DEBUG
           puts I18n.t(:warn_undefined_command, line_number, key)
@@ -975,7 +975,7 @@ class Aozora2Html
       _whole, ruby = encount.match(PAT_INLINE_RUBY).to_a
       push_char('</rb><rp>（</rp><rt>'.to_sjis + ruby + '</rt><rp>）</rp></ruby>'.to_sjis)
     elsif @style_stack.last_command.match?(encount)
-      push_chars(@style_stack.pop[1])
+      push_char(@style_stack.pop[1])
     else
       raise Aozora2Html::Error, I18n.t(:invalid_nesting, encount, @style_stack.last_command)
     end
