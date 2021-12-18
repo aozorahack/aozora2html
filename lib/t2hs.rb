@@ -183,21 +183,9 @@ class Aozora2Html
     @stream.read_char
   end
 
-  # 指定された終端文字(1文字のStringかCRLF)まで読み込む
-  #
-  #  @param [String] endchar 終端文字
-  def read_to(endchar)
-    buf = ''
-    loop do
-      char = @stream.read_char
-      break if char == endchar
-
-      if char.is_a?(Symbol)
-        print endchar
-      end
-      buf.concat(char)
-    end
-    buf
+  # 一行読み込む
+  def read_line
+    @stream.read_line
   end
 
   def read_accent
@@ -206,14 +194,6 @@ class Aozora2Html
 
   def read_to_nest(endchar)
     Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
-  end
-
-  # 1行読み込み
-  #
-  # @return [String] 読み込んだ文字列を返す
-  #
-  def read_line
-    read_to("\r\n")
   end
 
   # parseする
