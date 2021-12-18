@@ -406,13 +406,11 @@ class Aozora2Html
   #
   def ending_check
     # `底本：`でフッタ(:tail)に遷移
-    # rubocop:disable Style/GuardClause
-    if (@stream.peek_char(0) == TEIHON_MARK[1]) && (@stream.peek_char(1) == TEIHON_MARK[2])
-      @section = :tail
-      ensure_close
-      @out.print "</div>\r\n<div class=\"bibliographical_information\">\r\n<hr />\r\n<br />\r\n"
-    end
-    # rubocop:enable Style/GuardClause
+    return unless @stream.peek_char(0) == TEIHON_MARK[1] && @stream.peek_char(1) == TEIHON_MARK[2]
+
+    @section = :tail
+    ensure_close
+    @out.print "</div>\r\n<div class=\"bibliographical_information\">\r\n<hr />\r\n<br />\r\n"
   end
 
   def push_chars(obj)
