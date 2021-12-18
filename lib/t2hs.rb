@@ -2,6 +2,7 @@
 
 require_relative 'extensions'
 require_relative 'aozora2html/error'
+require_relative 'aozora2html/i18n'
 require_relative 'jstream'
 require_relative 'aozora2html/tag'
 require_relative 'aozora2html/tag_parser'
@@ -760,7 +761,7 @@ class Aozora2Html
     end
   end
 
-  def apply_chitsuki(string, multiline = false) # rubocop:disable Style/OptionalBooleanParameter
+  def apply_chitsuki(string, multiline: false)
     if string.match?(CLOSE_MARK + INDENT_TYPE[:chitsuki] + END_MARK) ||
        string.match?(CLOSE_MARK + JIAGE_COMMAND + END_MARK)
       explicit_close(:chitsuki)
@@ -966,7 +967,7 @@ class Aozora2Html
     if command.match?(INDENT_TYPE[:jisage])
       push_block_tag(apply_jisage(command), match_buf)
     elsif command.match?(/(#{INDENT_TYPE[:chitsuki]}|#{JIAGE_COMMAND})$/)
-      push_block_tag(apply_chitsuki(command, true), match_buf)
+      push_block_tag(apply_chitsuki(command, multiline: true), match_buf)
     end
 
     if command.match?(INDENT_TYPE[:midashi])
