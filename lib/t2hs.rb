@@ -856,7 +856,7 @@ class Aozora2Html
   end
 
   def push_block_tag(tag, closing)
-    push_chars(tag)
+    push_char(tag)
     closing.concat(tag.close_tag)
   end
 
@@ -975,7 +975,7 @@ class Aozora2Html
       _whole, ruby = encount.match(PAT_INLINE_RUBY).to_a
       push_char('</rb><rp>（</rp><rt>'.to_sjis + ruby + '</rt><rp>）</rp></ruby>'.to_sjis)
     elsif @style_stack.last_command.match?(encount)
-      push_chars(@style_stack.pop[1])
+      push_char(@style_stack.pop[1])
     else
       raise Aozora2Html::Error, I18n.t(:invalid_nesting, encount, @style_stack.last_command)
     end
