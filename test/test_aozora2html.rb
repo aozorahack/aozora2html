@@ -86,6 +86,8 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal 'ab', parsed
   end
 
+  using Aozora2Html::StringRefinements
+
   def test_char_type
     assert_equal :kanji, Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-2-3', 'name', gaiji_dir: nil).char_type
     assert_equal :kanji, Aozora2Html::Tag::UnEmbedGaiji.new(nil, 'foo').char_type

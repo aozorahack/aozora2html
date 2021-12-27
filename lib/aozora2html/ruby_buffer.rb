@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'string_refinements'
+
 class Aozora2Html
   # ルビ文字列解析用バッファ
   class RubyBuffer
@@ -101,6 +103,8 @@ class Aozora2Html
     end
 
     private
+
+    using StringRefinements
 
     def char_type(char)
       ## `String#char_type`も定義されているのに注意
