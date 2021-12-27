@@ -4,18 +4,18 @@
 class String
   # used in RubyBuffer#char_type
   def char_type
-    ch = self
-    if ch.match(Aozora2Html::REGEX_HIRAGANA)
+    case self
+    when Aozora2Html::REGEX_HIRAGANA
       :hiragana
-    elsif ch.match(Aozora2Html::REGEX_KATAKANA)
+    when Aozora2Html::REGEX_KATAKANA
       :katakana
-    elsif ch.match(Aozora2Html::REGEX_ZENKAKU)
+    when Aozora2Html::REGEX_ZENKAKU
       :zenkaku
-    elsif ch.match(Aozora2Html::REGEX_HANKAKU)
+    when Aozora2Html::REGEX_HANKAKU
       :hankaku
-    elsif ch.match(Aozora2Html::REGEX_KANJI)
+    when Aozora2Html::REGEX_KANJI
       :kanji
-    elsif ch.match?(/[.;"?!)]/)
+    when /[.;"?!)]/
       :hankaku_terminate
     else
       :else
