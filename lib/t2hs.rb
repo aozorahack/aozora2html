@@ -13,6 +13,7 @@ require_relative 'aozora2html/ruby_buffer'
 require_relative 'aozora2html/text_buffer'
 require_relative 'aozora2html/yaml_loader'
 require_relative 'aozora2html/utils'
+require_relative 'aozora2html/string_refinements'
 
 # 変換器本体
 class Aozora2Html
@@ -20,6 +21,9 @@ class Aozora2Html
   KU = ['18e5'].pack('h*').force_encoding('shift_jis')
   NOJI = ['18f5'].pack('h*').force_encoding('shift_jis')
   DAKUTEN = ['18d8'].pack('h*').force_encoding('shift_jis')
+
+  using StringRefinements
+
   GAIJI_MARK = '※'.to_sjis
   IGETA_MARK = '＃'.to_sjis
   RUBY_BEGIN_MARK = '《'.to_sjis

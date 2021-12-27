@@ -31,6 +31,8 @@ class FontSizeTagTest < Test::Unit::TestCase
     assert_equal '<div class="sho3" style="font-size: xx-small;">', tag.to_s.encode('utf-8')
   end
 
+  using Aozora2Html::StringRefinements
+
   def test_to_s0
     assert_raise(Aozora2Html::Error.new('文字サイズの指定が不正です'.to_sjis)) do
       _tag = Aozora2Html::Tag::FontSize.new(@parser, 0, :sho)
