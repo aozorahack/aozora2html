@@ -25,7 +25,11 @@ class Aozora2Html
       end
 
       def to_sjis
-        encode('shift_jis')
+        encode(Encoding::Shift_JIS)
+      end
+
+      def to_utf8
+        encode(Encoding::UTF_8)
       end
     end
   end

@@ -10,6 +10,8 @@ class ExceptionTest < Test::Unit::TestCase
     end
   end
 
+  using Aozora2Html::StringRefinements
+
   def test_raise_aozora_error
     error_msg = ''
     begin
@@ -18,6 +20,6 @@ class ExceptionTest < Test::Unit::TestCase
       error_msg = e.message(123)
     end
     assert_equal "エラー(123行目):sample error. \r\n処理を停止します",
-                 error_msg.encode('utf-8')
+                 error_msg.to_utf8
   end
 end

@@ -194,8 +194,10 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+  using Aozora2Html::StringRefinements
+
   def parse_text(input_text)
-    input = StringIO.new(input_text.encode('shift_jis'))
+    input = StringIO.new(input_text.to_sjis)
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
     parser.instance_eval { @section = :tail }
@@ -204,7 +206,7 @@ class CommandParseTest < Test::Unit::TestCase
         parser.parse
       end
     end
-    output.string.encode('utf-8')
+    output.string.to_utf8
   end
 
   def teardown
