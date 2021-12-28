@@ -15,9 +15,11 @@ class InlineYokogumiTagTest < Test::Unit::TestCase
     assert_equal true, tag.is_a?(Aozora2Html::Tag::Inline)
   end
 
+  using Aozora2Html::StringRefinements
+
   def test_to_s
-    tag = Aozora2Html::Tag::InlineYokogumi.new(@parser, 'テスト'.encode('shift_jis'))
-    assert_equal '<span class="yokogumi">テスト</span>', tag.to_s.encode('utf-8')
+    tag = Aozora2Html::Tag::InlineYokogumi.new(@parser, 'テスト'.to_sjis)
+    assert_equal '<span class="yokogumi">テスト</span>', tag.to_s.to_utf8
   end
 
   def teardown

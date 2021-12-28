@@ -14,10 +14,12 @@ class Aozora2Html
       normalize_data(tmp_data)
     end
 
+    using StringRefinements
+
     def normalize_data(data)
       case data
       when String
-        data.encode('shift_jis')
+        data.to_sjis
       when Hash
         new_data = {}
         data.each do |k, v|

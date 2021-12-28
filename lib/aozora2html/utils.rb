@@ -3,9 +3,11 @@
 class Aozora2Html
   # ユーティリティ関数モジュール
   module Utils
-    KANJI_NUMS = '一二三四五六七八九〇'.encode('shift_jis')
-    KANJI_TEN = '十'.encode('shift_jis')
-    ZENKAKU_NUMS = '０-９'.encode('shift_jis')
+    using StringRefinements
+
+    KANJI_NUMS = '一二三四五六七八九〇'.to_sjis
+    KANJI_TEN = '十'.to_sjis
+    ZENKAKU_NUMS = '０-９'.to_sjis
 
     def create_font_size(times, daisho)
       size = case times

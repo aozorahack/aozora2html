@@ -98,9 +98,11 @@ class RubyParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+  using Aozora2Html::StringRefinements
+
   def test_parse_ruby12
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」に「ママ」の注記］\r\n"
-    assert_raise(Aozora2Html::Error.new('同じ箇所に2つのルビはつけられません'.encode('shift_jis'))) do
+    assert_raise(Aozora2Html::Error.new('同じ箇所に2つのルビはつけられません'.to_sjis)) do
       _parsed = parse_text(src)
     end
   end
@@ -113,7 +115,7 @@ class RubyParseTest < Test::Unit::TestCase
   end
 
   def parse_text(input_text)
-    input = StringIO.new(input_text.encode('shift_jis'))
+    input = StringIO.new(input_text.to_sjis)
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
     parser.instance_eval { @section = :tail }
@@ -123,6 +125,6 @@ class RubyParseTest < Test::Unit::TestCase
       end
     end
 
-    output.string.encode('utf-8')
+    output.string.to_utf8
   end
 end

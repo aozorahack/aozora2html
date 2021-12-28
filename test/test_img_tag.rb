@@ -15,9 +15,11 @@ class ImgTagTest < Test::Unit::TestCase
     assert_equal true, tag.is_a?(Aozora2Html::Tag::Inline)
   end
 
+  using Aozora2Html::StringRefinements
+
   def test_to_s
     tag = Aozora2Html::Tag::Img.new(@parser, 'foo.png', 'img1', 'alt img1', 40, 50)
-    assert_equal '<img class="img1" width="40" height="50" src="foo.png" alt="alt img1" />', tag.to_s.encode('utf-8')
+    assert_equal '<img class="img1" width="40" height="50" src="foo.png" alt="alt img1" />', tag.to_s.to_utf8
   end
 
   def teardown

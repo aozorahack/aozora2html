@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'string_refinements'
+
 class Aozora2Html
   # Internationalization(I18n) class
   #
@@ -32,12 +34,14 @@ class Aozora2Html
       warn_undefined_command: '警告(%d行目):「%s」は未対応のコマンドのため無視します'
     }.freeze
 
+    using StringRefinements
+
     def self.t(msg, *args)
       if Aozora2Html::I18n.use_utf8
-        args_sjis = args.map { |arg| arg.is_a?(String) ? arg.encode('shift_jis') : arg }
-        (MSG[msg].encode('shift_jis') % args_sjis).force_encoding('cp932').encode('utf-8')
+        args_sjis = args.map { |arg| arg.is_a?(String) ? arg.to_sjis : arg }
+        (MSG[msg].to_sjis % args_sjis).force_encoding('cp932').to_utf8
       else
-        MSG[msg].encode('shift_jis') % args
+        MSG[msg].to_sjis % args
       end
     end
   end

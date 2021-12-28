@@ -104,11 +104,11 @@ class Aozora2Html
   PAT_BOUKI = /#{"「(.)」の傍記".to_sjis}/.freeze
   PAT_CHARSIZE = /#{"(.*)段階(..)な文字".to_sjis}/.freeze
 
-  REGEX_HIRAGANA = Regexp.new('[ぁ-んゝゞ]'.encode('shift_jis'))
-  REGEX_KATAKANA = Regexp.new('[ァ-ンーヽヾヴ]'.encode('shift_jis'))
-  REGEX_ZENKAKU = Regexp.new('[０-９Ａ-Ｚａ-ｚΑ-Ωα-ωА-Яа-я−＆’，．]'.encode('shift_jis'))
-  REGEX_HANKAKU = Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".encode('shift_jis'))
-  REGEX_KANJI = Regexp.new('[亜-熙々※仝〆〇ヶ]'.encode('shift_jis'))
+  REGEX_HIRAGANA = Regexp.new('[ぁ-んゝゞ]'.to_sjis)
+  REGEX_KATAKANA = Regexp.new('[ァ-ンーヽヾヴ]'.to_sjis)
+  REGEX_ZENKAKU = Regexp.new('[０-９Ａ-Ｚａ-ｚΑ-Ωα-ωА-Яа-я−＆’，．]'.to_sjis)
+  REGEX_HANKAKU = Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".to_sjis)
+  REGEX_KANJI = Regexp.new('[亜-熙々※仝〆〇ヶ]'.to_sjis)
 
   DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a><script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n</div>".to_sjis
 

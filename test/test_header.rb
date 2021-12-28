@@ -8,10 +8,12 @@ class HeaderTest < Test::Unit::TestCase
     @header = Aozora2Html::Header.new(css_files: Array['../../aozora.css'])
   end
 
+  using Aozora2Html::StringRefinements
+
   def test_header_to_html
-    @header.push('武装せる市街'.encode('shift_jis'))
-    @header.push('黒島伝治'.encode('shift_jis'))
-    actual = @header.to_html.encode('utf-8')
+    @header.push('武装せる市街'.to_sjis)
+    @header.push('黒島伝治'.to_sjis)
+    actual = @header.to_html.to_utf8
 
     # rubocop:disable Layout/LineLength
     expected =
@@ -22,21 +24,21 @@ class HeaderTest < Test::Unit::TestCase
   end
 
   def test_build_title
-    @header.push('武装せる市街'.encode('shift_jis'))
-    @header.push('黒島伝治'.encode('shift_jis'))
+    @header.push('武装せる市街'.to_sjis)
+    @header.push('黒島伝治'.to_sjis)
     header_info = @header.build_header_info
-    actual = @header.build_title(header_info).encode('utf-8')
+    actual = @header.build_title(header_info).to_utf8
     expected = '<title>黒島伝治 武装せる市街</title>'
     assert_equal(expected, actual)
   end
 
   def test_build_title2
-    @header.push('スリーピー・ホローの伝説'.encode('shift_jis'))
-    @header.push('故ディードリッヒ・ニッカボッカーの遺稿より'.encode('shift_jis'))
-    @header.push('ワシントン・アーヴィング　Washington Irving'.encode('shift_jis'))
-    @header.push('吉田甲子太郎訳'.encode('shift_jis'))
+    @header.push('スリーピー・ホローの伝説'.to_sjis)
+    @header.push('故ディードリッヒ・ニッカボッカーの遺稿より'.to_sjis)
+    @header.push('ワシントン・アーヴィング　Washington Irving'.to_sjis)
+    @header.push('吉田甲子太郎訳'.to_sjis)
     header_info = @header.build_header_info
-    actual = @header.build_title(header_info).encode('utf-8')
+    actual = @header.build_title(header_info).to_utf8
     expected = '<title>ワシントン・アーヴィング　Washington Irving 吉田甲子太郎訳 スリーピー・ホローの伝説 故ディードリッヒ・ニッカボッカーの遺稿より</title>'
     assert_equal(expected, actual)
   end

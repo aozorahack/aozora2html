@@ -4,12 +4,14 @@ require 'test_helper'
 require 'aozora2html'
 
 class I18nTest < Test::Unit::TestCase
+  using Aozora2Html::StringRefinements
+
   def test_t
     assert_equal '警告(123行目):JIS外字「①」が使われています',
                  Aozora2Html::I18n.t(:warn_jis_gaiji,
                                      123,
                                      '①'.encode('cp932').force_encoding('shift_jis'))
-                                  .force_encoding('cp932').encode('utf-8')
+                                  .force_encoding('cp932').to_utf8
   end
 
   def test_error_utf8
@@ -29,7 +31,7 @@ class I18nTest < Test::Unit::TestCase
     $stdout = StringIO.new
     begin
       puts '①'.encode('cp932').force_encoding('shift_jis')
-      assert_equal "①\n", $stdout.string.force_encoding('cp932').encode('utf-8')
+      assert_equal "①\n", $stdout.string.force_encoding('cp932').to_utf8
     ensure
       $stdout = STDOUT
     end

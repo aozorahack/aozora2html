@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../string_refinements'
+
 class Aozora2Html
   class Tag
     # 非埋め込み外字
@@ -10,8 +12,10 @@ class Aozora2Html
         super
       end
 
+      using StringRefinements
+
       def to_s
-        '<span class="notes">［'.encode('shift_jis') + @desc + '］</span>'.encode('shift_jis')
+        '<span class="notes">［'.to_sjis + @desc + '］</span>'.to_sjis
       end
 
       def escaped?
