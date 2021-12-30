@@ -21,7 +21,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
       begin
         assert_equal Aozora2Html, parser.class
       ensure
-        parser.close
+        parser.__send__(:close)
       end
     end
   end
@@ -35,23 +35,23 @@ class Aozora2HtmlTest < Test::Unit::TestCase
 
       begin
         assert_equal 0, parser.line_number
-        ch = parser.read_char
+        ch = parser.__send__(:read_char)
         assert_equal 'a', ch
         assert_equal 1, parser.line_number
-        ch = parser.read_char
+        ch = parser.__send__(:read_char)
         assert_equal "\r\n", ch
         assert_equal 1, parser.line_number
-        ch = parser.read_char
+        ch = parser.__send__(:read_char)
         assert_equal 'b', ch
         assert_equal 2, parser.line_number
-        ch = parser.read_char
+        ch = parser.__send__(:read_char)
         assert_equal "\r\n", ch
         assert_equal 2, parser.line_number
-        ch = parser.read_char
+        ch = parser.__send__(:read_char)
         assert_equal 'c', ch
         assert_equal 3, parser.line_number
       ensure
-        parser.close
+        parser.__send__(:close)
       end
     end
   end
@@ -61,19 +61,19 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
     assert_equal 0, parser.line_number
-    ch = parser.read_char
+    ch = parser.__send__(:read_char)
     assert_equal 'a', ch
     assert_equal 1, parser.line_number
-    ch = parser.read_char
+    ch = parser.__send__(:read_char)
     assert_equal "\r\n", ch
     assert_equal 1, parser.line_number
-    ch = parser.read_char
+    ch = parser.__send__(:read_char)
     assert_equal 'b', ch
     assert_equal 2, parser.line_number
-    ch = parser.read_char
+    ch = parser.__send__(:read_char)
     assert_equal "\r\n", ch
     assert_equal 2, parser.line_number
-    ch = parser.read_char
+    ch = parser.__send__(:read_char)
     assert_equal 'c', ch
     assert_equal 3, parser.line_number
   end
@@ -82,7 +82,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     input = StringIO.new("ab\r\nc\r\n")
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
-    parsed = parser.read_line
+    parsed = parser.__send__(:read_line)
     assert_equal 'ab', parsed
   end
 
@@ -113,7 +113,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     input = StringIO.new("／＼\r\n".to_sjis)
     output = StringIO.new
     parser = Aozora2Html.new(input, output)
-    char = parser.read_char
+    char = parser.__send__(:read_char)
     assert_equal '／'.to_sjis, char
     assert_equal Aozora2Html::KU, char
   end
@@ -219,14 +219,14 @@ class Aozora2HtmlTest < Test::Unit::TestCase
   end
 
   def test_multiply
-    bouki = @parser.multiply('x', 5)
+    bouki = @parser.__send__(:multiply, 'x', 5)
     assert_equal 'x&nbsp;x&nbsp;x&nbsp;x&nbsp;x', bouki
   end
 
   def test_apply_midashi
-    midashi = @parser.apply_midashi('中見出し'.to_sjis)
+    midashi = @parser.__send__(:apply_midashi, '中見出し'.to_sjis)
     assert_equal %Q(<h4 class="naka-midashi"><a class="midashi_anchor" id="midashi10">), midashi.to_s
-    midashi = @parser.apply_midashi('大見出し'.to_sjis)
+    midashi = @parser.__send__(:apply_midashi, '大見出し'.to_sjis)
     assert_equal %Q(<h3 class="o-midashi"><a class="midashi_anchor" id="midashi110">), midashi.to_s
   end
 
@@ -249,8 +249,8 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     $stdout = out
     message = nil
     begin
-      parser.parse_body
-      parser.general_output
+      parser.__send__(:parse_body)
+      parser.__send__(:general_output)
     rescue Aozora2Html::Error => e
       message = e.message.to_utf8
     ensure
@@ -267,10 +267,10 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     $stdout = out
     message = nil
     begin
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
-      parser.general_output
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:general_output)
     rescue Aozora2Html::Error => e
       message = e.message.to_utf8
     ensure
@@ -287,11 +287,11 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     $stdout = out
     _message = nil
     begin
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
     rescue Aozora2Html::Error => e
       _message = e.message.to_utf8
     ensure
@@ -310,7 +310,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     $stdout = out
     message = nil
     begin
-      parser.parse_body
+      parser.__send__(:parse_body)
     rescue Aozora2Html::Error => e
       message = e.message.to_utf8
     ensure
@@ -327,13 +327,13 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     $stdout = out
     message = nil
     begin
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
-      parser.parse_body
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
+      parser.__send__(:parse_body)
     rescue Aozora2Html::Error => e
       message = e.message.to_utf8
     ensure
@@ -351,7 +351,7 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     _message = nil
     begin
       9.times do
-        parser.parse_body
+        parser.__send__(:parse_body)
       end
     rescue Aozora2Html::Error => e
       _message = e.message.to_utf8

@@ -121,7 +121,7 @@ class RubyParseTest < Test::Unit::TestCase
     parser.instance_eval { @section = :tail }
     catch(:terminate) do
       loop do
-        parser.parse
+        parser.__send__(:parse)
       end
     end
 

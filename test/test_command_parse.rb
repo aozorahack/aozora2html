@@ -203,7 +203,7 @@ class CommandParseTest < Test::Unit::TestCase
     parser.instance_eval { @section = :tail }
     catch(:terminate) do
       loop do
-        parser.parse
+        parser.__send__(:parse)
       end
     end
     output.string.to_utf8

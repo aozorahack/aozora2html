@@ -183,24 +183,6 @@ class Aozora2Html
     @style_stack.empty?
   end
 
-  # 一文字読み込む
-  def read_char
-    @stream.read_char
-  end
-
-  # 一行読み込む
-  def read_line
-    @stream.read_line
-  end
-
-  def read_accent
-    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
-  end
-
-  def read_to_nest(endchar)
-    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
-  end
-
   # parseする
   #
   # 終了時（終端まで来た場合）にはthrow :terminateで脱出する
@@ -220,6 +202,76 @@ class Aozora2Html
   rescue StandardError => e
     puts "ERROR: line: #{line_number}"
     raise e
+  end
+
+  def new_midashi_id(size)
+    if size.is_a?(Integer)
+      @midashi_id += size
+      return @midashi_id
+    end
+
+    case size
+    when /#{SIZE_SMALL}/o
+      inc = 1
+    when /#{SIZE_MIDDLE}/o
+      inc = 10
+    when /#{SIZE_LARGE}/o
+      inc = 100
+    else
+      raise Aozora2Html::Error, I18n.t(:undefined_header)
+    end
+    @midashi_id += inc
+  end
+
+  def kuten2png(substring)
+    desc = substring.gsub(PAT_KUTEN, '')
+    matched = desc.match(/[12]-\d{1,2}-\d{1,2}/)
+    if matched && !desc.match?(NON_0213_GAIJI) && !desc.match?(PAT_KUTEN_DUAL)
+      @chuuki_table[:newjis] = true
+      codes = matched[0].split('-')
+      folder = sprintf('%1d-%02d', codes[0], codes[1])
+      code = sprintf('%1d-%02d-%02d', *codes)
+      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK, ''), gaiji_dir: @gaiji_dir)
+    else
+      substring
+    end
+  end
+
+  # コマンド文字列からモードのシンボルを取り出す
+  #
+  # @return [Symbol]
+  #
+  def detect_command_mode(command)
+    if command.match?(INDENT_TYPE[:chitsuki] + END_MARK) || command.match?(JIAGE_COMMAND + END_MARK)
+      return :chitsuki
+    end
+
+    INDENT_TYPE.each_key do |key|
+      if command.match?(INDENT_TYPE[key])
+        return key
+      end
+    end
+    nil
+  end
+
+  private
+
+  # 一文字読み込む
+  def read_char
+    @stream.read_char
+  end
+
+  # 一行読み込む
+  def read_line
+    @stream.read_line
+  end
+
+  def read_accent
+    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
+  end
+
+  def read_to_nest(endchar)
+    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
   end
 
   def finalize
@@ -585,20 +637,6 @@ class Aozora2Html
     end
   end
 
-  def kuten2png(substring)
-    desc = substring.gsub(PAT_KUTEN, '')
-    matched = desc.match(/[12]-\d{1,2}-\d{1,2}/)
-    if matched && !desc.match?(NON_0213_GAIJI) && !desc.match?(PAT_KUTEN_DUAL)
-      @chuuki_table[:newjis] = true
-      codes = matched[0].split('-')
-      folder = sprintf('%1d-%02d', codes[0], codes[1])
-      code = sprintf('%1d-%02d-%02d', *codes)
-      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK, ''), gaiji_dir: @gaiji_dir)
-    else
-      substring
-    end
-  end
-
   def escape_gaiji(command)
     _whole, kanji, line = command.match(PAT_GAIJI).to_a
     tmp = @images.assoc(kanji)
@@ -783,25 +821,6 @@ class Aozora2Html
         Aozora2Html::Tag::OnelineChitsuki.new(self, len)
       end
     end
-  end
-
-  def new_midashi_id(size)
-    if size.is_a?(Integer)
-      @midashi_id += size
-      return @midashi_id
-    end
-
-    case size
-    when /#{SIZE_SMALL}/o
-      inc = 1
-    when /#{SIZE_MIDDLE}/o
-      inc = 10
-    when /#{SIZE_LARGE}/o
-      inc = 100
-    else
-      raise Aozora2Html::Error, I18n.t(:undefined_header)
-    end
-    @midashi_id += inc
   end
 
   def apply_midashi(command)
@@ -1040,23 +1059,6 @@ class Aozora2Html
       @tag_stack.push(match_buf)
       nil
     end
-  end
-
-  # コマンド文字列からモードのシンボルを取り出す
-  #
-  # @return [Symbol]
-  #
-  def detect_command_mode(command)
-    if command.match?(INDENT_TYPE[:chitsuki] + END_MARK) || command.match?(JIAGE_COMMAND + END_MARK)
-      return :chitsuki
-    end
-
-    INDENT_TYPE.each_key do |key|
-      if command.match?(INDENT_TYPE[key])
-        return key
-      end
-    end
-    nil
   end
 
   def exec_block_end_command(command)
