@@ -1,3 +1,22 @@
+<a name="3.0.0"></a>
+## 3.0.0
+
+### Breaking Changes
+
+* Ruby 2.7未満をサポート対象外にしました。Ruby 3.0以降を推奨します。それ以前のRubyを使われる場合はv2.0.0をご利用ください https://github.com/aozorahack/aozora2html/pull/49
+* t2hs.rbを廃止し、bin/aozora2html以外からは実行できなくしました https://github.com/aozorahack/aozora2html/pull/65　
+* t2hs.rbにあったメソッドのうち、通常外部から使われないメソッドをprivateにしました https://github.com/aozorahack/aozora2html/pull/93
+
+### Bug Fixes
+
+* 以前は全角空白であったところが半角空白になっていたので修正しました https://github.com/aozorahack/aozora2html/pull/62
+
+### Features
+
+* エラーメッセージがUTF-8になる `--error-utf8` オプションを追加しました https://github.com/aozorahack/aozora2html/pull/72
+* `sample/chukiichiran_kinyurei.txt`に他の例を追加しました https://github.com/aozorahack/aozora2html/pull/78
+* `rake chuuki`で`sample/chukiichiran_kinyurei.txt`を`sample/chukiichiran_kinyurei.html`に変換できるrakeタスクを追加しました https://github.com/aozorahack/aozora2html/pull/95
+
 <a name="2.0.0"></a>
 ## 2.0.0
 
