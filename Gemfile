@@ -6,11 +6,10 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
-  gem 'bundler'
-  gem 'rake', '~> 12.0'
-  gem 'rubocop'
-  gem 'rubocop-performance'
-  gem 'rubocop-rake'
-  gem 'test-unit'
-  gem 'test-unit-rr'
+  gem 'rake', '~> 13.0'
+  gem 'rubocop', '~> 1.24'
+  gem 'rubocop-performance', '~> 1.13'
+  gem 'rubocop-rake', '~> 0.6.0'
+  gem 'test-unit', '~> 3.5'
+  gem 'test-unit-rr', '~> 1.0'
 end
