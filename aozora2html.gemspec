@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['takahashimm@gmail.com']
 
   spec.summary       = %q(converter from Aozora Bunko format into xhtml. It's based of t2hs.rb from kumihan.aozora.gr.jp.)
-  spec.description   = %q(converter from Aozora Bunko format into xhtml. It's based of t2hs.rb from kumihan.aozora.gr.jp.)
+  spec.description   = spec.summary
   spec.homepage      = 'https://github.com/aozorahack/aozora2html'
 
   spec.required_ruby_version = '>= 2.7.0'
@@ -22,13 +22,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'rubyzip'
-  spec.add_development_dependency 'bundler'
-  spec.add_development_dependency 'rake', '~> 12.0'
-  spec.add_development_dependency 'rubocop'
-  spec.add_development_dependency 'rubocop-performance'
-  spec.add_development_dependency 'rubocop-rake'
-  spec.add_development_dependency 'test-unit'
-  spec.add_development_dependency 'test-unit-rr'
+
   spec.metadata = {
     'rubygems_mfa_required' => 'true'
   }
