@@ -22,7 +22,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'rubyzip'
-
+  spec.add_development_dependency 'bundler'
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'rubocop-performance'
+  spec.add_development_dependency 'rubocop-rake'
+  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'test-unit'
+  spec.add_development_dependency 'test-unit-rr'
   spec.metadata = {
     'rubygems_mfa_required' => 'true'
   }
