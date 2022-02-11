@@ -2,6 +2,7 @@ require_relative 'aozora2html/version'
 require_relative 'extensions'
 require_relative 'aozora2html/error'
 require_relative 'aozora2html/i18n'
+require_relative 'aozora2html/midashi_counter'
 require_relative 'jstream'
 require_relative 'aozora2html/tag'
 require_relative 'aozora2html/tag_parser'
@@ -168,7 +169,7 @@ class Aozora2Html
     @images = [] ## 使用した外字の画像保持用
     @indent_stack = [] ## 基本はシンボルだが、ぶらさげのときはdivタグの文字列が入る
     @tag_stack = []
-    @midashi_id = 0  ## 見出しのカウンタ、見出しの種類によって増分が異なる
+    @midashi_counter = MidashiCounter.new(0) ## 見出しのカウンタ、見出しの種類によって増分が異なる
     @terprip = true  ## 改行制御用 (terpriはLisp由来?)
     @endchar = :eof  ## 解析終了文字、AccentParserやTagParserでは異なる
     @noprint = nil ## 行末を読み込んだとき、何も出力しないかどうかのフラグ
@@ -205,22 +206,7 @@ class Aozora2Html
   end
 
   def new_midashi_id(size)
-    if size.is_a?(Integer)
-      @midashi_id += size
-      return @midashi_id
-    end
-
-    case size
-    when /#{SIZE_SMALL}/o
-      inc = 1
-    when /#{SIZE_MIDDLE}/o
-      inc = 10
-    when /#{SIZE_LARGE}/o
-      inc = 100
-    else
-      raise Aozora2Html::Error, I18n.t(:undefined_header)
-    end
-    @midashi_id += inc
+    @midashi_counter.generate_id(size)
   end
 
   def kuten2png(substring)
@@ -893,33 +879,33 @@ class Aozora2Html
     when OMIDASHI_COMMAND
       @style_stack.push([command, '</a></h3>'])
       @terprip = false
-      push_char("<h3 class=\"o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
+      push_char("<h3 class=\"o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(100)}\">")
     when NAKAMIDASHI_COMMAND
       @style_stack.push([command, '</a></h4>'])
       @terprip = false
-      push_char("<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
+      push_char("<h4 class=\"naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(10)}\">")
     when KOMIDASHI_COMMAND
       @style_stack.push([command, '</a></h5>'])
       @terprip = false
-      push_char("<h5 class=\"ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+      push_char("<h5 class=\"ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(1)}\">")
     when DOGYO_OMIDASHI_COMMAND
       @style_stack.push([command, '</a></h3>'])
-      push_char("<h3 class=\"dogyo-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
+      push_char("<h3 class=\"dogyo-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(100)}\">")
     when DOGYO_NAKAMIDASHI_COMMAND
       @style_stack.push([command, '</a></h4>'])
-      push_char("<h4 class=\"dogyo-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
+      push_char("<h4 class=\"dogyo-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(10)}\">")
     when DOGYO_KOMIDASHI_COMMAND
       @style_stack.push([command, '</a></h5>'])
-      push_char("<h5 class=\"dogyo-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+      push_char("<h5 class=\"dogyo-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(1)}\">")
     when MADO_OMIDASHI_COMMAND
       @style_stack.push([command, '</a></h3>'])
-      push_char("<h3 class=\"mado-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(100)}\">")
+      push_char("<h3 class=\"mado-o-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(100)}\">")
     when MADO_NAKAMIDASHI_COMMAND
       @style_stack.push([command, '</a></h4>'])
-      push_char("<h4 class=\"mado-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(10)}\">")
+      push_char("<h4 class=\"mado-naka-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(10)}\">")
     when MADO_KOMIDASHI_COMMAND
       @style_stack.push([command, '</a></h5>'])
-      push_char("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{new_midashi_id(1)}\">")
+      push_char("<h5 class=\"mado-ko-midashi\"><a class=\"midashi_anchor\" id=\"midashi#{@midashi_counter.generate_id(1)}\">")
     when PAT_CHARSIZE
       @style_stack.push([command, '</span>'])
       _whole, nest, style = command.match(PAT_CHARSIZE).to_a
