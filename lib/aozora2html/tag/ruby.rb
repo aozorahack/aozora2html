@@ -40,7 +40,7 @@ class Aozora2Html
                     else
                       under_ruby
                     end
-        if (new_upper.length > 1) && (new_under.length > 1)
+        if (new_upper.length >= 1) && (new_under.length >= 1)
           raise Aozora2Html::Error, I18n.t(:dont_allow_triple_ruby)
         end
 
