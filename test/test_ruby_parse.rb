@@ -91,23 +91,16 @@ class RubyParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_ruby11
-    src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」の左に「ママ」の注記］\r\n"
-    parsed = parse_text(src)
-    expected = %Q(<ruby><rb>大空文庫</rb><rp>（</rp><rt>あおぞらぶんこ</rt><rp>）</rp></ruby><span class="notes">［＃「大空文庫」の左に「ママ」の注記］</span><br />\r\n)
-    assert_equal expected, parsed
-  end
-
   using Aozora2Html::StringRefinements
 
-  def test_parse_ruby12
+  def test_parse_ruby11
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」に「ママ」の注記］\r\n"
     assert_raise(Aozora2Html::Error.new('同じ箇所に2つのルビはつけられません'.to_sjis)) do
       _parsed = parse_text(src)
     end
   end
 
-  def test_parse_ruby13
+  def test_parse_ruby12
     src = "［＃注記付き］名※［＃二の字点、1-2-22］［＃「（銘々）」の注記付き終わり］\r\n"
     parsed = parse_text(src)
     expected = %Q|<ruby><rb>名<img src="../../../gaiji/1-02/1-02-22.png" alt="※(二の字点、1-2-22)" class="gaiji" /></rb><rp>（</rp><rt>（銘々）</rt><rp>）</rp></ruby><br />\r\n|
