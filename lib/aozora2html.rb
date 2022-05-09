@@ -1314,20 +1314,9 @@ class Aozora2Html
       @images.each do |cell|
         k, *v = cell
         vs = v.join('、'.to_sjis)
-        @out.print "			<tr>
-				<td>
-				#{k}
-				</td>
-				<td>&nbsp;&nbsp;</td>
-				<td>
-#{vs}				</td>
-				<!--
-				<td>
-				" + '　　'.to_sjis + "<img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />
-				</td>
-				-->
-			</tr>
-".to_sjis
+        @out.print "\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t#{k}\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>&nbsp;&nbsp;</td>\r\n\t\t\t\t<td>\r\n#{vs}\t\t\t\t</td>\r\n\t\t\t\t<!--\r\n\t\t\t\t<td>\r\n\t\t\t\t"
+	      + '　　'.to_sjis
+	      + "<img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />\r\n\t\t\t\t</td>\r\n\t\t\t\t-->\r\n\t\t\t</tr>\r\n".to_sjis
       end
       @out.print "\t\t</table>\r\n".to_sjis
     else
