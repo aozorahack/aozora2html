@@ -190,7 +190,7 @@ class CommandParseTest < Test::Unit::TestCase
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "グリーンランドの中央部八千尺の氷河地帯にあるといわれる、［＃横組み］“Ser-mik-Suah《セルミク・シュアー》”［＃横組み終わり］の冥路《よみじ》の国。\r\n"
     parsed = parse_text(src)
-    expected = %Q(グリーンランドの中央部八千尺の氷河地帯にあるといわれる、<span class=\"yokogumi\">“<ruby><rb>Ser-mik-Suah</rb><rp>（</rp><rt>セルミク・シュアー</rt><rp>）</rp></ruby>”</span>の<ruby><rb>冥路</rb><rp>（</rp><rt>よみじ</rt><rp>）</rp></ruby>の国。<br />\r\n)
+    expected = %Q(グリーンランドの中央部八千尺の氷河地帯にあるといわれる、<span class="yokogumi">“<ruby><rb>Ser-mik-Suah</rb><rp>（</rp><rt>セルミク・シュアー</rt><rp>）</rp></ruby>”</span>の<ruby><rb>冥路</rb><rp>（</rp><rt>よみじ</rt><rp>）</rp></ruby>の国。<br />\r\n)
     assert_equal expected, parsed
   end
 
