@@ -1,3 +1,18 @@
+<a name="3.0.1"></a>
+## 3.0.1
+
+### Bug Fixes
+
+* いくつかマイナーな修正を行いました
+  * https://github.com/aozorahack/aozora2html/pull/100
+  * https://github.com/aozorahack/aozora2html/pull/101
+  * https://github.com/aozorahack/aozora2html/pull/103
+* その他コードの挙動とは関係ない修正を行いました
+  * https://github.com/aozorahack/aozora2html/pull/98
+  * https://github.com/aozorahack/aozora2html/pull/102
+  * https://github.com/aozorahack/aozora2html/pull/105
+  * https://github.com/aozorahack/aozora2html/pull/108
+
 <a name="3.0.0"></a>
 ## 3.0.0
 
