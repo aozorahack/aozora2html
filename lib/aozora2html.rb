@@ -45,7 +45,7 @@ class Aozora2Html
   PAT_HENYAKU = '編訳$'.to_sjis
   PAT_TRANSLATOR = '訳$'.to_sjis
   RUBY_PREFIX = '｜'.to_sjis
-  PAT_RUBY = /#{"《.*?》".to_sjis}/.freeze
+  PAT_RUBY = /#{'《.*?》'.to_sjis}/.freeze
   PAT_DIRECTION = '(右|左|上|下)に(.*)'.to_sjis
   PAT_REF = '^「.+」'.to_sjis
   CHUUKI_COMMAND = '注記付き'.to_sjis
@@ -87,13 +87,13 @@ class Aozora2Html
   WARICHU_COMMAND = '割り注'.to_sjis
   TENTSUKI_COMMAND = '天付き'.to_sjis
   PAT_REST_NOTES = '(左|下)に「(.*)」の(ルビ|注記|傍記)'.to_sjis
-  PAT_KUTEN = /#{"「※」[は|の]".to_sjis}/.freeze
+  PAT_KUTEN = /#{'「※」[は|の]'.to_sjis}/.freeze
   PAT_KUTEN_DUAL = '※.*※'.to_sjis
   PAT_GAIJI = '(?:＃)(.*)(?:、)(.*)'.to_sjis
   PAT_KAERITEN = '^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$'.to_sjis
   PAT_OKURIGANA = '^（(.+)）$'.to_sjis
-  PAT_REMOVE_OKURIGANA = /#{"[（）]".to_sjis}/.freeze
-  PAT_CHITSUKI = /#{"(地付き|字上げ)(終わり)*$".to_sjis}/.freeze
+  PAT_REMOVE_OKURIGANA = /#{'[（）]'.to_sjis}/.freeze
+  PAT_CHITSUKI = /#{'(地付き|字上げ)(終わり)*$'.to_sjis}/.freeze
   PAT_ORIKAESHI_JISAGE = '折り返して(\\d*)字下げ'.to_sjis
   PAT_ORIKAESHI_JISAGE2 = '(\\d*)字下げ、折り返して(\\d*)字下げ'.to_sjis
   PAT_JI_LEN = '([0-9]+)字'.to_sjis
@@ -101,9 +101,9 @@ class Aozora2Html
   PAT_IMAGE = '(.*)（(fig.+\\.png)(、横([0-9]+)×縦([0-9]+))*）入る'.to_sjis
   PAT_FRONTREF = '「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)'.to_sjis
   PAT_RUBY_DIR = '(左|下)に「([^」]*)」の(ルビ|注記)'.to_sjis
-  PAT_CHUUKI = /#{"「(.+?)」の注記".to_sjis}/.freeze
-  PAT_BOUKI = /#{"「(.)」の傍記".to_sjis}/.freeze
-  PAT_CHARSIZE = /#{"(.*)段階(..)な文字".to_sjis}/.freeze
+  PAT_CHUUKI = /#{'「(.+?)」の注記'.to_sjis}/.freeze
+  PAT_BOUKI = /#{'「(.)」の傍記'.to_sjis}/.freeze
+  PAT_CHARSIZE = /#{'(.*)段階(..)な文字'.to_sjis}/.freeze
 
   REGEX_HIRAGANA = Regexp.new('[ぁ-んゝゞ]'.to_sjis)
   REGEX_KATAKANA = Regexp.new('[ァ-ンーヽヾヴ]'.to_sjis)
@@ -158,7 +158,7 @@ class Aozora2Html
              File.open(output, 'w')
            end
     @gaiji_dir = gaiji_dir || '../../../gaiji/'
-    @css_files = css_files || Array['../../aozora.css']
+    @css_files = css_files || ['../../aozora.css']
 
     @buffer = TextBuffer.new
     @ruby_buf = RubyBuffer.new
@@ -767,14 +767,12 @@ class Aozora2Html
       check = @ruby_buf.last
 
       # NOTE: Do not remove duplicates!
-      # rubocop:disable Style/IdenticalConditionalBranches
       if check.is_a?(String) && check.end_with?(PAREN_BEGIN_MARK)
         push_char('<span class="warichu">')
       else
         push_char('<span class="warichu">')
         push_char(PAREN_BEGIN_MARK)
       end
-      # rubocop:enable Style/IdenticalConditionalBranches
     end
     nil
   end

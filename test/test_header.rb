@@ -5,7 +5,7 @@ require 'aozora2html'
 
 class HeaderTest < Test::Unit::TestCase
   def setup
-    @header = Aozora2Html::Header.new(css_files: Array['../../aozora.css'])
+    @header = Aozora2Html::Header.new(css_files: ['../../aozora.css'])
   end
 
   using Aozora2Html::StringRefinements
