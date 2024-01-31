@@ -14,4 +14,8 @@ class Aozora2Html
       I18n.t(:error_stop, line, @message)
     end
   end
+
+  # Aozora2Htmlクラス内でexitする代わりに例外をあげるためのfatal error用クラス
+  class FatalError < Exception
+  end
 end

@@ -30,7 +30,7 @@ class Jstream
     rescue Aozora2Html::Error => e
       puts e.message(1)
       if e.is_a?(Aozora2Html::Error)
-        exit(2)
+        raise Aozora2Html::FatalError
       end
     ensure
       @file.rewind

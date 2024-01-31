@@ -12,7 +12,7 @@ class JstreamTest < Test::Unit::TestCase
     orig_stdout = $stdout
     out = StringIO.new
     $stdout = out
-    assert_raises(SystemExit) do
+    assert_raises(Aozora2Html::FatalError) do
       Jstream.new(strio)
     end
     $stdout = orig_stdout
