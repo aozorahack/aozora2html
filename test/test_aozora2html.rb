@@ -94,7 +94,6 @@ class Aozora2HtmlTest < Test::Unit::TestCase
     assert_equal :hankaku, Aozora2Html::Tag::Accent.new(nil, 123, 'abc', gaiji_dir: nil).char_type
     assert_equal :else, Aozora2Html::Tag::Okurigana.new(nil, 'abc').char_type
     assert_equal :else, Aozora2Html::Tag::InlineKeigakomi.new(nil, 'abc').char_type
-    assert_equal :katakana, Aozora2Html::Tag::DakutenKatakana.new(nil, 1, 'abc', gaiji_dir: nil).char_type
 
     assert_equal :hiragana, 'あ'.to_sjis.char_type
     assert_equal :hiragana, 'っ'.to_sjis.char_type

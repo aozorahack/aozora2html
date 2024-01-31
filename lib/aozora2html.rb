@@ -692,8 +692,6 @@ class Aozora2Html
       nil
     elsif command.match?(PAT_REF)
       exec_frontref_command(command)
-    elsif command.match?(/1-7-8[2345]/)
-      apply_dakuten_katakana(command)
     elsif command.match?(PAT_KAERITEN)
       Aozora2Html::Tag::Kaeriten.new(self, command)
     elsif command.match?(PAT_OKURIGANA)
@@ -1186,17 +1184,6 @@ class Aozora2Html
       if found
         Aozora2Html::Tag::Decorate.new(self, targets, filter.call(found[0]), found[1])
       end
-    end
-  end
-
-  def apply_dakuten_katakana(command)
-    n = command.match(/1-7-8([2345])/).to_a[1]
-    frontref = DAKUTEN_KATAKANA_TABLE[n]
-    found = search_front_reference(frontref)
-    if found
-      Aozora2Html::Tag::DakutenKatakana.new(self, n, found.join, gaiji_dir: @gaiji_dir)
-    else
-      apply_rest_notes(command)
     end
   end
 

@@ -34,7 +34,6 @@ require_relative 'tag/inline_yokogumi'
 require_relative 'tag/inline_caption'
 require_relative 'tag/inline_font_size'
 require_relative 'tag/decorate'
-require_relative 'tag/dakuten_katakana'
 require_relative 'tag/dir'
 require_relative 'tag/img'
 
