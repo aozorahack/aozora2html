@@ -111,6 +111,10 @@ class Aozora2Html
   REGEX_HANKAKU = Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".to_sjis)
   REGEX_KANJI = Regexp.new('[亜-熙々※仝〆〇ヶ]'.to_sjis)
 
+  KANJI_NUMS = '一二三四五六七八九〇'.to_sjis
+  KANJI_TEN = '十'.to_sjis
+  ZENKAKU_NUMS = '０１２３４５６７８９'.to_sjis
+
   DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a><script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n</div>".to_sjis
 
   # KUNOJI = ["18e518f5"].pack("h*")

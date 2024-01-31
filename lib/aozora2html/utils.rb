@@ -5,10 +5,6 @@ class Aozora2Html
   module Utils
     using StringRefinements
 
-    KANJI_NUMS = '一二三四五六七八九〇'.to_sjis
-    KANJI_TEN = '十'.to_sjis
-    ZENKAKU_NUMS = '０-９'.to_sjis
-
     def create_font_size(times, daisho)
       size = case times
              when 1
@@ -80,7 +76,7 @@ class Aozora2Html
     module_function :create_midashi_class
 
     def convert_japanese_number(command)
-      tmp = command.tr(ZENKAKU_NUMS, '0-9')
+      tmp = command.tr(ZENKAKU_NUMS, '0123456789')
       tmp.tr!(KANJI_NUMS, '1234567890')
       tmp.gsub!(/(\d)#{KANJI_TEN}(\d)/o) { "#{$1}#{$2}" }
       tmp.gsub!(/(\d)#{KANJI_TEN}/o) { "#{$1}0" }
