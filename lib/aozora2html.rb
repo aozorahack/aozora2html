@@ -111,7 +111,7 @@ class Aozora2Html
   REGEX_HANKAKU = Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".to_sjis)
   REGEX_KANJI = Regexp.new('[亜-熙々※仝〆〇ヶ]'.to_sjis)
 
-  KANJI_NUMS = '一二三四五六七八九〇'.to_sjis
+  KANJI_NUMS = '〇一二三四五六七八九'.to_sjis
   KANJI_TEN = '十'.to_sjis
   ZENKAKU_NUMS = '０１２３４５６７８９'.to_sjis
 

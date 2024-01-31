@@ -77,7 +77,7 @@ class Aozora2Html
 
     def convert_japanese_number(command)
       tmp = command.tr(ZENKAKU_NUMS, '0123456789')
-      tmp.tr!(KANJI_NUMS, '1234567890')
+      tmp.tr!(KANJI_NUMS, '0123456789')
       tmp.gsub!(/(\d)#{KANJI_TEN}(\d)/o) { "#{$1}#{$2}" }
       tmp.gsub!(/(\d)#{KANJI_TEN}/o) { "#{$1}0" }
       tmp.gsub!(/#{KANJI_TEN}(\d)/o) { "1#{$1}" }
