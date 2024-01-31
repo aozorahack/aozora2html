@@ -45,16 +45,17 @@ class Aozora2Html
           found2 = found[@stream.peek_char(0)]
           if found2
             if found2.is_a?(Hash)
-              found3 = found2[@stream.peek_char(1)]
-              if found3
-                first = Aozora2Html::Tag::Accent.new(self, *found3, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213)
+              code, name = found2[@stream.peek_char(1)]
+              if code
+                first = Aozora2Html::Tag::Accent.new(self, code, name, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213)
                 @encount_accent = true
                 @chuuki_table[:accent] = true
                 read_char
                 read_char
               end
-            elsif found2
-              first = Aozora2Html::Tag::Accent.new(self, *found2, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213)
+            elsif found2.is_a?(Array)
+              code, name = found2[0], found2[1]
+              first = Aozora2Html::Tag::Accent.new(self, code, name, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213)
               @encount_accent = true
               read_char
               @chuuki_table[:accent] = true
