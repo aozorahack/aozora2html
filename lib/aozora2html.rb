@@ -963,7 +963,7 @@ class Aozora2Html
       # special inline ruby
       @style_stack.pop
       _whole, ruby = encount.match(PAT_INLINE_RUBY).to_a
-      push_char('</rb><rp>' + PAREN_BEGIN_MARK + '</rp><rt>' + ruby + '</rt><rp>' + PAREN_END_MARK + '</rp></ruby>')
+      push_char('</rb><rp>' + PAREN_BEGIN_MARK + '</rp><rt>' + ruby + '</rt><rp>' + PAREN_END_MARK + '</rp></ruby>') # rubocop:disable Style/StringConcatenation
     elsif @style_stack.last_command.match?(encount)
       push_char(@style_stack.pop[1])
     else
@@ -1280,7 +1280,7 @@ class Aozora2Html
     string = @buffer.join
     @buffer = TextBuffer.new
     string.gsub!('info@aozora.gr.jp', '<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
-    string.gsub!(AOZORABUNKO + PAREN_BEGIN_MARK + 'http://www.aozora.gr.jp/' + PAREN_END_MARK) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" }
+    string.gsub!(AOZORABUNKO + PAREN_BEGIN_MARK + 'http://www.aozora.gr.jp/' + PAREN_END_MARK) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" } # rubocop:disable Style/StringConcatenation
     if string.match?(%r{(<br />$|</p>$|</h\d>$|<div.*>$|</div>$|^<[^>]*>$)})
       @out.print string, "\r\n"
     else
