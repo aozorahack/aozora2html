@@ -64,7 +64,7 @@ Dir.mktmpdir do |dir|
       gaiji_dir: gaiji_dir,
       css_files: css_files,
       use_jisx0213: use_jisx0213,
-      use_unicode: use_unicode,
+      use_unicode: use_unicode
     ).process
   else
     Aozora2Html.new(
@@ -73,7 +73,7 @@ Dir.mktmpdir do |dir|
       gaiji_dir: gaiji_dir,
       css_files: css_files,
       use_jisx0213: use_jisx0213,
-      use_unicode: use_unicode,
+      use_unicode: use_unicode
     ).process
   end
   unless ARGV[1]

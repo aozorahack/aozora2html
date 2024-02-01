@@ -20,6 +20,9 @@ Style/Documentation:
   Exclude:
     - 'test/**/*'
 
+Style/DoubleNegation:
+  Enabled: false
+
 Style/EmptyMethod:
   EnforcedStyle: expanded
   Enabled: true
