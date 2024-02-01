@@ -15,7 +15,7 @@ class Aozora2Html
       using StringRefinements
 
       def to_s
-        '<span class="notes">［'.to_sjis + @desc + '］</span>'.to_sjis
+        '<span class="notes">' + COMMAND_BEGIN + @desc + COMMAND_END + '</span>' # rubocop:disable Style/StringConcatenation
       end
 
       def escaped?

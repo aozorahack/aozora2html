@@ -111,6 +111,10 @@ class Aozora2Html
   REGEX_HANKAKU = Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".to_sjis)
   REGEX_KANJI = Regexp.new('[亜-熙々※仝〆〇ヶ]'.to_sjis)
 
+  KANJI_NUMS = '〇一二三四五六七八九'.to_sjis
+  KANJI_TEN = '十'.to_sjis
+  ZENKAKU_NUMS = '０１２３４５６７８９'.to_sjis
+
   DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a><script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n</div>".to_sjis
 
   # KUNOJI = ["18e518f5"].pack("h*")
@@ -959,7 +963,7 @@ class Aozora2Html
       # special inline ruby
       @style_stack.pop
       _whole, ruby = encount.match(PAT_INLINE_RUBY).to_a
-      push_char('</rb><rp>（</rp><rt>'.to_sjis + ruby + '</rt><rp>）</rp></ruby>'.to_sjis)
+      push_char('</rb><rp>' + PAREN_BEGIN_MARK + '</rp><rt>' + ruby + '</rt><rp>' + PAREN_END_MARK + '</rp></ruby>') # rubocop:disable Style/StringConcatenation
     elsif @style_stack.last_command.match?(encount)
       push_char(@style_stack.pop[1])
     else
@@ -1276,7 +1280,7 @@ class Aozora2Html
     string = @buffer.join
     @buffer = TextBuffer.new
     string.gsub!('info@aozora.gr.jp', '<a href="mailto: info@aozora.gr.jp">info@aozora.gr.jp</a>')
-    string.gsub!('青空文庫（http://www.aozora.gr.jp/）'.to_sjis) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" }
+    string.gsub!(AOZORABUNKO + PAREN_BEGIN_MARK + 'http://www.aozora.gr.jp/' + PAREN_END_MARK) { "<a href=\"http://www.aozora.gr.jp/\">#{$&}</a>" } # rubocop:disable Style/StringConcatenation
     if string.match?(%r{(<br />$|</p>$|</h\d>$|<div.*>$|</div>$|^<[^>]*>$)})
       @out.print string, "\r\n"
     else
