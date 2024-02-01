@@ -264,7 +264,7 @@ class Aozora2Html
   end
 
   def read_to_nest(endchar)
-    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
+    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213, use_unicode: @use_unicode).process
   end
 
   def finalize
