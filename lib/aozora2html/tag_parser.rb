@@ -7,13 +7,15 @@ class Aozora2Html
   #
   # 青空記法の入れ子に対応（？）
   class TagParser < Aozora2Html
-    def initialize(input, endchar, chuuki, image, gaiji_dir:) # rubocop:disable Lint/MissingSuper
+    def initialize(input, endchar, chuuki, image, gaiji_dir:, use_jisx0213: nil, use_unicode: nil) # rubocop:disable Lint/MissingSuper
       unless input.is_a?(Jstream)
         raise ArgumentError, 'tag_parser must supply Jstream as input'
       end
 
       @stream = input
       @gaiji_dir = gaiji_dir
+      @use_jisx0213 = use_jisx0213
+      @use_unicode = use_unicode
       @buffer = TextBuffer.new
       @ruby_buf = RubyBuffer.new
       @chuuki_table = chuuki
