@@ -198,7 +198,7 @@ class Aozora2Html
     rescue Aozora2Html::Error => e
       puts e.message(line_number)
       if e.is_a?(Aozora2Html::Error)
-        exit(2)
+        raise Aozora2Html::FatalError
       end
     end
     tail_output # final call

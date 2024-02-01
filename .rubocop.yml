@@ -77,6 +77,9 @@ Layout/LineLength:
 Lint/EmptyClass:
   AllowComments: true
 
+Lint/InheritException:
+  Enabled: false
+
 Metrics/AbcSize:
   Enabled: true
   Max: 260.05

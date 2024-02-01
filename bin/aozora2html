@@ -72,4 +72,6 @@ Dir.mktmpdir do |dir|
     output = File.read(dest_file)
     print output
   end
+rescue Aozora2Html::FatalError
+  exit(2)
 end

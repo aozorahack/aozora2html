@@ -16,9 +16,7 @@ class Jstream
   CRLF = CR + LF
 
   # 初期化と同時に、いったん最初の行をscanして、改行コードがCR+LFかどうか調べる。
-  # CR+LFでない場合はエラーメッセージを出力してexitする(!)
-  #
-  # TODO: 将来的にはさすがにexitまではしないよう、仕様を変更する?
+  # CR+LFでない場合はエラーメッセージを出力して、例外Aozora2Html::FatalErrorを上げる
   def initialize(file_io)
     @line = 0
     @current_char = nil
@@ -30,7 +28,7 @@ class Jstream
     rescue Aozora2Html::Error => e
       puts e.message(1)
       if e.is_a?(Aozora2Html::Error)
-        exit(2)
+        raise Aozora2Html::FatalError
       end
     ensure
       @file.rewind
