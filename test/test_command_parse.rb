@@ -98,7 +98,7 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_unicode
+  def test_parse_command_unicode_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "※［＃「衄のへん＋卩」、U+5379、287-2］\r\n"
     parsed = parse_text(src)
@@ -106,7 +106,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_teisei1
+  def test_parse_command_unicode
+    src = "※［＃「衄のへん＋卩」、U+5379、287-2］\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = "&#x5379;<br />\r\n"
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei1_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "吹喋［＃「喋」に「ママ」の注記］\r\n"
     parsed = parse_text(src)
@@ -114,7 +121,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_teisei2
+  def test_parse_command_teisei1
+    src = "吹喋［＃「喋」に「ママ」の注記］\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = "吹<ruby><rb>喋</rb><rp>（</rp><rt>ママ</rt><rp>）</rp></ruby><br />\r\n"
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei2_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "紋附だとか［＃「紋附だとか」は底本では「絞附だとか」］\r\n"
     parsed = parse_text(src)
@@ -122,7 +136,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_teisei3
+  def test_parse_command_teisei2
+    src = "紋附だとか［＃「紋附だとか」は底本では「絞附だとか」］\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(紋附だとか<span class="notes">［＃「紋附だとか」は底本では「絞附だとか」］</span><br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei3_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "私は籠《ざる》［＃ルビの「ざる」は底本では「さる」］をさげ\r\n"
     parsed = parse_text(src)
@@ -130,7 +151,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_teisei4
+  def test_parse_command_teisei3
+    src = "私は籠《ざる》［＃ルビの「ざる」は底本では「さる」］をさげ\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(私は<ruby><rb>籠</rb><rp>（</rp><rt>ざる</rt><rp>）</rp></ruby><span class="notes">［＃ルビの「ざる」は底本では「さる」］</span>をさげ<br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei4_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "広場へに［＃「広場へに」はママ］店でもだそう。\r\n"
     parsed = parse_text(src)
@@ -138,7 +166,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_teisei5
+  def test_parse_command_teisei4
+    src = "広場へに［＃「広場へに」はママ］店でもだそう。\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(広場へに<span class="notes">［＃「広場へに」はママ］</span>店でもだそう。<br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_teisei5_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "お湯《ゆう》［＃ルビの「ゆう」はママ］\r\n"
     parsed = parse_text(src)
@@ -146,7 +181,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_tcy
+  def test_parse_command_teisei5
+    src = "お湯《ゆう》［＃ルビの「ゆう」はママ］\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(お<ruby><rb>湯</rb><rp>（</rp><rt>ゆう</rt><rp>）</rp></ruby><span class="notes">［＃ルビの「ゆう」はママ］</span><br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_tcy_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "米機Ｂ29［＃「29」は縦中横］の編隊は、\r\n"
     parsed = parse_text(src)
@@ -154,7 +196,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_tcy2
+  def test_parse_command_tcy
+    src = "米機Ｂ29［＃「29」は縦中横］の編隊は、\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(米機Ｂ<span dir="ltr">29</span>の編隊は、<br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_tcy2_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "［＃縦中横］（※［＃ローマ数字1、1-13-21］）［＃縦中横終わり］\r\n"
     parsed = parse_text(src)
@@ -162,7 +211,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_kogaki
+  def test_parse_command_tcy2
+    src = "［＃縦中横］（※［＃ローマ数字1、1-13-21］）［＃縦中横終わり］\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q|<span dir="ltr">（<img src="../../../gaiji/1-13/1-13-21.png" alt="※(ローマ数字1、1-13-21)" class="gaiji" />）</span><br />\r\n|
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_kogaki_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "それ以上である。（５）［＃「（５）」は行右小書き］\r\n"
     parsed = parse_text(src)
@@ -170,7 +226,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_uetsuki
+  def test_parse_command_kogaki
+    src = "それ以上である。（５）［＃「（５）」は行右小書き］\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(それ以上である。<sup class="superscript">（５）</sup><br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_uetsuki_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "22［＃「2」は上付き小文字］\r\n"
     parsed = parse_text(src)
@@ -178,7 +241,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_bouki
+  def test_parse_command_uetsuki
+    src = "22［＃「2」は上付き小文字］\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(2<sup class="superscript">2</sup><br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_bouki_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "支部長の顔にさっと血が流れ［＃「血が流れ」に「×」の傍記］た\r\n"
     parsed = parse_text(src)
@@ -186,7 +256,14 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
-  def test_parse_command_ruby
+  def test_parse_command_bouki
+    src = "支部長の顔にさっと血が流れ［＃「血が流れ」に「×」の傍記］た\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(支部長の顔にさっと<ruby><rb>血が流れ</rb><rp>（</rp><rt>×&nbsp;×&nbsp;×&nbsp;×</rt><rp>）</rp></ruby>た<br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  def test_parse_command_ruby_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "グリーンランドの中央部八千尺の氷河地帯にあるといわれる、［＃横組み］“Ser-mik-Suah《セルミク・シュアー》”［＃横組み終わり］の冥路《よみじ》の国。\r\n"
     parsed = parse_text(src)
@@ -194,12 +271,19 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+  def test_parse_command_ruby
+    src = "グリーンランドの中央部八千尺の氷河地帯にあるといわれる、［＃横組み］“Ser-mik-Suah《セルミク・シュアー》”［＃横組み終わり］の冥路《よみじ》の国。\r\n"
+    parsed = parse_text(src, use_unicode: true)
+    expected = %Q(グリーンランドの中央部八千尺の氷河地帯にあるといわれる、<span class="yokogumi">“<ruby><rb>Ser-mik-Suah</rb><rp>（</rp><rt>セルミク・シュアー</rt><rp>）</rp></ruby>”</span>の<ruby><rb>冥路</rb><rp>（</rp><rt>よみじ</rt><rp>）</rp></ruby>の国。<br />\r\n)
+    assert_equal expected, parsed
+  end
+
   using Aozora2Html::StringRefinements
 
-  def parse_text(input_text)
+  def parse_text(input_text, use_jisx0213: nil, use_unicode: nil)
     input = StringIO.new(input_text.to_sjis)
     output = StringIO.new
-    parser = Aozora2Html.new(input, output)
+    parser = Aozora2Html.new(input, output, use_jisx0213: use_jisx0213, use_unicode: use_unicode)
     parser.instance_eval { @section = :tail }
     catch(:terminate) do
       loop do

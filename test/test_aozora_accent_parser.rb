@@ -32,12 +32,21 @@ class Aozora2HtmlAccentParserTest < Test::Unit::TestCase
     end
   end
 
-  def test_use_jisx0213
+  def test_use_jisx0213_class
     Aozora2Html::Tag::Accent.use_jisx0213 = true
     str = "〔e'tiquette〕\r\n".to_sjis
     strio = StringIO.new(str)
     stream = Jstream.new(strio)
     parsed = Aozora2Html::AccentParser.new(stream, '〕'.to_sjis, {}, [], gaiji_dir: 'g_dir/').process
+    expected = '〔&#x00E9;tiquette'
+    assert_equal expected, parsed.to_s.to_utf8
+  end
+
+  def test_use_jisx0213
+    str = "〔e'tiquette〕\r\n".to_sjis
+    strio = StringIO.new(str)
+    stream = Jstream.new(strio)
+    parsed = Aozora2Html::AccentParser.new(stream, '〕'.to_sjis, {}, [], gaiji_dir: 'g_dir/', use_jisx0213: true).process
     expected = '〔&#x00E9;tiquette'
     assert_equal expected, parsed.to_s.to_utf8
   end
