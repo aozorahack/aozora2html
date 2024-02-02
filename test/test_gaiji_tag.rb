@@ -31,15 +31,25 @@ class EmbedGaijiTagTest < Test::Unit::TestCase
     assert_equal true, egt.escaped?
   end
 
-  def test_jisx0213
+  def test_jisx0213_class
     Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = true
     egt = Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-06-75', 'snowman', gaiji_dir: @gaiji_dir)
     assert_equal '&#x2603;', egt.to_s.to_utf8
   end
 
-  def test_use_unicode
+  def test_jisx0213
+    egt = Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-06-75', 'snowman', gaiji_dir: @gaiji_dir, use_jisx0213: true)
+    assert_equal '&#x2603;', egt.to_s.to_utf8
+  end
+
+  def test_use_unicode_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     egt = Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-06-75', 'snowman', '2603', gaiji_dir: @gaiji_dir)
+    assert_equal '&#x2603;', egt.to_s.to_utf8
+  end
+
+  def test_use_unicode
+    egt = Aozora2Html::Tag::EmbedGaiji.new(nil, 'foo', '1-06-75', 'snowman', '2603', gaiji_dir: @gaiji_dir, use_unicode: true)
     assert_equal '&#x2603;', egt.to_s.to_utf8
   end
 

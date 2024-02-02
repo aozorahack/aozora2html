@@ -150,7 +150,7 @@ class Aozora2Html
     '5' => 'ヲ゛'.to_sjis
   }.freeze
 
-  def initialize(input, output, gaiji_dir: nil, css_files: nil)
+  def initialize(input, output, gaiji_dir: nil, css_files: nil, use_jisx0213: nil, use_unicode: nil)
     @stream = if input.respond_to?(:read) ## readable IO?
                 Jstream.new(input)
               else
@@ -163,6 +163,9 @@ class Aozora2Html
            end
     @gaiji_dir = gaiji_dir || '../../../gaiji/'
     @css_files = css_files || ['../../aozora.css']
+
+    @use_jisx0213 = use_jisx0213
+    @use_unicode = use_unicode
 
     @buffer = TextBuffer.new
     @ruby_buf = RubyBuffer.new
@@ -221,7 +224,7 @@ class Aozora2Html
       codes = matched[0].split('-')
       folder = sprintf('%1d-%02d', codes[0], codes[1])
       code = sprintf('%1d-%02d-%02d', *codes)
-      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK, ''), gaiji_dir: @gaiji_dir)
+      Aozora2Html::Tag::EmbedGaiji.new(self, folder, code, desc.gsub!(IGETA_MARK, ''), gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213, use_unicode: @use_unicode)
     else
       substring
     end
@@ -257,11 +260,11 @@ class Aozora2Html
   end
 
   def read_accent
-    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
+    Aozora2Html::AccentParser.new(@stream, ACCENT_END, @chuuki_table, @images, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213).process
   end
 
   def read_to_nest(endchar)
-    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir).process
+    Aozora2Html::TagParser.new(@stream, endchar, @chuuki_table, @images, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213, use_unicode: @use_unicode).process
   end
 
   def finalize
@@ -654,9 +657,9 @@ class Aozora2Html
     end
 
     matched = command.match(/U\+([0-9A-F]{4,5})/)
-    if matched && Aozora2Html::Tag::EmbedGaiji.use_unicode
+    if matched && (Aozora2Html::Tag::EmbedGaiji.use_unicode || @use_unicode)
       unicode_num = matched[1]
-      Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num, gaiji_dir: @gaiji_dir)
+      Aozora2Html::Tag::EmbedGaiji.new(self, nil, nil, command, unicode_num, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213, use_unicode: @use_unicode)
     else
       # Unemb
       escape_gaiji(command)
@@ -1305,10 +1308,10 @@ class Aozora2Html
     elsif @chuuki_table[:dakutenkunoji]
       @out.printf("\t<li>「濁点付きくの字点」は「%s」で表しました。</li>\r\n".to_sjis, KU + DAKUTEN + NOJI)
     end
-    if @chuuki_table[:newjis] && !Aozora2Html::Tag::EmbedGaiji.use_jisx0213
+    if @chuuki_table[:newjis] && !(Aozora2Html::Tag::EmbedGaiji.use_jisx0213 || @use_jisx0213)
       @out.print "\t<li>「くの字点」をのぞくJIS X 0213にある文字は、画像化して埋め込みました。</li>\r\n".to_sjis
     end
-    if @chuuki_table[:accent] && !Aozora2Html::Tag::Accent.use_jisx0213
+    if @chuuki_table[:accent] && !(Aozora2Html::Tag::Accent.use_jisx0213 || @use_jisx0213)
       @out.print "\t<li>アクセント符号付きラテン文字は、画像化して埋め込みました。</li>\r\n".to_sjis
     end
     if @images[0]

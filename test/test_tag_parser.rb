@@ -66,12 +66,21 @@ class TagParserTest < Test::Unit::TestCase
     assert_equal expected, command.to_s.to_utf8
   end
 
-  def test_parse_gaiji_jisx0213
+  def test_parse_gaiji_jisx0213_class
     Aozora2Html::Tag::EmbedGaiji.use_jisx0213 = true
     str = "※［＃「てへん＋劣」、第3水準1-84-77］…\r\n".to_sjis
     strio = StringIO.new(str)
     stream = Jstream.new(strio)
     command, _raw = Aozora2Html::TagParser.new(stream, '…'.to_sjis, {}, [], gaiji_dir: 'g_dir/').process
+    expected = '&#x6318;'
+    assert_equal expected, command.to_s.to_utf8
+  end
+
+  def test_parse_gaiji_jisx0213
+    str = "※［＃「てへん＋劣」、第3水準1-84-77］…\r\n".to_sjis
+    strio = StringIO.new(str)
+    stream = Jstream.new(strio)
+    command, _raw = Aozora2Html::TagParser.new(stream, '…'.to_sjis, {}, [], gaiji_dir: 'g_dir/', use_jisx0213: true).process
     expected = '&#x6318;'
     assert_equal expected, command.to_s.to_utf8
   end

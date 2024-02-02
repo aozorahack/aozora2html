@@ -5,7 +5,7 @@ require_relative 'ruby_buffer'
 class Aozora2Html
   # accent特殊文字を生かすための再帰呼び出し
   class AccentParser < Aozora2Html
-    def initialize(input, endchar, chuuki, image, gaiji_dir:) # rubocop:disable Lint/MissingSuper
+    def initialize(input, endchar, chuuki, image, gaiji_dir:, use_jisx0213: nil) # rubocop:disable Lint/MissingSuper
       unless input.is_a?(Jstream)
         raise ArgumentError, 'tag_parser must supply Jstream as input'
       end
@@ -19,6 +19,7 @@ class Aozora2Html
       @endchar = endchar # 改行は越えられない <br />を出力していられない
       @closed = nil # 改行での強制撤退チェックフラグ
       @encount_accent = nil
+      @use_jisx0213 = use_jisx0213
     end
 
     # 出力は配列で返す
@@ -46,14 +47,14 @@ class Aozora2Html
             if found2.is_a?(Hash)
               found3 = found2[@stream.peek_char(1)]
               if found3
-                first = Aozora2Html::Tag::Accent.new(self, *found3, gaiji_dir: @gaiji_dir)
+                first = Aozora2Html::Tag::Accent.new(self, *found3, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213)
                 @encount_accent = true
                 @chuuki_table[:accent] = true
                 read_char
                 read_char
               end
             elsif found2
-              first = Aozora2Html::Tag::Accent.new(self, *found2, gaiji_dir: @gaiji_dir)
+              first = Aozora2Html::Tag::Accent.new(self, *found2, gaiji_dir: @gaiji_dir, use_jisx0213: @use_jisx0213)
               @encount_accent = true
               read_char
               @chuuki_table[:accent] = true

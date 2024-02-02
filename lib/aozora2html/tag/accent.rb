@@ -10,10 +10,11 @@ class Aozora2Html
         attr_accessor :use_jisx0213
       end
 
-      def initialize(parser, code, name, gaiji_dir:)
+      def initialize(parser, code, name, gaiji_dir:, use_jisx0213: nil)
         @code = code
         @name = name
         @gaiji_dir = gaiji_dir
+        @use_jisx0213 = use_jisx0213
         super
       end
 
@@ -26,7 +27,7 @@ class Aozora2Html
       end
 
       def to_s
-        if Aozora2Html::Tag::Accent.use_jisx0213
+        if Aozora2Html::Tag::Accent.use_jisx0213 || @use_jisx0213
           jisx0213_to_unicode(@code.sub(%r{.*/}, '').to_sym)
         else
           "<img src=\"#{@gaiji_dir}#{@code}.png\" alt=\"" + GAIJI_MARK + "(#{@name})\" class=\"gaiji\" />"
