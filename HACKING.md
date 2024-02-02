@@ -43,3 +43,15 @@ RubyBufferも`RubyBuffer#char_type`を持っています。これはRubyBuffer�
 `Aozora2Html::Tag::Multiline`は、そのタグが複数行であることを表すマーカー用のモジュールです。
 
 マーカーとして使われるため、メソッド等は特に持っていない、空のモジュールとして実装されています。実行中に追加されたりすることもありません。
+
+
+## parserと入れ子について
+
+青空文庫の記法は一部入れ子にできます。
+
+Aozora2Htmlのparserは入れ子で実行されることがあります。
+実装としては、parserとしてのAozora2HtmlにはサブクラスとしてAozora2Html::TagParserとAozora2Html::AccentParserがあります。Aozora2Htmlは`［...］`をparseする際にはTagParserを、`《...》`をparseする際にはAccentParserを呼び出します。
+
+`［...］`のparseには`read_to_nest`メソッドが、`《...》`のparseには`read_acccent`メソッドが使われます。
+
+`［...］`は入れ子にできますが、`《...》`は入れ子にできません。`《...》`の中に`［...］`を入れたり`《...》`を入れたりすることはできません。
