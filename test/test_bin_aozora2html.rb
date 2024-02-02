@@ -13,8 +13,8 @@ class Aozora2HtmlBinTest < Test::Unit::TestCase
       output = File.join(dir, 'out.html')
       cmd = "bundle exec aozora2html #{@input} #{output}"
       system(cmd)
-      input_content = File.read('./sample/chukiichiran_kinyurei.html')
-      output_content = File.read(output)
+      input_content = File.binread('./sample/chukiichiran_kinyurei.html')
+      output_content = File.binread(output)
       assert_equal input_content, output_content
     end
   end
@@ -24,8 +24,8 @@ class Aozora2HtmlBinTest < Test::Unit::TestCase
       output = File.join(dir, 'out.html')
       cmd = "bundle exec aozora2html --use-jisx0213 #{@input} #{output}"
       system(cmd)
-      input_content = File.read('./sample/chukiichiran_kinyurei_jisx0213.html')
-      output_content = File.read(output)
+      input_content = File.binread('./sample/chukiichiran_kinyurei_jisx0213.html')
+      output_content = File.binread(output)
       assert_equal input_content, output_content
     end
   end
@@ -35,8 +35,8 @@ class Aozora2HtmlBinTest < Test::Unit::TestCase
       output = File.join(dir, 'out.html')
       cmd = "bundle exec aozora2html --use-unicode #{@input} #{output}"
       system(cmd)
-      input_content = File.read('./sample/chukiichiran_kinyurei_unicode.html')
-      output_content = File.read(output)
+      input_content = File.binread('./sample/chukiichiran_kinyurei_unicode.html')
+      output_content = File.binread(output)
       assert_equal input_content, output_content
     end
   end
