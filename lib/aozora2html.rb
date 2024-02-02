@@ -159,7 +159,7 @@ class Aozora2Html
     @out = if output.respond_to?(:print) ## writable IO?
              output
            else
-             File.open(output, 'w')
+             File.open(output, 'wb')
            end
     @gaiji_dir = gaiji_dir || '../../../gaiji/'
     @css_files = css_files || ['../../aozora.css']
