@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require_relative 'test_helper'
 require 'aozora2html'
 
 class RubyParseTest < Test::Unit::TestCase
@@ -95,7 +95,7 @@ class RubyParseTest < Test::Unit::TestCase
 
   def test_parse_ruby11
     src = "大空文庫《あおぞらぶんこ》［＃「大空文庫」に「ママ」の注記］\r\n"
-    assert_raise(Aozora2Html::Error.new('同じ箇所に2つのルビはつけられません'.to_sjis)) do
+    assert_raise(Aozora2Html::Error.new('同じ箇所に2つのルビはつけられません')) do
       _parsed = parse_text(src)
     end
   end

@@ -15,10 +15,8 @@ class Aozora2Html
         :katakana
       end
 
-      using StringRefinements
-
       def to_s
-        "<img src=\"#{@gaiji_dir}/1-07/1-07-8#{@n}.png\" alt=\"" + '※(濁点付き片仮名「'.to_sjis + @katakana + '」、1-07-8'.to_sjis + "#{@n})\" class=\"gaiji\" />"
+        "<img src=\"#{@gaiji_dir}/1-07/1-07-8#{@n}.png\" alt=\"※(濁点付き片仮名「#{@katakana}」、1-07-8#{@n})\" class=\"gaiji\" />"
       end
     end
   end

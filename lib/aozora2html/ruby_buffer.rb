@@ -108,6 +108,9 @@ class Aozora2Html
 
     def char_type(char)
       ## `String#char_type`も定義されているのに注意
+      ## Tag（Gaiji等）もchar_typeを持つ場合がある
+      return :else unless char.respond_to?(:char_type)
+
       char.char_type
     rescue StandardError
       :else

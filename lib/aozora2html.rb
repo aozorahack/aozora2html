@@ -4,6 +4,7 @@ require_relative 'aozora2html/error'
 require_relative 'aozora2html/i18n'
 require_relative 'aozora2html/midashi_counter'
 require_relative 'jstream'
+require_relative 'output_stream'
 require_relative 'aozora2html/tag'
 require_relative 'aozora2html/tag_parser'
 require_relative 'aozora2html/accent_parser'
@@ -18,104 +19,105 @@ require_relative 'aozora2html/string_refinements'
 # 青空文庫形式のテキストファイルを html に整形する ruby スクリプト
 # 変換器本体
 class Aozora2Html
-  # 全角バックスラッシュが出せないから直打ち
-  KU = ['18e5'].pack('h*').force_encoding('shift_jis')
-  NOJI = ['18f5'].pack('h*').force_encoding('shift_jis')
-  DAKUTEN = ['18d8'].pack('h*').force_encoding('shift_jis')
+  # くの字点関連の特殊文字 (UTF-8)
+  # KU + NOJI = くの字点 (／＼)
+  # KU + DAKUTEN + NOJI = 濁点付きくの字点 (／″＼)
+  KU = '／'        # U+FF0F 全角スラッシュ
+  NOJI = '＼'      # U+FF3C 全角バックスラッシュ
+  DAKUTEN = '″'   # U+2033 ダブルプライム
 
-  using StringRefinements
-
-  GAIJI_MARK = '※'.to_sjis
-  IGETA_MARK = '＃'.to_sjis
-  RUBY_BEGIN_MARK = '《'.to_sjis
-  RUBY_END_MARK = '》'.to_sjis
-  PAREN_BEGIN_MARK = '（'.to_sjis
-  PAREN_END_MARK = '）'.to_sjis
-  SIZE_SMALL = '小'.to_sjis
-  SIZE_MIDDLE = '中'.to_sjis
-  SIZE_LARGE = '大'.to_sjis
-  TEIHON_MARK = '底本：'.to_sjis
-  COMMAND_BEGIN = '［'.to_sjis
-  COMMAND_END = '］'.to_sjis
-  ACCENT_BEGIN = '〔'.to_sjis
-  ACCENT_END = '〕'.to_sjis
-  AOZORABUNKO = '青空文庫'.to_sjis
+  GAIJI_MARK = '※'
+  IGETA_MARK = '＃'
+  RUBY_BEGIN_MARK = '《'
+  RUBY_END_MARK = '》'
+  PAREN_BEGIN_MARK = '（'
+  PAREN_END_MARK = '）'
+  SIZE_SMALL = '小'
+  SIZE_MIDDLE = '中'
+  SIZE_LARGE = '大'
+  TEIHON_MARK = '底本：'
+  COMMAND_BEGIN = '［'
+  COMMAND_END = '］'
+  ACCENT_BEGIN = '〔'
+  ACCENT_END = '〕'
+  AOZORABUNKO = '青空文庫'
   # PAT_EDITOR = /[校訂|編|編集|編集校訂|校訂編集]$/
-  PAT_EDITOR = '(校訂|編|編集)$'.to_sjis
-  PAT_HENYAKU = '編訳$'.to_sjis
-  PAT_TRANSLATOR = '訳$'.to_sjis
-  RUBY_PREFIX = '｜'.to_sjis
-  PAT_RUBY = /#{'《.*?》'.to_sjis}/.freeze
-  PAT_DIRECTION = '(右|左|上|下)に(.*)'.to_sjis
-  PAT_REF = '^「.+」'.to_sjis
-  CHUUKI_COMMAND = '注記付き'.to_sjis
-  TCY_COMMAND = '縦中横'.to_sjis
-  KEIGAKOMI_COMMAND = '罫囲み'.to_sjis
-  YOKOGUMI_COMMAND = '横組み'.to_sjis
-  CAPTION_COMMAND = 'キャプション'.to_sjis
-  WARIGAKI_COMMAND = '割書'.to_sjis
-  KAERITEN_COMMAND = '返り点'.to_sjis
-  KUNTEN_OKURIGANA_COMMAND = '訓点送り仮名'.to_sjis
-  MIDASHI_COMMAND = '見出し'.to_sjis
-  OMIDASHI_COMMAND = '大見出し'.to_sjis
-  NAKAMIDASHI_COMMAND = '中見出し'.to_sjis
-  KOMIDASHI_COMMAND = '小見出し'.to_sjis
-  DOGYO_OMIDASHI_COMMAND = '同行大見出し'.to_sjis
-  DOGYO_NAKAMIDASHI_COMMAND = '同行中見出し'.to_sjis
-  DOGYO_KOMIDASHI_COMMAND = '同行小見出し'.to_sjis
-  MADO_OMIDASHI_COMMAND = '窓大見出し'.to_sjis
-  MADO_NAKAMIDASHI_COMMAND = '窓中見出し'.to_sjis
-  MADO_KOMIDASHI_COMMAND = '窓小見出し'.to_sjis
-  LEFT_MARK = '左'.to_sjis
-  UNDER_MARK = '下'.to_sjis
-  OVER_MARK = '上'.to_sjis
-  MAIN_MARK = '本文'.to_sjis
-  END_MARK = '終わり'.to_sjis
-  TEN_MARK = '点'.to_sjis
-  SEN_MARK = '線'.to_sjis
-  OPEN_MARK = 'ここから'.to_sjis
-  CLOSE_MARK = 'ここで'.to_sjis
-  MADE_MARK = 'まで'.to_sjis
-  DOGYO_MARK = '同行'.to_sjis
-  MADO_MARK = '窓'.to_sjis
-  JIAGE_COMMAND = '字上げ'.to_sjis
-  JISAGE_COMMAND = '字下げ'.to_sjis
-  PHOTO_COMMAND = '写真'.to_sjis
-  ORIKAESHI_COMMAND = '折り返して'.to_sjis
-  ONELINE_COMMAND = 'この行'.to_sjis
-  NON_0213_GAIJI = '非0213外字'.to_sjis
-  WARICHU_COMMAND = '割り注'.to_sjis
-  TENTSUKI_COMMAND = '天付き'.to_sjis
-  PAT_REST_NOTES = '(左|下)に「(.*)」の(ルビ|注記|傍記)'.to_sjis
-  PAT_KUTEN = /#{'「※」[は|の]'.to_sjis}/.freeze
-  PAT_KUTEN_DUAL = '※.*※'.to_sjis
-  PAT_GAIJI = '(?:＃)(.*)(?:、)(.*)'.to_sjis
-  PAT_KAERITEN = '^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$'.to_sjis
-  PAT_OKURIGANA = '^（(.+)）$'.to_sjis
-  PAT_REMOVE_OKURIGANA = /#{'[（）]'.to_sjis}/.freeze
-  PAT_CHITSUKI = /#{'(地付き|字上げ)(終わり)*$'.to_sjis}/.freeze
-  PAT_ORIKAESHI_JISAGE = '折り返して(\\d*)字下げ'.to_sjis
-  PAT_ORIKAESHI_JISAGE2 = '(\\d*)字下げ、折り返して(\\d*)字下げ'.to_sjis
-  PAT_JI_LEN = '([0-9]+)字'.to_sjis
-  PAT_INLINE_RUBY = '「(.*)」の注記付き'.to_sjis
-  PAT_IMAGE = '(.*)（(fig.+\\.png)(、横([0-9]+)×縦([0-9]+))*）入る'.to_sjis
-  PAT_FRONTREF = '「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)'.to_sjis
-  PAT_RUBY_DIR = '(左|下)に「([^」]*)」の(ルビ|注記)'.to_sjis
-  PAT_CHUUKI = /#{'「(.+?)」の注記'.to_sjis}/.freeze
-  PAT_BOUKI = /#{'「(.)」の傍記'.to_sjis}/.freeze
-  PAT_CHARSIZE = /#{'(.*)段階(..)な文字'.to_sjis}/.freeze
+  PAT_EDITOR = '(校訂|編|編集)$'
+  PAT_HENYAKU = '編訳$'
+  PAT_TRANSLATOR = '訳$'
+  RUBY_PREFIX = '｜'
+  PAT_RUBY = /《.*?》/.freeze
+  PAT_DIRECTION = '(右|左|上|下)に(.*)'
+  PAT_REF = '^「.+」'
+  CHUUKI_COMMAND = '注記付き'
+  TCY_COMMAND = '縦中横'
+  KEIGAKOMI_COMMAND = '罫囲み'
+  YOKOGUMI_COMMAND = '横組み'
+  CAPTION_COMMAND = 'キャプション'
+  WARIGAKI_COMMAND = '割書'
+  KAERITEN_COMMAND = '返り点'
+  KUNTEN_OKURIGANA_COMMAND = '訓点送り仮名'
+  MIDASHI_COMMAND = '見出し'
+  OMIDASHI_COMMAND = '大見出し'
+  NAKAMIDASHI_COMMAND = '中見出し'
+  KOMIDASHI_COMMAND = '小見出し'
+  DOGYO_OMIDASHI_COMMAND = '同行大見出し'
+  DOGYO_NAKAMIDASHI_COMMAND = '同行中見出し'
+  DOGYO_KOMIDASHI_COMMAND = '同行小見出し'
+  MADO_OMIDASHI_COMMAND = '窓大見出し'
+  MADO_NAKAMIDASHI_COMMAND = '窓中見出し'
+  MADO_KOMIDASHI_COMMAND = '窓小見出し'
+  LEFT_MARK = '左'
+  UNDER_MARK = '下'
+  OVER_MARK = '上'
+  MAIN_MARK = '本文'
+  END_MARK = '終わり'
+  TEN_MARK = '点'
+  SEN_MARK = '線'
+  OPEN_MARK = 'ここから'
+  CLOSE_MARK = 'ここで'
+  MADE_MARK = 'まで'
+  DOGYO_MARK = '同行'
+  MADO_MARK = '窓'
+  JIAGE_COMMAND = '字上げ'
+  JISAGE_COMMAND = '字下げ'
+  PHOTO_COMMAND = '写真'
+  ORIKAESHI_COMMAND = '折り返して'
+  ONELINE_COMMAND = 'この行'
+  NON_0213_GAIJI = '非0213外字'
+  WARICHU_COMMAND = '割り注'
+  TENTSUKI_COMMAND = '天付き'
+  PAT_REST_NOTES = '(左|下)に「(.*)」の(ルビ|注記|傍記)'
+  PAT_KUTEN = /「※」[は|の]/.freeze
+  PAT_KUTEN_DUAL = '※.*※'
+  PAT_GAIJI = '(?:＃)(.*)(?:、)(.*)'
+  PAT_KAERITEN = '^([一二三四五六七八九十レ上中下甲乙丙丁天地人]+)$'
+  PAT_OKURIGANA = '^（(.+)）$'
+  PAT_REMOVE_OKURIGANA = /[（）]/.freeze
+  PAT_CHITSUKI = /(地付き|字上げ)(終わり)*$/.freeze
+  PAT_ORIKAESHI_JISAGE = '折り返して(\\d*)字下げ'
+  PAT_ORIKAESHI_JISAGE2 = '(\\d*)字下げ、折り返して(\\d*)字下げ'
+  PAT_JI_LEN = '([0-9]+)字'
+  PAT_INLINE_RUBY = '「(.*)」の注記付き'
+  PAT_IMAGE = '(.*)（(fig.+\\.png)(、横([0-9]+)×縦([0-9]+))*）入る'
+  PAT_FRONTREF = '「([^「」]*(?:「.+」)*[^「」]*)」[にはの](「.+」の)*(.+)'
+  PAT_RUBY_DIR = '(左|下)に「([^」]*)」の(ルビ|注記)'
+  PAT_CHUUKI = /「(.+?)」の注記/.freeze
+  PAT_BOUKI = /「(.)」の傍記/.freeze
+  PAT_CHARSIZE = /(.*)段階(..)な文字/.freeze
 
-  REGEX_HIRAGANA = Regexp.new('[ぁ-んゝゞ]'.to_sjis)
-  REGEX_KATAKANA = Regexp.new('[ァ-ンーヽヾヴ]'.to_sjis)
-  REGEX_ZENKAKU = Regexp.new('[０-９Ａ-Ｚａ-ｚΑ-Ωα-ωА-Яа-я−＆’，．]'.to_sjis)
-  REGEX_HANKAKU = Regexp.new("[A-Za-z0-9#\\-\\&'\\,]".to_sjis)
-  REGEX_KANJI = Regexp.new('[亜-熙々※仝〆〇ヶ]'.to_sjis)
+  REGEX_HIRAGANA = /[ぁ-んゝゞ]/
+  REGEX_KATAKANA = /[ァ-ンーヽヾヴ]/
+  REGEX_ZENKAKU = /[０-９Ａ-Ｚａ-ｚΑ-Ωα-ωА-Яа-я−＆'，．]/
+  REGEX_HANKAKU = /[A-Za-z0-9#\-&',]/
+  # CJK統合漢字 (U+4E00-U+9FFF) + 特殊文字
+  REGEX_KANJI = /[\u4E00-\u9FFF々※仝〆〇ヶ]/
 
-  KANJI_NUMS = '〇一二三四五六七八九'.to_sjis
-  KANJI_TEN = '十'.to_sjis
-  ZENKAKU_NUMS = '０１２３４５６７８９'.to_sjis
+  KANJI_NUMS = '〇一二三四五六七八九'
+  KANJI_TEN = '十'
+  ZENKAKU_NUMS = '０１２３４５６７８９'
 
-  DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a><script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n</div>".to_sjis
+  DYNAMIC_CONTENTS = "<div id=\"card\">\r\n<hr />\r\n<br />\r\n<a href=\"JavaScript:goLibCard();\" id=\"goAZLibCard\">●図書カード</a><script type=\"text/javascript\" src=\"../../contents.js\"></script>\r\n<script type=\"text/javascript\" src=\"../../golibcard.js\"></script>\r\n</div>"
 
   # KUNOJI = ["18e518f5"].pack("h*")
   # utf8 ["fecbf8fecbcb"].pack("h*")
@@ -130,24 +132,24 @@ class Aozora2Html
   JIS2UCS = loader.load('../yml/jis2ucs.yml')
 
   INDENT_TYPE = {
-    jisage: '字下げ'.to_sjis,
-    chitsuki: '地付き'.to_sjis,
-    midashi: '見出し'.to_sjis,
-    jizume: '字詰め'.to_sjis,
-    yokogumi: '横組み'.to_sjis,
-    keigakomi: '罫囲み'.to_sjis,
-    caption: 'キャプション'.to_sjis,
-    futoji: '太字'.to_sjis,
-    shatai: '斜体'.to_sjis,
-    dai: '大きな文字'.to_sjis,
-    sho: '小さな文字'.to_sjis
+    jisage: '字下げ',
+    chitsuki: '地付き',
+    midashi: '見出し',
+    jizume: '字詰め',
+    yokogumi: '横組み',
+    keigakomi: '罫囲み',
+    caption: 'キャプション',
+    futoji: '太字',
+    shatai: '斜体',
+    dai: '大きな文字',
+    sho: '小さな文字'
   }.freeze
 
   DAKUTEN_KATAKANA_TABLE = {
-    '2' => 'ワ゛'.to_sjis,
-    '3' => 'ヰ゛'.to_sjis,
-    '4' => 'ヱ゛'.to_sjis,
-    '5' => 'ヲ゛'.to_sjis
+    '2' => 'ワ゛',
+    '3' => 'ヰ゛',
+    '4' => 'ヱ゛',
+    '5' => 'ヲ゛'
   }.freeze
 
   def initialize(input, output, gaiji_dir: nil, css_files: nil, use_jisx0213: nil, use_unicode: nil)
@@ -156,11 +158,12 @@ class Aozora2Html
               else
                 Jstream.new(File.open(input, 'rb:Shift_JIS'))
               end
-    @out = if output.respond_to?(:print) ## writable IO?
-             output
-           else
-             File.open(output, 'wb')
-           end
+    raw_out = if output.respond_to?(:print) ## writable IO?
+                output
+              else
+                File.open(output, 'wb')
+              end
+    @out = OutputStream.new(raw_out)
     @gaiji_dir = gaiji_dir || '../../../gaiji/'
     @css_files = css_files || ['../../aozora.css']
 
@@ -854,7 +857,7 @@ class Aozora2Html
   end
 
   def detect_style_size(style)
-    if style.match?('小'.to_sjis)
+    if style.match?('小')
       :sho
     else
       :dai
@@ -1294,34 +1297,34 @@ class Aozora2Html
   # `●表記について`で使用した注記等を出力する
   def hyoki
     # <br /> times fix
-    @out.print "<br />\r\n</div>\r\n<div class=\"notation_notes\">\r\n<hr />\r\n<br />\r\n●表記について<br />\r\n<ul>\r\n".to_sjis
-    @out.print "\t<li>このファイルは W3C 勧告 XHTML1.1 にそった形式で作成されています。</li>\r\n".to_sjis
+    @out.print "<br />\r\n</div>\r\n<div class=\"notation_notes\">\r\n<hr />\r\n<br />\r\n●表記について<br />\r\n<ul>\r\n"
+    @out.print "\t<li>このファイルは W3C 勧告 XHTML1.1 にそった形式で作成されています。</li>\r\n"
     if @chuuki_table[:chuki]
-      @out.print "\t<li>［＃…］は、入力者による注を表す記号です。</li>\r\n".to_sjis
+      @out.print "\t<li>［＃…］は、入力者による注を表す記号です。</li>\r\n"
     end
     if @chuuki_table[:kunoji]
       if @chuuki_table[:dakutenkunoji]
-        @out.printf("\t<li>「くの字点」は「%s」で、「濁点付きくの字点」は「%s」で表しました。</li>\r\n".to_sjis, KU + NOJI, KU + DAKUTEN + NOJI)
+        @out.printf("\t<li>「くの字点」は「%s」で、「濁点付きくの字点」は「%s」で表しました。</li>\r\n", KU + NOJI, KU + DAKUTEN + NOJI)
       else
-        @out.printf("\t<li>「くの字点」は「%s」で表しました。</li>\r\n".to_sjis, KU + NOJI)
+        @out.printf("\t<li>「くの字点」は「%s」で表しました。</li>\r\n", KU + NOJI)
       end
     elsif @chuuki_table[:dakutenkunoji]
-      @out.printf("\t<li>「濁点付きくの字点」は「%s」で表しました。</li>\r\n".to_sjis, KU + DAKUTEN + NOJI)
+      @out.printf("\t<li>「濁点付きくの字点」は「%s」で表しました。</li>\r\n", KU + DAKUTEN + NOJI)
     end
     if @chuuki_table[:newjis] && !(Aozora2Html::Tag::EmbedGaiji.use_jisx0213 || @use_jisx0213)
-      @out.print "\t<li>「くの字点」をのぞくJIS X 0213にある文字は、画像化して埋め込みました。</li>\r\n".to_sjis
+      @out.print "\t<li>「くの字点」をのぞくJIS X 0213にある文字は、画像化して埋め込みました。</li>\r\n"
     end
     if @chuuki_table[:accent] && !(Aozora2Html::Tag::Accent.use_jisx0213 || @use_jisx0213)
-      @out.print "\t<li>アクセント符号付きラテン文字は、画像化して埋め込みました。</li>\r\n".to_sjis
+      @out.print "\t<li>アクセント符号付きラテン文字は、画像化して埋め込みました。</li>\r\n"
     end
     if @images[0]
-      @out.print "\t<li>この作品には、JIS X 0213にない、以下の文字が用いられています。（数字は、底本中の出現「ページ-行」数。）これらの文字は本文内では「※［＃…］」の形で示しました。</li>\r\n</ul>\r\n<br />\r\n\t\t<table class=\"gaiji_list\">\r\n".to_sjis
+      @out.print "\t<li>この作品には、JIS X 0213にない、以下の文字が用いられています。（数字は、底本中の出現「ページ-行」数。）これらの文字は本文内では「※［＃…］」の形で示しました。</li>\r\n</ul>\r\n<br />\r\n\t\t<table class=\"gaiji_list\">\r\n"
       @images.each do |cell|
         k, *v = cell
-        vs = v.join('、'.to_sjis)
-        @out.print "\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t#{k}\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>&nbsp;&nbsp;</td>\r\n\t\t\t\t<td>\r\n#{vs}\t\t\t\t</td>\r\n\t\t\t\t<!--\r\n\t\t\t\t<td>\r\n\t\t\t\t" + '　　'.to_sjis + "<img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />\r\n\t\t\t\t</td>\r\n\t\t\t\t-->\r\n\t\t\t</tr>\r\n".to_sjis
+        vs = v.join('、')
+        @out.print "\t\t\t<tr>\r\n\t\t\t\t<td>\r\n\t\t\t\t#{k}\r\n\t\t\t\t</td>\r\n\t\t\t\t<td>&nbsp;&nbsp;</td>\r\n\t\t\t\t<td>\r\n#{vs}\t\t\t\t</td>\r\n\t\t\t\t<!--\r\n\t\t\t\t<td>\r\n\t\t\t\t　　<img src=\"../../../gaiji/others/xxxx.png\" alt=\"#{k}\" width=32 height=32 />\r\n\t\t\t\t</td>\r\n\t\t\t\t-->\r\n\t\t\t</tr>\r\n"
       end
-      @out.print "\t\t</table>\r\n".to_sjis
+      @out.print "\t\t</table>\r\n"
     else
       @out.print "</ul>\r\n" # <ul>内に<li>以外のエレメントが来るのは不正なので修正
     end
