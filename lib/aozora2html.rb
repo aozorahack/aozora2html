@@ -583,7 +583,7 @@ class Aozora2Html
           false
         end
       end
-    when Aozora2Html::Tag::ReferenceMentioned
+    when Aozora2Html::Tag::ReferenceMentioned, Aozora2Html::Tag::UnEmbedGaiji
       inner = last_string.target_string
       if inner == string
         # 完全一致
@@ -698,7 +698,7 @@ class Aozora2Html
       exec_inline_end_command(command)
       nil
     elsif command.match?(PAT_REF)
-      exec_frontref_command(command)
+      exec_frontref_command(command, raw)
     elsif command.match?(/1-7-8[2345]/)
       apply_dakuten_katakana(command)
     elsif command.match?(PAT_KAERITEN)
@@ -1087,8 +1087,16 @@ class Aozora2Html
     end
   end
 
-  def exec_frontref_command(command)
-    _whole, reference, spec1, spec2 = command.match(PAT_FRONTREF).to_a
+  def exec_frontref_command(command, raw = nil)
+    # rawがある場合はrawから参照文字列を抽出（外字がHTMLに変換される前の文字列）
+    # ただしspecはcommandから取得（rawには余分な括弧が含まれる可能性がある）
+    if raw
+      _whole, reference, _s1, _s2 = raw.match(PAT_FRONTREF).to_a
+    else
+      reference = nil
+    end
+    _whole, ref_fallback, spec1, spec2 = command.match(PAT_FRONTREF).to_a
+    reference ||= ref_fallback
     spec = if spec1
              spec1 + spec2
            else
