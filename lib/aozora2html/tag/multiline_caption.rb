@@ -5,6 +5,7 @@ class Aozora2Html
     # 複数行キャプション用
     class MultilineCaption < Aozora2Html::Tag::Block
       include Aozora2Html::Tag::Multiline
+
       def to_s
         '<div class="caption">'
       end

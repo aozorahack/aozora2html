@@ -24,6 +24,7 @@ class Aozora2Html
       if endchar.is_a?(String) && endchar.encoding != Encoding::UTF_8
         raise ArgumentError, "endchar must be UTF-8 encoded, got #{endchar.encoding}"
       end
+
       @endchar = endchar
       @section = :tail # 末尾処理と記法内はインデントをしないので等価
       @raw = +'' # 外字変換前の生テキストを残したいことがあるらしい
@@ -38,7 +39,7 @@ class Aozora2Html
     end
 
     def read_to_nest(endchar)
-      ans = super(endchar)
+      ans = super
       @raw.concat(ans[1])
       ans
     end
