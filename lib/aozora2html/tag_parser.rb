@@ -33,7 +33,7 @@ class Aozora2Html
     end
 
     def read_to_nest(endchar)
-      ans = super(endchar)
+      ans = super
       @raw.concat(ans[1])
       ans
     end
