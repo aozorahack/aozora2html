@@ -25,6 +25,10 @@ class Aozora2Html
       def escape!
         @escaped = true
       end
+
+      def target_string
+        GAIJI_MARK + COMMAND_BEGIN + @desc + COMMAND_END
+      end
     end
   end
 end

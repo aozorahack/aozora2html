@@ -263,6 +263,22 @@ class CommandParseTest < Test::Unit::TestCase
     assert_equal expected, parsed
   end
 
+  # 注記の内容に亀甲括弧が含まれる場合のテスト
+  def test_parse_command_chuuki_with_tortoise_brackets
+    src = "二万五千六百尺［＃「尺」に「〔呎〕」の注記］の雪峰\r\n"
+    parsed = parse_text(src)
+    expected = %Q(二万五千六百<ruby><rb>尺</rb><rp>（</rp><rt>〔呎〕</rt><rp>）</rp></ruby>の雪峰<br />\r\n)
+    assert_equal expected, parsed
+  end
+
+  # 変換できない外字に傍点が指定された場合のテスト
+  def test_parse_command_bouten_on_unembed_gaiji
+    src = "※［＃「てへん＋夸」、37-下-12］［＃「※［＃「てへん＋夸」、37-下-12］」に傍点］門は崩れ\r\n"
+    parsed = parse_text(src)
+    expected = %Q(<em class="sesame_dot"><span class="notes">［＃「てへん＋夸」、37-下-12］</span></em>門は崩れ<br />\r\n)
+    assert_equal expected, parsed
+  end
+
   def test_parse_command_ruby_class
     Aozora2Html::Tag::EmbedGaiji.use_unicode = true
     src = "グリーンランドの中央部八千尺の氷河地帯にあるといわれる、［＃横組み］“Ser-mik-Suah《セルミク・シュアー》”［＃横組み終わり］の冥路《よみじ》の国。\r\n"
