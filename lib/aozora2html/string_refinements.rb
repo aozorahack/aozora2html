@@ -25,7 +25,12 @@ class Aozora2Html
       end
 
       def to_sjis
-        encode(Encoding::Windows_31J, undef: :replace, replace: '?')
+        encode(Encoding::Shift_JIS)
+      end
+
+      # for I18n message (allow `①` and/or other non-Shift_JIS chars)
+      def to_cp932
+        encode(Encoding::CP932, undef: :replace, replace: '?')
       end
 
       def to_utf8

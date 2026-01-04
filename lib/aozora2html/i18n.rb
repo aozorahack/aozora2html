@@ -40,8 +40,8 @@ class Aozora2Html
       if Aozora2Html::I18n.use_utf8
         MSG[msg] % args
       else
-        args_sjis = args.map { |arg| arg.is_a?(String) ? arg.to_sjis : arg }
-        (MSG[msg].to_sjis % args_sjis).force_encoding('cp932')
+        args_cp932 = args.map { |arg| arg.is_a?(String) ? arg.to_cp932 : arg }
+        (MSG[msg].to_cp932 % args_cp932).force_encoding('cp932')
       end
     end
   end
