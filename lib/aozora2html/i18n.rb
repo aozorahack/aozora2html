@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
+require_relative 'string_refinements'
+
 class Aozora2Html
   # Internationalization(I18n) class
   #
   # コード内に日本語メッセージが氾濫しないようにするためのクラス
   class I18n
+    @use_utf8 = nil
+
+    class << self
+      attr_accessor :use_utf8
+    end
+
     MSG = {
       tag_syntax_error: '注記を重ねる際の原則、「狭い範囲を先に、広い範囲を後に」が守られていません。リンク先の指針を参考に、書き方をあらためてください',
       undefined_header: '未定義な見出しです',
@@ -26,8 +34,15 @@ class Aozora2Html
       warn_undefined_command: '警告(%d行目):「%s」は未対応のコマンドのため無視します'
     }.freeze
 
+    using StringRefinements
+
     def self.t(msg, *args)
-      MSG[msg] % args
+      if Aozora2Html::I18n.use_utf8
+        MSG[msg] % args
+      else
+        args_sjis = args.map { |arg| arg.is_a?(String) ? arg.to_sjis : arg }
+        (MSG[msg].to_sjis % args_sjis).force_encoding('cp932')
+      end
     end
   end
 end

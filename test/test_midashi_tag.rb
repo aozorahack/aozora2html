@@ -4,6 +4,8 @@ require_relative 'test_helper'
 require 'aozora2html'
 
 class MidashiTagTest < Test::Unit::TestCase
+  using Aozora2Html::StringRefinements
+
   def setup
     @parser = Object.new
     stub(@parser).block_allowed_context? { true }
@@ -29,7 +31,8 @@ class MidashiTagTest < Test::Unit::TestCase
   def test_undeined_midashi
     Aozora2Html::Tag::Midashi.new(@parser, 'テスト見出し', 'あ', :normal)
   rescue Aozora2Html::Error => e
-    assert_equal e.message(123), "エラー(123行目):未定義な見出しです. \r\n処理を停止します"
+    assert_equal "エラー(123行目):未定義な見出しです. \r\n処理を停止します",
+                 e.message(123).force_encoding('cp932').to_utf8
   end
 
   def teardown
