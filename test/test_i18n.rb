@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require_relative 'test_helper'
 require 'aozora2html'
 
 class I18nTest < Test::Unit::TestCase
@@ -10,7 +10,7 @@ class I18nTest < Test::Unit::TestCase
     assert_equal '警告(123行目):JIS外字「①」が使われています',
                  Aozora2Html::I18n.t(:warn_jis_gaiji,
                                      123,
-                                     '①'.encode('cp932').force_encoding('shift_jis'))
+                                     '①'.encode('cp932'))
                                   .force_encoding('cp932').to_utf8
   end
 
@@ -21,7 +21,7 @@ class I18nTest < Test::Unit::TestCase
       assert_equal '警告(123行目):JIS外字「①」が使われています',
                    Aozora2Html::I18n.t(:warn_jis_gaiji,
                                        123,
-                                       '①'.encode('cp932').force_encoding('shift_jis'))
+                                       '①')
     ensure
       Aozora2Html::I18n.use_utf8 = orig_value
     end

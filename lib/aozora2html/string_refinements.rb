@@ -28,6 +28,11 @@ class Aozora2Html
         encode(Encoding::Shift_JIS)
       end
 
+      # for I18n message (allow `①` and/or other non-Shift_JIS chars)
+      def to_cp932
+        encode(Encoding::CP932, undef: :replace, replace: '?')
+      end
+
       def to_utf8
         encode(Encoding::UTF_8)
       end

@@ -10,6 +10,9 @@ require_relative 'aozora2html/i18n'
 # when finished to read IO, return a symbol :eof.
 # when found line terminator except CR+LF, exit.
 #
+# Internal processing is done in UTF-8.
+# Input can be Shift_JIS or UTF-8; Shift_JIS is converted to UTF-8.
+#
 class Jstream
   CR = "\r"
   LF = "\n"
@@ -39,7 +42,7 @@ class Jstream
     "#<jcode-stream input #{@file.inspect}>"
   end
 
-  # 1文字読み込んで返す
+  # 1文字読み込んで返す (UTF-8に変換して返す)
   #
   # 行末の場合は(1文字ではなく)CR+LFを返す
   # EOFまで到達すると :eof というシンボルを返す
@@ -55,17 +58,17 @@ class Jstream
       end
 
       @line += 1
-      @current_char = char + char2
+      @current_char = CRLF
     elsif char.nil?
       @current_char = :eof
     else
-      @current_char = char
+      @current_char = to_utf8(char)
     end
 
     @current_char
   end
 
-  # pos個分の文字を先読みし、最後の文字を返す
+  # pos個分の文字を先読みし、最後の文字を返す (UTF-8に変換して返す)
   #
   # ファイルディスクリプタは移動しない（実行前の位置まで戻す）
   # 行末の場合は(1文字ではなく)CR+LFを返す
@@ -84,7 +87,9 @@ class Jstream
           raise Aozora2Html::Error, Aozora2Html::I18n.t(:use_crlf)
         end
 
-        char += char2
+        char = CRLF
+      elsif char
+        char = to_utf8(char)
       end
     ensure
       @file.seek(original_pos)
@@ -133,5 +138,14 @@ class Jstream
     else
       @line + 1
     end
+  end
+
+  private
+
+  # Shift_JIS文字をUTF-8に変換する
+  def to_utf8(char)
+    return char if char.nil? || char.encoding == Encoding::UTF_8
+
+    char.encode(Encoding::UTF_8)
   end
 end

@@ -20,15 +20,21 @@ class Aozora2Html
       @ruby_buf = RubyBuffer.new
       @chuuki_table = chuuki
       @images = image # globalな環境を記録するアイテムは共有する必要あり
-      @endchar = endchar # 改行を越えるべきか否か…
+      # 内部処理はUTF-8なので、endcharもUTF-8であること
+      if endchar.is_a?(String) && endchar.encoding != Encoding::UTF_8
+        raise ArgumentError, "endchar must be UTF-8 encoded, got #{endchar.encoding}"
+      end
+
+      @endchar = endchar
       @section = :tail # 末尾処理と記法内はインデントをしないので等価
       @raw = +'' # 外字変換前の生テキストを残したいことがあるらしい
+      @out = OutputStream.new(StringIO.new) # ダミー出力（TagParser自体は出力を使わない）
     end
 
     # method override!
     def read_char
       c = @stream.read_char
-      @raw.concat(c)
+      @raw.concat(c) if c.is_a?(String)
       c
     end
 

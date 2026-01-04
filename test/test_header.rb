@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require_relative 'test_helper'
 require 'aozora2html'
 
 class HeaderTest < Test::Unit::TestCase
@@ -8,12 +8,10 @@ class HeaderTest < Test::Unit::TestCase
     @header = Aozora2Html::Header.new(css_files: ['../../aozora.css'])
   end
 
-  using Aozora2Html::StringRefinements
-
   def test_header_to_html
-    @header.push('武装せる市街'.to_sjis)
-    @header.push('黒島伝治'.to_sjis)
-    actual = @header.to_html.to_utf8
+    @header.push('武装せる市街')
+    @header.push('黒島伝治')
+    actual = @header.to_html
 
     # rubocop:disable Layout/LineLength
     expected =
@@ -24,21 +22,21 @@ class HeaderTest < Test::Unit::TestCase
   end
 
   def test_build_title
-    @header.push('武装せる市街'.to_sjis)
-    @header.push('黒島伝治'.to_sjis)
+    @header.push('武装せる市街')
+    @header.push('黒島伝治')
     header_info = @header.build_header_info
-    actual = @header.build_title(header_info).to_utf8
+    actual = @header.build_title(header_info)
     expected = '<title>黒島伝治 武装せる市街</title>'
     assert_equal(expected, actual)
   end
 
   def test_build_title2
-    @header.push('スリーピー・ホローの伝説'.to_sjis)
-    @header.push('故ディードリッヒ・ニッカボッカーの遺稿より'.to_sjis)
-    @header.push('ワシントン・アーヴィング　Washington Irving'.to_sjis)
-    @header.push('吉田甲子太郎訳'.to_sjis)
+    @header.push('スリーピー・ホローの伝説')
+    @header.push('故ディードリッヒ・ニッカボッカーの遺稿より')
+    @header.push('ワシントン・アーヴィング　Washington Irving')
+    @header.push('吉田甲子太郎訳')
     header_info = @header.build_header_info
-    actual = @header.build_title(header_info).to_utf8
+    actual = @header.build_title(header_info)
     expected = '<title>ワシントン・アーヴィング　Washington Irving 吉田甲子太郎訳 スリーピー・ホローの伝説 故ディードリッヒ・ニッカボッカーの遺稿より</title>'
     assert_equal(expected, actual)
   end

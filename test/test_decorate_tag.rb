@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require_relative 'test_helper'
 require 'aozora2html'
 
 class DecorateTagTest < Test::Unit::TestCase
@@ -15,11 +15,9 @@ class DecorateTagTest < Test::Unit::TestCase
     assert_equal true, tag.is_a?(Aozora2Html::Tag::Inline)
   end
 
-  using Aozora2Html::StringRefinements
-
   def test_to_s
-    tag = Aozora2Html::Tag::Decorate.new(@parser, 'テスト'.to_sjis, 'foo', 'span')
-    assert_equal '<span class="foo">テスト</span>', tag.to_s.to_utf8
+    tag = Aozora2Html::Tag::Decorate.new(@parser, 'テスト', 'foo', 'span')
+    assert_equal '<span class="foo">テスト</span>', tag.to_s
   end
 
   def teardown

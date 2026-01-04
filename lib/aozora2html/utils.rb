@@ -76,7 +76,8 @@ class Aozora2Html
     module_function :create_midashi_class
 
     def convert_japanese_number(command)
-      tmp = command.tr(ZENKAKU_NUMS, '0123456789')
+      tmp = command.dup
+      tmp.tr!(ZENKAKU_NUMS, '0123456789')
       tmp.tr!(KANJI_NUMS, '0123456789')
       tmp.gsub!(/(\d)#{KANJI_TEN}(\d)/o) { "#{$1}#{$2}" }
       tmp.gsub!(/(\d)#{KANJI_TEN}/o) { "#{$1}0" }
@@ -99,7 +100,16 @@ class Aozora2Html
     def illegal_char_check(char, line)
       return unless char.is_a?(String)
 
-      code = char.unpack1('H*')
+      # CP932(Windows-31J)に変換してバイトコードをチェック
+      # ①などのCP932拡張文字を正しく扱うため
+      sjis_char = if char.encoding == Encoding::UTF_8
+                    char.encode(Encoding::Windows_31J, undef: :replace, invalid: :replace)
+                  elsif char.encoding == Encoding::Shift_JIS
+                    char.force_encoding(Encoding::Windows_31J)
+                  else
+                    char
+                  end
+      code = sjis_char.unpack1('H*')
       if (code == '21') ||
          (code == '23') ||
          ((code >= 'a1') && (code <= 'a5')) ||
